@@ -12,14 +12,15 @@ import { Loader } from '@/components/atoms/ui/loader'
 import { cn } from '@/utils/cn'
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-1.5 whitespace-nowrap max-sm:text-sm font-bold disabled:cursor-not-allowed disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] cursor-pointer",
+  "inline-flex items-center justify-center gap-1.5 whitespace-nowrap text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] cursor-pointer",
   {
     variants: {
       variant: {
         default: 'bg-primary text-white shadow-xs hover:bg-primary/90 disabled:bg-slate-600',
-        secondary: 'bg-secondary text-white shadow-xs hover:bg-secondary/90 disabled:bg-slate-600',
+        secondary: 'bg-secondary text-primary shadow-xs hover:bg-secondary/90 disabled:bg-slate-600',
         destructive: 'bg-red-500 text-white shadow-xs hover:bg-red-500/90 focus-visible:ring-red-500/20',
-        outline: 'border shadow-xs hover:bg-white/30 hover:text-white border-white text-white',
+        white: 'bg-white text-primary shadow-xs hover:bg-white/90 focus-visible:ring-white/20',
+        outline: 'border shadow-xs bg-transparent hover:bg-white/10 text-white border-white',
         ghost: 'hover:bg-accent hover:text-accent-foreground',
         link: 'text-primary underline-offset-4 hover:underline',
         accent: 'bg-accent text-white shadow-xs hover:bg-accent/90 disabled:bg-slate-600',
@@ -45,7 +46,7 @@ const buttonVariants = cva(
         '2xl': 'rounded-2xl',
         '3xl': 'rounded-3xl',
         '4xl': 'rounded-4xl',
-        default: 'rounded-lg',
+        default: 'rounded',
         full: 'rounded-full'
       }
     },

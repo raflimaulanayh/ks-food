@@ -7,7 +7,7 @@ export const MarkdownComponents: Components = {
     <ol className="mb-3 list-decimal space-y-1 pl-4 marker:font-semibold marker:text-primary">{children}</ol>
   ),
   li: ({ children }) => <li className="pl-1 text-slate-700">{children}</li>,
-  strong: ({ children }) => <span className="font-bold text-slate-900">{children}</span>,
+  strong: ({ children }) => <span className="font-semibold text-slate-900">{children}</span>,
   a: ({ href, children }) => (
     <a
       href={href}

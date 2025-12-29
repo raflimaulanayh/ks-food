@@ -1,8 +1,22 @@
-export const Badge = ({ label }: { label: string }) => {
+import { cn } from '@/shared/utils'
+
+interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
+  variant?: 'default' | 'outline'
+}
+
+export const Badge = ({ className, variant = 'default', children, ...props }: BadgeProps) => {
   return (
-    <div className="flex items-center gap-2 text-sm font-medium text-white/90">
-      <span className="size-1.5 rounded-full bg-white shadow-sm"></span>
-      {label}
+    <div
+      className={cn(
+        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none',
+        variant === 'outline'
+          ? 'text-foreground'
+          : 'border-transparent bg-primary text-primary-foreground hover:bg-primary/80',
+        className
+      )}
+      {...props}
+    >
+      {children}
     </div>
   )
 }

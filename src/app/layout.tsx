@@ -3,7 +3,7 @@ import '@/styles/globals.css'
 import { siteMetadata } from '@/constants/site-metadata'
 import { Analytics } from '@vercel/analytics/react'
 import { Metadata, Viewport } from 'next'
-import { Poppins } from 'next/font/google'
+import { Merriweather, Plus_Jakarta_Sans } from 'next/font/google'
 import NextTopLoader from 'nextjs-toploader'
 import React from 'react'
 
@@ -41,11 +41,18 @@ export const viewport: Viewport = {
   viewportFit: 'cover'
 }
 
-const sans = Poppins({
+const sans = Plus_Jakarta_Sans({
   weight: ['300', '400', '500', '600', '700', '800'],
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-sans'
+})
+
+const serif = Merriweather({
+  weight: ['400', '500', '600', '700', '800', '900'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-serif'
 })
 
 export default async function RootLayout({
@@ -55,7 +62,7 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={cn('min-h-screen bg-slate-50 antialiased', sans.variable)}>
+      <body className={cn('min-h-screen bg-slate-50 antialiased', sans.variable, serif.variable)}>
         <SplashScreen />
         <NextTopLoader color="#A31313" showSpinner={false} />
         {children}
