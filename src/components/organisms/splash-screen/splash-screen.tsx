@@ -48,7 +48,7 @@ export const SplashScreen = () => {
     >
       {show && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-primary"
+          className="fixed inset-0 z-99 flex items-center justify-center bg-primary"
           initial={{ opacity: 1 }}
           exit={{
             opacity: 0,
