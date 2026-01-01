@@ -23,6 +23,7 @@
       "@/constants/*": ["./src/constants/*"],
       "@/pages/*": ["./src/pages/*"],
       "@/utils/*": ["./src/utils/*"],
+      "@/data/*": ["./src/data/*"],
       "@/utils": ["./src/utils/index.ts"],
       "@/hooks/*": ["./src/hooks/*"],
       "@/services/*": ["./src/services/*"],
