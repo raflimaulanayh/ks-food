@@ -18,8 +18,8 @@ import { cn } from '@/utils/cn'
 
 interface ApprovalCardProps {
   request: ApprovalRequest
-  onApprove: (id: string) => void
-  onReject: (id: string, reason: string) => void
+  onApprove: (id: number) => void
+  onReject: (id: number, reason: string) => void
 }
 
 export const ApprovalCard = ({ request, onApprove, onReject }: ApprovalCardProps) => {
@@ -29,11 +29,11 @@ export const ApprovalCard = ({ request, onApprove, onReject }: ApprovalCardProps
 
   const getIcon = () => {
     switch (request.type) {
-      case 'GATE_PASS':
-        return Truck
-      case 'PURCHASE_ORDER':
+      case 'LEAVE':
+        return User
+      case 'PO':
         return Scroll
-      case 'LEAVE_REQUEST':
+      case 'HIRING':
         return User
       default:
         return Package
@@ -42,12 +42,16 @@ export const ApprovalCard = ({ request, onApprove, onReject }: ApprovalCardProps
 
   const getTypeLabel = () => {
     switch (request.type) {
-      case 'GATE_PASS':
-        return 'Gate Pass'
-      case 'PURCHASE_ORDER':
+      case 'LEAVE':
+        return 'Cuti'
+      case 'PO':
         return 'Purchase Order'
-      case 'LEAVE_REQUEST':
-        return 'Perizinan'
+      case 'HIRING':
+        return 'Rekrutmen'
+      case 'BUDGET':
+        return 'Budget'
+      case 'EXPENSE':
+        return 'Pengeluaran'
       default:
         return request.type
     }
@@ -88,9 +92,11 @@ export const ApprovalCard = ({ request, onApprove, onReject }: ApprovalCardProps
             <div
               className={cn(
                 'flex h-12 w-12 shrink-0 items-center justify-center rounded-lg',
-                request.type === 'GATE_PASS' && 'bg-blue-100 text-blue-600',
-                request.type === 'PURCHASE_ORDER' && 'bg-orange-100 text-orange-600',
-                request.type === 'LEAVE_REQUEST' && 'bg-purple-100 text-purple-600'
+                request.type === 'LEAVE' && 'bg-blue-100 text-blue-600',
+                request.type === 'PO' && 'bg-purple-100 text-purple-600',
+                request.type === 'HIRING' && 'bg-emerald-100 text-emerald-600',
+                request.type === 'BUDGET' && 'bg-amber-100 text-amber-600',
+                request.type === 'EXPENSE' && 'bg-orange-100 text-orange-600'
               )}
             >
               <Icon size={24} weight="duotone" />
@@ -101,7 +107,7 @@ export const ApprovalCard = ({ request, onApprove, onReject }: ApprovalCardProps
                 <span className="text-xs font-medium text-slate-500">{getTypeLabel()}</span>
                 <span className="text-xs text-slate-400">•</span>
                 <span className="font-mono text-xs text-slate-600">{request.id}</span>
-                {request.priority === 'URGENT' && (
+                {request.priority === 'high' && (
                   <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-700">Urgent</span>
                 )}
               </div>
@@ -120,53 +126,11 @@ export const ApprovalCard = ({ request, onApprove, onReject }: ApprovalCardProps
                 </p>
               </div>
 
-              {/* Details */}
+              {/* Details - Disabled for now, needs proper data structure
               <div className="mt-3 rounded-lg bg-slate-50 p-3 text-sm">
-                {request.type === 'GATE_PASS' && (
-                  <div className="space-y-1">
-                    <p>
-                      <span className="font-medium">Driver:</span> {request.details.driver}
-                    </p>
-                    <p>
-                      <span className="font-medium">Kendaraan:</span> {request.details.licensePlate}
-                    </p>
-                    <p>
-                      <span className="font-medium">Barang:</span> {request.details.items}
-                    </p>
-                    <p>
-                      <span className="font-medium">Tujuan:</span> {request.details.destination}
-                    </p>
-                  </div>
-                )}
-
-                {request.type === 'PURCHASE_ORDER' && (
-                  <div className="space-y-1">
-                    <p>
-                      <span className="font-medium">Supplier:</span> {request.details.supplier}
-                    </p>
-                    <p>
-                      <span className="font-medium">Material:</span> {request.details.material}
-                    </p>
-                    <p className="text-base font-bold text-green-700">
-                      Nilai: Rp {request.details.value?.toLocaleString('id-ID')}
-                    </p>
-                  </div>
-                )}
-
-                {request.type === 'LEAVE_REQUEST' && (
-                  <div className="space-y-1">
-                    <p>
-                      <span className="font-medium">Alasan:</span> {request.details.reason}
-                    </p>
-                    <p>
-                      <span className="font-medium">Durasi:</span> {request.details.duration}
-                    </p>
-                    <p>
-                      <span className="font-medium">Tanggal:</span> {request.details.dateRange}
-                    </p>
-                  </div>
-                )}
+                <p className="text-xs text-slate-500">{request.description}</p>
               </div>
+              */}
             </div>
           </div>
 
@@ -210,7 +174,7 @@ export const ApprovalCard = ({ request, onApprove, onReject }: ApprovalCardProps
 
           <div className="space-y-2">
             <label htmlFor="reason" className="text-sm font-medium text-slate-700">
-              Alasan Penolakan <span className="text-red-600">*</span>
+              Alasan Penolakan <span className="text-primary">*</span>
             </label>
             <textarea
               id="reason"
@@ -232,7 +196,7 @@ export const ApprovalCard = ({ request, onApprove, onReject }: ApprovalCardProps
             <button
               onClick={handleRejectConfirm}
               disabled={!rejectReason.trim()}
-              className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700 disabled:opacity-50"
+              className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700 disabled:opacity-50"
             >
               Konfirmasi Penolakan
             </button>

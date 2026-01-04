@@ -17,14 +17,14 @@ interface ApprovalWidgetProps {
 export const ApprovalWidget = ({ approvals, title = 'Persetujuan yang Diperlukan', maxItems = 5 }: ApprovalWidgetProps) => {
   const [items, setItems] = useState(approvals.slice(0, maxItems))
 
-  const handleApprove = (id: string) => {
+  const handleApprove = (id: number) => {
     setItems((prev) => prev.filter((item) => item.id !== id))
     toast.success(`${id} disetujui`, {
       description: 'Permintaan telah diproses'
     })
   }
 
-  const handleReject = (id: string, reason: string) => {
+  const handleReject = (id: number, reason: string) => {
     setItems((prev) => prev.filter((item) => item.id !== id))
     toast.error(`${id} ditolak`, {
       description: reason

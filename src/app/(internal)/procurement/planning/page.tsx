@@ -3,9 +3,9 @@
 import { JOB_ORDERS, RAW_MATERIALS } from '@/data/mock-production'
 import { CheckCircle, Factory, Plus, WarningCircle } from '@phosphor-icons/react'
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 import { StatCard } from '@/components/molecules/dashboard/stat-card'
-import { CreateJobOrderDialog } from '@/components/molecules/production/create-job-order-dialog'
 
 import { cn } from '@/utils/cn'
 
@@ -32,6 +32,13 @@ export default function ProductionPlanningPage() {
     }
   }
 
+  const handleCreateJobOrder = () => {
+    toast.info('Fitur Buat Job Order', {
+      description: 'Dialog untuk membuat job order akan tersedia segera'
+    })
+    setShowCreateDialog(false)
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -41,7 +48,7 @@ export default function ProductionPlanningPage() {
           <p className="mt-1 text-sm text-slate-500">Kelola jadwal produksi dan cek ketersediaan bahan baku</p>
         </div>
         <button
-          onClick={() => setShowCreateDialog(true)}
+          onClick={handleCreateJobOrder}
           className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary/90"
         >
           <Plus size={20} weight="bold" />
@@ -124,9 +131,6 @@ export default function ProductionPlanningPage() {
           <div className="px-6 py-12 text-center text-sm text-slate-500">Belum ada job order yang dibuat</div>
         )}
       </div>
-
-      {/* Create Job Order Dialog */}
-      <CreateJobOrderDialog open={showCreateDialog} onOpenChange={setShowCreateDialog} />
     </div>
   )
 }

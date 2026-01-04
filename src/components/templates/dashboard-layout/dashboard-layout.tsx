@@ -28,7 +28,9 @@ export const DashboardLayout = ({ children, className }: DashboardLayoutProps) =
     <Fragment>
       <div className="flex h-screen w-full overflow-hidden bg-slate-50">
         {/* Sidebar - Desktop */}
-        <Sidebar className="hidden md:flex" />
+        <div className="hidden md:flex">
+          <Sidebar />
+        </div>
 
         {/* Sidebar - Mobile Drawer */}
         <AnimatePresence>

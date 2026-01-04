@@ -16,7 +16,6 @@ import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { toast } from 'sonner'
 
 import { Container } from '@/components/templates/container'
 
@@ -42,7 +41,6 @@ export const Navbar = () => {
 
   const handleLogout = () => {
     logout()
-    toast.success('Berhasil keluar')
   }
   // ...
 
@@ -128,7 +126,7 @@ export const Navbar = () => {
                       <div className="p-1">
                         <button
                           onClick={handleLogout}
-                          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-red-600 transition-colors hover:bg-red-50"
+                          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-primary transition-colors hover:bg-red-50"
                         >
                           <User className="size-4 text-red-400" />
                           Keluar
@@ -150,7 +148,7 @@ export const Navbar = () => {
             <Link href="/cart" className="relative ml-4 hover:text-white/80" aria-label="Cart">
               <ShoppingCart className="size-5" />
               {mounted && cartItemsCount > 0 && (
-                <span className="absolute -top-2 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-secondary text-[10px] font-bold text-slate-900">
+                <span className="absolute -top-2 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-slate-900">
                   {cartItemsCount}
                 </span>
               )}
@@ -191,7 +189,7 @@ export const Navbar = () => {
             <Link href="/cart" className="relative text-slate-900" aria-label="Cart">
               <ShoppingCart className="size-6" />
               {mounted && cartItemsCount > 0 && (
-                <span className="absolute -top-2 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-secondary text-[10px] font-bold text-slate-900">
+                <span className="absolute -top-2 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-slate-900">
                   {cartItemsCount}
                 </span>
               )}
@@ -302,7 +300,7 @@ export const Navbar = () => {
                               handleLogout()
                               setIsMobileMenuOpen(false)
                             }}
-                            className="flex w-full items-center gap-2 rounded-lg px-4 py-3 text-left text-sm font-medium text-red-600 transition-colors hover:bg-red-50"
+                            className="flex w-full items-center gap-2 rounded-lg px-4 py-3 text-left text-sm font-medium text-primary transition-colors hover:bg-red-50"
                           >
                             <User className="size-4" />
                             KELUAR

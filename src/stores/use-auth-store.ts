@@ -9,6 +9,7 @@ export interface User {
   address: string
   city: string
   zipCode: string
+  role: 'PIMPINAN' | 'ADMIN' | 'FINANCE' | 'PROCUREMENT' | 'QC_LAB' | 'HR' | 'WAREHOUSE'
 }
 
 interface AuthState {
@@ -32,11 +33,15 @@ export const useAuthStore = create<AuthState>()(
           phone: userInfo.phone || '081234567890',
           address: userInfo.address || 'Jl. Dago No. 101',
           city: userInfo.city || 'Bandung',
-          zipCode: userInfo.zipCode || '40135'
+          zipCode: userInfo.zipCode || '40135',
+          role: userInfo.role || 'ADMIN'
         }
         set({ user: mockUser, isAuthenticated: true })
       },
-      logout: () => set({ user: null, isAuthenticated: false })
+      logout: () => {
+        set({ user: null, isAuthenticated: false })
+        window.location.href = '/internal/login'
+      }
     }),
     {
       name: 'ks-food-auth'

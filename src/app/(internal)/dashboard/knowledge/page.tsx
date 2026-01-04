@@ -321,7 +321,7 @@ export default function KnowledgePage() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <h3 className="font-semibold text-slate-900">{doc.title}</h3>
-                      {doc.category === 'CONFIDENTIAL' && <Lock size={16} weight="fill" className="text-red-600" />}
+                      {doc.category === 'CONFIDENTIAL' && <Lock size={16} weight="fill" className="text-primary" />}
                     </div>
                     <div className="mt-1 flex items-center gap-2 text-xs text-slate-500">
                       <span className={cn('rounded-full px-2 py-0.5 font-semibold', getCategoryBadge(doc.category))}>
@@ -344,7 +344,7 @@ export default function KnowledgePage() {
                     </button>
                     <button
                       onClick={() => handleDeleteClick(doc.id)}
-                      className="rounded-lg p-2 text-red-600 transition-colors hover:bg-red-50"
+                      className="rounded-lg p-2 text-secondary transition-colors hover:bg-red-50"
                       title="Hapus"
                     >
                       <Trash size={18} weight="fill" />
@@ -443,7 +443,7 @@ export default function KnowledgePage() {
           <div className="space-y-4">
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-700">
-                Judul Dokumen <span className="text-red-600">*</span>
+                Judul Dokumen <span className="text-secondary">*</span>
               </label>
               <input
                 type="text"
@@ -456,7 +456,7 @@ export default function KnowledgePage() {
 
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-700">
-                Kategori <span className="text-red-600">*</span>
+                Kategori <span className="text-secondary">*</span>
               </label>
               <select
                 value={formCategory}
@@ -472,7 +472,7 @@ export default function KnowledgePage() {
 
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-700">
-                Konten <span className="text-red-600">*</span>
+                Konten <span className="text-secondary">*</span>
               </label>
               <textarea
                 value={formContent}
@@ -485,7 +485,7 @@ export default function KnowledgePage() {
 
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-700">
-                Penulis/Author <span className="text-red-600">*</span>
+                Penulis/Author <span className="text-secondary">*</span>
               </label>
               <input
                 type="text"
@@ -532,7 +532,7 @@ export default function KnowledgePage() {
             </button>
             <button
               onClick={handleConfirmDelete}
-              className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700"
+              className="rounded-lg bg-secondary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700"
             >
               Hapus
             </button>

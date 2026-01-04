@@ -1,150 +1,149 @@
 'use client'
 
-import { useAuthStore, UserRole } from '@/stores/use-auth-store'
+import { useAuthStore } from '@/stores/use-auth-store'
 import {
-  Briefcase,
-  ChartLineUp,
-  ChartPie,
-  ClipboardText,
-  Factory,
-  FileText,
-  Flask,
-  Gear,
-  Lightbulb,
-  Package,
-  Receipt,
-  Scroll,
-  SignOut,
+  House,
   Users,
-  WarningCircle
+  CreditCard,
+  ShoppingCart,
+  Package,
+  Cpu,
+  Shield,
+  BookOpen,
+  SignOut,
+  ChartBar,
+  Calendar,
+  Clock,
+  Briefcase,
+  ClipboardText
 } from '@phosphor-icons/react'
-import Image from 'next/image'
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
-
-import { Button } from '@/components/atoms/ui/button'
+import { usePathname } from 'next/navigation'
 
 import { cn } from '@/utils/cn'
+
+type UserRole = 'PIMPINAN' | 'ADMIN' | 'FINANCE' | 'PROCUREMENT' | 'QC_LAB' | 'HR' | 'WAREHOUSE' | 'ALL'
 
 interface MenuItem {
   label: string
   href: string
   icon: React.ElementType
+  roles: UserRole[]
+  exact?: boolean
 }
 
-const MENU_ITEMS: Record<UserRole, MenuItem[]> = {
-  PIMPINAN: [
-    { label: 'Dashboard', href: '/dashboard', icon: ChartLineUp },
-    { label: 'Pusat Persetujuan', href: '/dashboard/approvals', icon: ClipboardText },
-    { label: 'Laporan Bisnis', href: '/dashboard/reports', icon: FileText },
-    { label: 'Pustaka Pengetahuan', href: '/dashboard/knowledge', icon: Lightbulb }
-  ],
-  ADMIN: [
-    { label: 'Status Sistem', href: '/dashboard', icon: Gear },
-    { label: 'Manajemen Pengguna', href: '/dashboard/admin/users', icon: Users },
-    { label: 'Log Sistem', href: '/dashboard/admin/logs', icon: Scroll },
-    { label: 'Data Master', href: '/dashboard/admin/master', icon: Package },
-    { label: 'Pustaka Ilmu', href: '/dashboard/knowledge', icon: Lightbulb }
-  ],
-  FINANCE: [
-    { label: 'Beranda', href: '/dashboard', icon: ChartPie },
-    { label: 'Manajemen Tagihan', href: '/dashboard/finance/invoices', icon: Receipt },
-    { label: 'Pustaka Ilmu', href: '/dashboard/knowledge', icon: Lightbulb }
-  ],
-  PROCUREMENT: [
-    { label: 'Peringatan Stok Menipis', href: '/dashboard', icon: WarningCircle },
-    { label: 'Perencanaan Produksi', href: '/dashboard/procurement/planning', icon: Factory },
-    { label: 'Pengadaan Bahan (PO)', href: '/dashboard/procurement/orders', icon: ClipboardText },
-    { label: 'Monitor Stok', href: '/dashboard/warehouse', icon: Package },
-    { label: 'Pustaka Ilmu', href: '/dashboard/knowledge', icon: Lightbulb }
-  ],
-  QC_LAB: [
-    { label: 'Beranda', href: '/dashboard', icon: ChartPie },
-    { label: 'Kontrol Kualitas', href: '/qc/lab-result', icon: Flask },
-    { label: 'Pustaka Pengetahuan', href: '/dashboard/knowledge', icon: Lightbulb }
-  ],
-  HR: [
-    { label: 'Kehadiran', href: '/dashboard', icon: Users },
-    { label: 'Data Karyawan', href: '/dashboard/hr/employees', icon: Briefcase },
-    { label: 'Pustaka Ilmu', href: '/dashboard/knowledge', icon: Lightbulb }
-  ],
-  WAREHOUSE: [
-    { label: 'Beranda', href: '/dashboard', icon: ChartPie },
-    { label: 'Manajemen Gudang', href: '/dashboard/warehouse', icon: Package },
-    { label: 'Pustaka Ilmu', href: '/dashboard/knowledge', icon: Lightbulb }
-  ]
-}
+const MENU_ITEMS: MenuItem[] = [
+  // GLOBAL
+  { label: 'Dashboard', href: '/dashboard', icon: House, roles: ['ALL'], exact: true },
 
-export const Sidebar = ({ className }: { className?: string }) => {
-  const { user, logout } = useAuthStore()
+  // ADMIN
+  { label: 'Manajemen User', href: '/dashboard/admin/users', icon: Users, roles: ['ADMIN'] },
+  { label: 'Data Master', href: '/dashboard/admin/master', icon: Package, roles: ['ADMIN'] },
+  { label: 'Log Sistem', href: '/dashboard/admin/logs', icon: Shield, roles: ['ADMIN'] },
+
+  // HR
+  { label: 'Kehadiran', href: '/dashboard/hr/attendance', icon: Clock, roles: ['HR'] },
+  { label: 'Data Karyawan', href: '/dashboard/hr/employees', icon: Users, roles: ['HR'] },
+  { label: 'Payroll & Gaji', href: '/dashboard/hr/payroll', icon: CreditCard, roles: ['HR'] },
+  { label: 'Rekrutmen', href: '/dashboard/hr/recruitment', icon: Briefcase, roles: ['HR'] },
+
+  // PROCUREMENT
+  { label: 'Perencanaan', href: '/dashboard/procurement/planning', icon: Calendar, roles: ['PROCUREMENT'] },
+  { label: 'Purchase Order', href: '/dashboard/procurement/orders', icon: ShoppingCart, roles: ['PROCUREMENT'] },
+  { label: 'Monitor Stok', href: '/dashboard/warehouse', icon: Package, roles: ['PROCUREMENT'] },
+
+  // WAREHOUSE
+  { label: 'Manajemen Gudang', href: '/dashboard/warehouse', icon: Package, roles: ['WAREHOUSE'] },
+
+  // FINANCE
+  { label: 'Invoices', href: '/dashboard/finance/invoices', icon: CreditCard, roles: ['FINANCE'] },
+
+  // PIMPINAN
+  { label: 'Laporan Bisnis', href: '/dashboard/reports', icon: ChartBar, roles: ['PIMPINAN'] },
+  { label: 'Persetujuan', href: '/dashboard/approvals', icon: Cpu, roles: ['PIMPINAN'] },
+
+  // QC_LAB
+  { label: 'Riwayat Inspeksi', href: '/dashboard/qc-lab/history', icon: ClipboardText, roles: ['QC_LAB'] },
+  { label: 'Laporan & Analisa', href: '/dashboard/qc-lab/reports', icon: ChartBar, roles: ['QC_LAB'] },
+
+  // KNOWLEDGE (ALL)
+  { label: 'Pustaka Ilmu', href: '/dashboard/knowledge', icon: BookOpen, roles: ['ALL'] }
+]
+
+export function Sidebar() {
   const pathname = usePathname()
-  const router = useRouter()
+  const { user, logout } = useAuthStore()
 
   if (!user) return null
 
-  const items = MENU_ITEMS[user.role] || []
-
-  const handleLogout = () => {
-    logout()
-    router.push('/internal/login')
-  }
+  const filteredMenu = MENU_ITEMS.filter(
+    (item) => item.roles.includes('ALL') || (user?.role && item.roles.includes(user.role as UserRole))
+  )
 
   return (
-    <aside className={cn('flex h-screen w-64 flex-col gap-6 bg-primary pt-8 text-white', className)}>
-      <div className="space-y-2 px-6">
-        <Image src="/static/images/logo.png" alt="Logo" width={150} height={150} />
-        <p className="text-xs opacity-80">Internal Management System</p>
+    <div className="flex h-screen w-64 flex-col bg-primary p-4 text-white shadow-xl">
+      {/* Logo Section - White Square with Red Text */}
+      <div className="mb-8 flex items-center gap-3 px-2 pt-2">
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-lg font-black text-primary">
+          K
+        </div>
+        <div>
+          <h1 className="text-xl leading-none font-bold tracking-tight text-white">KSFOOD</h1>
+          <p className="mt-1 text-[10px] text-red-100">Internal Management</p>
+        </div>
       </div>
 
-      <nav className="flex flex-1 flex-col gap-1 px-3">
-        {items.map((item) => {
-          const isActive = pathname === item.href
+      {/* Navigation Menu */}
+      <div className="flex-1 space-y-1 overflow-y-auto">
+        {filteredMenu.map((item) => {
+          const Icon = item.icon
+          // Check active state with exact match support
+          const basePath = item.href.split('?')[0]
+          const isActive = item.exact
+            ? pathname === item.href
+            : pathname === item.href || pathname === basePath || pathname.startsWith(basePath + '/')
 
           return (
             <Link
               key={item.href}
               href={item.href}
               className={cn(
-                'flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors',
-                isActive ? 'bg-secondary text-primary shadow-sm' : 'hover:bg-white/10'
+                'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all',
+                isActive
+                  ? 'translate-x-1 bg-[#FFC107] font-bold text-[#8B0000] shadow-md'
+                  : 'text-red-50 hover:translate-x-1 hover:bg-white/10'
               )}
             >
-              <item.icon size={20} weight={isActive ? 'fill' : 'regular'} />
+              <Icon className="h-[18px] w-[18px]" weight={isActive ? 'fill' : 'regular'} />
               {item.label}
             </Link>
           )
         })}
-      </nav>
+      </div>
 
-      <div className="border-t border-white/10 p-4">
-        <div className="mb-4 flex items-center gap-3 px-2">
-          {user.avatarUrl ? (
-            <Image
-              src={user.avatarUrl}
-              alt={user.name}
-              width={40}
-              height={40}
-              className="h-10 w-10 rounded-full border border-white/50 bg-white/20"
-            />
-          ) : (
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary font-bold text-primary">
-              {user.name.charAt(0)}
-            </div>
-          )}
-          <div className="overflow-hidden">
-            <p className="truncate text-sm font-semibold">{user.name}</p>
-            <p className="truncate text-xs opacity-70">{user.role}</p>
+      {/* User Info */}
+      {user && (
+        <div className="mb-3 flex items-center gap-2 rounded-lg bg-white/10 px-3 py-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-xs font-semibold">
+            {user.name.substring(0, 2).toUpperCase()}
+          </div>
+          <div className="flex-1">
+            <p className="text-xs font-medium text-white">{user.name}</p>
+            <p className="text-[10px] text-red-100">{user.role}</p>
           </div>
         </div>
-        <Button
-          variant="outline"
-          className="w-full justify-start border-white/20 text-white hover:bg-white/10 hover:text-white"
-          onClick={handleLogout}
+      )}
+
+      {/* Logout Button */}
+      <div className="border-t border-white/10 pt-4">
+        <button
+          onClick={() => logout()}
+          className="flex w-full items-center gap-3 px-3 py-2 text-sm font-medium text-red-50 transition-colors hover:text-red-200"
         >
-          <SignOut size={18} />
+          <SignOut className="h-[18px] w-[18px]" />
           Keluar
-        </Button>
+        </button>
       </div>
-    </aside>
+    </div>
   )
 }

@@ -27,7 +27,7 @@ export const ArticleCard = ({ image, category, title, slug: slug }: ArticleCardP
 
       <div className="flex flex-1 flex-col items-start gap-4 p-5">
         <div className="space-y-2">
-          <span className="text-xs font-semibold text-red-600">{category}</span>
+          <span className="text-xs font-semibold text-primary">{category}</span>
           <h3 className="line-clamp-2 text-lg leading-tight font-semibold text-slate-900">{title}</h3>
         </div>
 

@@ -66,7 +66,16 @@ export default function LoginPage() {
         throw new Error('Password salah! Coba gunakan "123"')
       }
 
-      login(email)
+      // Find the matching demo account to get role
+      const demoAccount = DEMO_ACCOUNTS.find((acc) => acc.email === email)
+      const userRole =
+        (demoAccount?.role as 'PIMPINAN' | 'ADMIN' | 'FINANCE' | 'PROCUREMENT' | 'QC_LAB' | 'HR' | 'WAREHOUSE') || 'ADMIN'
+
+      // Get name from demo account or use default
+      const userName = demoAccount ? demoAccount.label.split(' ')[0] : 'User'
+
+      // Pass role and name to login
+      login({ email, role: userRole, name: userName })
       toast.success('Login berhasil! Mengalihkan...')
       router.push('/dashboard')
     } catch (error) {

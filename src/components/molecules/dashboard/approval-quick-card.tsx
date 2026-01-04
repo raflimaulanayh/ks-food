@@ -17,8 +17,8 @@ import { cn } from '@/utils/cn'
 
 interface ApprovalQuickCardProps {
   request: ApprovalRequest
-  onApprove: (id: string) => void
-  onReject: (id: string, reason: string) => void
+  onApprove: (id: number) => void
+  onReject: (id: number, reason: string) => void
 }
 
 export const ApprovalQuickCard = ({ request, onApprove, onReject }: ApprovalQuickCardProps) => {
@@ -28,11 +28,11 @@ export const ApprovalQuickCard = ({ request, onApprove, onReject }: ApprovalQuic
 
   const getIcon = () => {
     switch (request.type) {
-      case 'GATE_PASS':
-        return Truck
-      case 'PURCHASE_ORDER':
+      case 'LEAVE':
+        return User
+      case 'PO':
         return Scroll
-      case 'LEAVE_REQUEST':
+      case 'HIRING':
         return User
       default:
         return Package
@@ -41,12 +41,16 @@ export const ApprovalQuickCard = ({ request, onApprove, onReject }: ApprovalQuic
 
   const getIconColor = () => {
     switch (request.type) {
-      case 'GATE_PASS':
+      case 'LEAVE':
         return 'bg-blue-100 text-blue-600'
-      case 'PURCHASE_ORDER':
-        return 'bg-orange-100 text-orange-600'
-      case 'LEAVE_REQUEST':
+      case 'PO':
         return 'bg-purple-100 text-purple-600'
+      case 'HIRING':
+        return 'bg-emerald-100 text-emerald-600'
+      case 'BUDGET':
+        return 'bg-amber-100 text-amber-600'
+      case 'EXPENSE':
+        return 'bg-orange-100 text-orange-600'
       default:
         return 'bg-slate-100 text-slate-600'
     }
@@ -82,7 +86,7 @@ export const ApprovalQuickCard = ({ request, onApprove, onReject }: ApprovalQuic
         <div className="min-w-0 flex-1">
           <div className="mb-1 flex flex-wrap items-center gap-2">
             <p className="truncate text-sm font-semibold text-slate-900">{request.title}</p>
-            {request.priority === 'URGENT' && (
+            {request.priority === 'high' && (
               <span className="shrink-0 rounded-full bg-red-100 px-2 py-0.5 text-xs font-bold text-red-700">Urgent</span>
             )}
           </div>
@@ -101,7 +105,7 @@ export const ApprovalQuickCard = ({ request, onApprove, onReject }: ApprovalQuic
           <button
             onClick={handleRejectClick}
             disabled={isProcessing}
-            className="rounded-md p-1.5 text-red-600 transition-colors hover:bg-red-50 disabled:opacity-50"
+            className="rounded-md p-1.5 text-primary transition-colors hover:bg-red-50 disabled:opacity-50"
             title="Tolak"
           >
             <XCircle size={20} weight="fill" />
@@ -134,7 +138,7 @@ export const ApprovalQuickCard = ({ request, onApprove, onReject }: ApprovalQuic
 
           <div className="space-y-2">
             <label htmlFor="quick-reason" className="text-sm font-medium text-slate-700">
-              Alasan Penolakan <span className="text-red-600">*</span>
+              Alasan Penolakan <span className="text-primary">*</span>
             </label>
             <textarea
               id="quick-reason"
@@ -156,7 +160,7 @@ export const ApprovalQuickCard = ({ request, onApprove, onReject }: ApprovalQuic
             <button
               onClick={handleRejectConfirm}
               disabled={!rejectReason.trim()}
-              className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700 disabled:opacity-50"
+              className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700 disabled:opacity-50"
             >
               Konfirmasi Penolakan
             </button>

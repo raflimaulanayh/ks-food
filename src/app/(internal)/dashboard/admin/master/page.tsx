@@ -1,254 +1,323 @@
 'use client'
 
+import { useMasterStore, type Product, type Unit, type Location } from '@/stores/use-master-store'
 import {
-  ITEM_CATEGORIES,
-  type ItemCategory,
-  type Product,
-  PRODUCTS,
-  type UnitOfMeasure,
-  UNITS_OF_MEASURE,
-  type WarehouseLocation,
-  WAREHOUSE_LOCATIONS
-} from '@/data/mock-admin'
-import { ImageSquare, PencilSimple, Plus, Trash } from '@phosphor-icons/react'
-import { useState } from 'react'
+  Package,
+  MapPin,
+  Scales,
+  Plus,
+  MagnifyingGlass,
+  PencilSimple,
+  Trash,
+  Image as ImageIcon,
+  Globe,
+  Warning,
+  CaretLeft,
+  CaretRight
+} from '@phosphor-icons/react'
+import { useState, useMemo } from 'react'
 import { toast } from 'sonner'
 
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/atoms/ui/dialog'
+import { Button } from '@/components/atoms/ui/button'
+import { Card } from '@/components/atoms/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/atoms/ui/tabs'
 
-import { cn } from '@/utils/cn'
-
-type TabName = 'products' | 'uom' | 'categories' | 'locations'
-
 export default function DataMasterPage() {
-  const [activeTab, setActiveTab] = useState<TabName>('products')
+  const {
+    products,
+    units,
+    locations,
+    addProduct,
+    updateProduct,
+    deleteProduct,
+    addUnit,
+    updateUnit,
+    deleteUnit,
+    addLocation,
+    updateLocation,
+    deleteLocation
+  } = useMasterStore()
 
-  // Products state
-  const [products, setProducts] = useState<Product[]>(PRODUCTS)
-  const [showProductDialog, setShowProductDialog] = useState(false)
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null)
-  const [productForm, setProductForm] = useState({
+  const [activeTab, setActiveTab] = useState('products')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [editingItem, setEditingItem] = useState<any>(null)
+  const [deletingId, setDeletingId] = useState<number | null>(null)
+
+  // Form state
+  const [formData, setFormData] = useState<any>({
     name: '',
     sku: '',
     category: 'Finished Goods',
     price: 0,
-    description: '',
     image: '',
-    status: 'Draft' as 'Published' | 'Draft'
+    isPublic: false,
+    code: '',
+    type: 'Mass',
+    capacity: ''
   })
 
-  // UoM state
-  const [units, setUnits] = useState<UnitOfMeasure[]>(UNITS_OF_MEASURE)
-  const [showUomDialog, setShowUomDialog] = useState(false)
-  const [uomForm, setUomForm] = useState({ code: '', name: '', type: 'Mass' as const })
+  // Filtered data
+  const filteredProducts = useMemo(() => {
+    return products.filter(
+      (p) =>
+        p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.sku.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  }, [products, searchQuery])
 
-  // Categories state
-  const [categories, setCategories] = useState<ItemCategory[]>(ITEM_CATEGORIES)
-  const [showCategoryDialog, setShowCategoryDialog] = useState(false)
-  const [categoryForm, setCategoryForm] = useState({ name: '', description: '' })
+  const filteredUnits = useMemo(() => {
+    return units.filter(
+      (u) =>
+        u.name.toLowerCase().includes(searchQuery.toLowerCase()) || u.code.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  }, [units, searchQuery])
 
-  // Locations state
-  const [locations, setLocations] = useState<WarehouseLocation[]>(WAREHOUSE_LOCATIONS)
-  const [showLocationDialog, setShowLocationDialog] = useState(false)
-  const [locationForm, setLocationForm] = useState({ code: '', name: '', capacity: '' })
+  const filteredLocations = useMemo(() => {
+    return locations.filter(
+      (l) =>
+        l.name.toLowerCase().includes(searchQuery.toLowerCase()) || l.code.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  }, [locations, searchQuery])
 
-  // Product handlers
-  const handleAddProduct = () => {
-    setEditingProduct(null)
-    setProductForm({ name: '', sku: '', category: 'Finished Goods', price: 0, description: '', image: '', status: 'Draft' })
-    setShowProductDialog(true)
-  }
-
-  const handleEditProduct = (product: Product) => {
-    setEditingProduct(product)
-    setProductForm(product)
-    setShowProductDialog(true)
-  }
-
-  const handleSaveProduct = () => {
-    if (!productForm.name || !productForm.sku) {
-      toast.error('Form tidak lengkap!')
-
-      return
-    }
-
-    if (editingProduct) {
-      setProducts(products.map((p) => (p.id === editingProduct.id ? { ...p, ...productForm } : p)))
-      toast.success('Produk berhasil diupdate!', { description: productForm.name })
-    } else {
-      const newProduct: Product = { id: `PROD-${Date.now()}`, ...productForm }
-      setProducts([...products, newProduct])
-      toast.success('Produk berhasil ditambahkan!', { description: productForm.name })
-    }
-    setShowProductDialog(false)
-  }
-
-  const handleToggleProductStatus = (product: Product) => {
-    const newStatus = product.status === 'Published' ? 'Draft' : 'Published'
-    setProducts(products.map((p) => (p.id === product.id ? { ...p, status: newStatus } : p)))
-    toast.success(newStatus === 'Published' ? 'Produk dipublikasikan!' : 'Produk dijadikan draft', {
-      description: product.name
+  const handleOpenCreate = () => {
+    setEditingItem(null)
+    setFormData({
+      name: '',
+      sku: '',
+      category: 'Finished Goods',
+      price: 0,
+      image: '',
+      isPublic: false,
+      code: '',
+      type: 'Mass',
+      capacity: ''
     })
+    setShowAddModal(true)
   }
 
-  const handleDeleteProduct = (product: Product) => {
-    setProducts(products.filter((p) => p.id !== product.id))
-    toast.success('Produk dihapus!', { description: product.name })
+  const handleOpenEdit = (item: any) => {
+    setEditingItem(item)
+    setFormData({ ...item })
+    setShowAddModal(true)
   }
 
-  // UoM handlers
-  const handleSaveUom = () => {
-    if (!uomForm.code || !uomForm.name) {
-      toast.error('Form tidak lengkap!')
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
 
-      return
+    if (activeTab === 'products') {
+      if (editingItem) {
+        updateProduct(editingItem.id, {
+          name: formData.name,
+          sku: formData.sku,
+          category: formData.category,
+          price: Number(formData.price),
+          image: formData.image,
+          status: formData.isPublic ? 'Published' : 'Draft',
+          isPublic: formData.isPublic
+        })
+        toast.success('Produk berhasil diperbarui!')
+      } else {
+        const newProduct: Product = {
+          id: Math.max(...products.map((p) => p.id), 0) + 1,
+          name: formData.name,
+          sku: formData.sku,
+          category: formData.category,
+          price: Number(formData.price),
+          image: formData.image || '/img/default.jpg',
+          status: formData.isPublic ? 'Published' : 'Draft',
+          isPublic: formData.isPublic
+        }
+        addProduct(newProduct)
+        toast.success('Produk baru berhasil ditambahkan!')
+      }
+    } else if (activeTab === 'units') {
+      if (editingItem) {
+        updateUnit(editingItem.id, {
+          code: formData.code,
+          name: formData.name,
+          type: formData.type
+        })
+        toast.success('Satuan berhasil diperbarui!')
+      } else {
+        const newUnit: Unit = {
+          id: Math.max(...units.map((u) => u.id), 0) + 1,
+          code: formData.code,
+          name: formData.name,
+          type: formData.type
+        }
+        addUnit(newUnit)
+        toast.success('Satuan baru berhasil ditambahkan!')
+      }
+    } else if (activeTab === 'locations') {
+      if (editingItem) {
+        updateLocation(editingItem.id, {
+          code: formData.code,
+          name: formData.name,
+          capacity: formData.capacity
+        })
+        toast.success('Lokasi berhasil diperbarui!')
+      } else {
+        const newLocation: Location = {
+          id: Math.max(...locations.map((l) => l.id), 0) + 1,
+          code: formData.code,
+          name: formData.name,
+          capacity: formData.capacity
+        }
+        addLocation(newLocation)
+        toast.success('Lokasi baru berhasil ditambahkan!')
+      }
     }
 
-    const newUom: UnitOfMeasure = { id: `UOM-${Date.now()}`, ...uomForm }
-    setUnits([...units, newUom])
-    toast.success('Satuan baru disimpan!', { description: uomForm.code })
-    setShowUomDialog(false)
-    setUomForm({ code: '', name: '', type: 'Mass' })
+    setShowAddModal(false)
+    setEditingItem(null)
   }
 
-  // Category handlers
-  const handleSaveCategory = () => {
-    if (!categoryForm.name) {
-      toast.error('Nama kategori wajib diisi!')
-
-      return
-    }
-
-    const newCategory: ItemCategory = { id: `CAT-${Date.now()}`, ...categoryForm }
-    setCategories([...categories, newCategory])
-    toast.success('Kategori baru disimpan!', { description: categoryForm.name })
-    setShowCategoryDialog(false)
-    setCategoryForm({ name: '', description: '' })
+  const handleDeleteClick = (id: number) => {
+    setDeletingId(id)
+    setShowDeleteDialog(true)
   }
 
-  // Location handlers
-  const handleSaveLocation = () => {
-    if (!locationForm.code || !locationForm.name) {
-      toast.error('Form tidak lengkap!')
-
-      return
+  const confirmDelete = () => {
+    if (deletingId !== null) {
+      if (activeTab === 'products') {
+        deleteProduct(deletingId)
+        toast.success('Produk berhasil dihapus')
+      } else if (activeTab === 'units') {
+        deleteUnit(deletingId)
+        toast.success('Satuan berhasil dihapus')
+      } else if (activeTab === 'locations') {
+        deleteLocation(deletingId)
+        toast.success('Lokasi berhasil dihapus')
+      }
+      setShowDeleteDialog(false)
+      setDeletingId(null)
     }
+  }
 
-    const newLocation: WarehouseLocation = { id: `LOC-${Date.now()}`, ...locationForm }
-    setLocations([...locations, newLocation])
-    toast.success('Lokasi gudang baru disimpan!', { description: locationForm.name })
-    setShowLocationDialog(false)
-    setLocationForm({ code: '', name: '', capacity: '' })
+  const getModalTitle = () => {
+    const action = editingItem ? 'Edit' : 'Tambah'
+    if (activeTab === 'products') return `${action} Produk`
+    if (activeTab === 'units') return `${action} Satuan`
+
+    return `${action} Lokasi`
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pt-2 pb-10">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-slate-900">Data Master & Referensi</h1>
-        <p className="mt-2 text-slate-600">Kelola katalog produk dan data referensi sistem</p>
+      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Data Master & Referensi</h1>
+          <p className="mt-1 text-sm text-slate-500">Pusat data produk, satuan ukur, dan lokasi gudang</p>
+        </div>
+
+        <Button onClick={handleOpenCreate}>
+          <Plus size={18} weight="bold" />{' '}
+          {activeTab === 'products' ? 'Tambah Produk' : activeTab === 'units' ? 'Tambah Satuan' : 'Tambah Lokasi'}
+        </Button>
       </div>
 
-      {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as TabName)} className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="products">Katalog Produk (Public)</TabsTrigger>
-          <TabsTrigger value="uom">Satuan (UoM)</TabsTrigger>
-          <TabsTrigger value="categories">Kategori Barang</TabsTrigger>
-          <TabsTrigger value="locations">Lokasi Gudang</TabsTrigger>
-        </TabsList>
-
-        {/* Products Tab */}
-        <TabsContent value="products" className="space-y-4">
-          <div className="flex justify-end pb-4">
-            <button
-              onClick={handleAddProduct}
-              className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 font-semibold text-white shadow-md transition-all hover:bg-red-700"
-            >
-              <Plus size={20} weight="bold" />
-              Tambah Produk
-            </button>
+      {/* Tabs with Premium Style */}
+      <Tabs defaultValue="products" className="w-full" onValueChange={setActiveTab}>
+        <Card className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+          {/* Custom Tab List */}
+          <div className="border-b bg-white px-6 pt-2">
+            <TabsList className="h-auto gap-8 bg-transparent p-0">
+              <TabsTrigger
+                value="products"
+                className="rounded-none border-b-2 border-transparent px-2 py-3 font-medium transition-all data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-none"
+              >
+                <div className="flex items-center gap-2">
+                  <Package size={16} /> Katalog Produk (Public)
+                </div>
+              </TabsTrigger>
+              <TabsTrigger
+                value="units"
+                className="rounded-none border-b-2 border-transparent px-2 py-3 font-medium transition-all data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-none"
+              >
+                <div className="flex items-center gap-2">
+                  <Scales size={16} /> Satuan (UoM)
+                </div>
+              </TabsTrigger>
+              <TabsTrigger
+                value="locations"
+                className="rounded-none border-b-2 border-transparent px-2 py-3 font-medium transition-all data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-none"
+              >
+                <div className="flex items-center gap-2">
+                  <MapPin size={16} /> Lokasi Gudang
+                </div>
+              </TabsTrigger>
+            </TabsList>
           </div>
 
-          <div className="rounded-xl border-2 border-slate-200 bg-white shadow-sm">
+          {/* Search Bar */}
+          <div className="flex items-center gap-4 border-b bg-slate-50/50 p-4">
+            <div className="relative w-full md:w-96">
+              <MagnifyingGlass className="absolute top-2.5 left-3 text-slate-400" size={18} />
+              <input
+                type="text"
+                placeholder="Cari data..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full rounded-lg border border-slate-200 bg-white py-2 pr-4 pl-10 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none"
+              />
+            </div>
+          </div>
+
+          {/* Products Tab */}
+          <TabsContent value="products" className="m-0 p-0">
             <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="border-b border-slate-200 bg-slate-50">
+              <table className="w-full text-left text-sm">
+                <thead className="border-b bg-slate-50/50 font-medium text-slate-500">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase">Image</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase">Product</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase">SKU</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase">Category</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-slate-600 uppercase">Price</th>
-                    <th className="px-4 py-3 text-center text-xs font-semibold text-slate-600 uppercase">Status</th>
-                    <th className="px-4 py-3 text-center text-xs font-semibold text-slate-600 uppercase">Actions</th>
+                    <th className="px-6 py-4">Produk</th>
+                    <th className="px-6 py-4">SKU</th>
+                    <th className="px-6 py-4">Kategori</th>
+                    <th className="px-6 py-4">Harga Public</th>
+                    <th className="px-6 py-4">Status Web</th>
+                    <th className="px-6 py-4 text-right">Aksi</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {products.map((product) => (
-                    <tr key={product.id} className="hover:bg-slate-50">
-                      <td className="px-4 py-3">
-                        <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-lg bg-slate-100 ring-1 ring-slate-200">
-                          {product.image ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
-                              src={product.image}
-                              alt={product.name}
-                              className="h-full w-full object-cover"
-                              onError={(e) => {
-                                e.currentTarget.style.display = 'none'
-                                e.currentTarget.nextElementSibling?.classList.remove('hidden')
-                              }}
-                            />
-                          ) : null}
-                          <div
-                            className={cn(
-                              'flex h-full w-full items-center justify-center bg-slate-100 text-slate-400',
-                              product.image ? 'hidden' : ''
-                            )}
-                          >
-                            <ImageSquare size={24} weight="duotone" />
+                  {filteredProducts.map((item) => (
+                    <tr key={item.id} className="transition-colors hover:bg-slate-50/80">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-10 w-10 items-center justify-center rounded bg-slate-100 text-slate-400">
+                            <ImageIcon size={18} />
                           </div>
+                          <span className="font-semibold text-slate-800">{item.name}</span>
                         </div>
                       </td>
-                      <td className="px-4 py-3">
-                        <p className="font-semibold text-slate-900">{product.name}</p>
-                        <p className="text-xs text-slate-500">{product.description}</p>
-                      </td>
-                      <td className="px-4 py-3 font-mono text-sm text-slate-600">{product.sku}</td>
-                      <td className="px-4 py-3">
-                        <span className="rounded-full bg-blue-100 px-2.5 py-1 text-xs font-semibold text-blue-700">
-                          {product.category}
+                      <td className="px-6 py-4 text-slate-600">{item.sku}</td>
+                      <td className="px-6 py-4">
+                        <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700">
+                          {item.category}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-right font-semibold text-slate-900">
-                        Rp {product.price.toLocaleString('id-ID')}
-                      </td>
-                      <td className="px-4 py-3 text-center">
-                        <button
-                          onClick={() => handleToggleProductStatus(product)}
-                          className={cn(
-                            'rounded-full px-3 py-1 text-xs font-semibold transition-colors',
-                            product.status === 'Published'
-                              ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                              : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
-                          )}
+                      <td className="px-6 py-4 font-mono text-slate-800">Rp {item.price.toLocaleString()}</td>
+                      <td className="px-6 py-4">
+                        <span
+                          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold ${
+                            item.status === 'Published' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-600'
+                          }`}
                         >
-                          {product.status}
-                        </button>
+                          {item.status === 'Published' && <Globe size={12} weight="fill" />}
+                          {item.status}
+                        </span>
                       </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center justify-center gap-2">
+                      <td className="px-6 py-4">
+                        <div className="flex justify-end gap-1">
                           <button
-                            onClick={() => handleEditProduct(product)}
-                            className="rounded-lg bg-blue-600 p-2 text-white transition-colors hover:bg-blue-700"
+                            onClick={() => handleOpenEdit(item)}
+                            className="rounded-md p-2 text-blue-600 transition-colors hover:bg-blue-50"
                           >
                             <PencilSimple size={16} weight="bold" />
                           </button>
                           <button
-                            onClick={() => handleDeleteProduct(product)}
-                            className="rounded-lg bg-red-600 p-2 text-white transition-colors hover:bg-red-700"
+                            onClick={() => handleDeleteClick(item.id)}
+                            className="rounded-md p-2 text-primary transition-colors hover:bg-red-50"
                           >
                             <Trash size={16} weight="bold" />
                           </button>
@@ -259,372 +328,334 @@ export default function DataMasterPage() {
                 </tbody>
               </table>
             </div>
-          </div>
-        </TabsContent>
 
-        {/* UoM Tab */}
-        <TabsContent value="uom" className="space-y-4">
-          <div className="flex justify-end">
-            <button
-              onClick={() => setShowUomDialog(true)}
-              className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 font-semibold text-white shadow-md transition-all hover:bg-red-700"
-            >
-              <Plus size={20} weight="bold" />
-              Tambah Satuan
-            </button>
-          </div>
+            {/* Pagination Footer */}
+            <div className="flex items-center justify-between border-t bg-slate-50/30 p-4 text-xs text-slate-600">
+              <span className="font-medium">
+                Menampilkan {filteredProducts.length} dari {products.length} baris
+              </span>
+              <div className="flex gap-4">
+                <button
+                  disabled
+                  className="flex h-8 items-center gap-1 border-slate-300 bg-white text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                >
+                  <CaretLeft size={14} weight="bold" /> Previous
+                </button>
+                <button className="flex h-8 items-center gap-1 border-slate-300 bg-white text-xs font-medium text-slate-700 hover:text-slate-900">
+                  Next <CaretRight size={14} weight="bold" />
+                </button>
+              </div>
+            </div>
+          </TabsContent>
 
-          <div className="rounded-xl border-2 border-slate-200 bg-white shadow-sm">
+          {/* Units Tab */}
+          <TabsContent value="units" className="m-0 p-0">
             <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="border-b border-slate-200 bg-slate-50">
+              <table className="w-full text-left text-sm">
+                <thead className="border-b bg-slate-50/50 font-medium text-slate-500">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase">Code</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase">Name</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase">Type</th>
+                    <th className="px-6 py-4">Kode</th>
+                    <th className="px-6 py-4">Nama Satuan</th>
+                    <th className="px-6 py-4">Tipe</th>
+                    <th className="px-6 py-4 text-right">Aksi</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {units.map((unit) => (
-                    <tr key={unit.id} className="hover:bg-slate-50">
-                      <td className="px-4 py-3 font-mono font-semibold text-slate-900">{unit.code}</td>
-                      <td className="px-4 py-3 text-slate-700">{unit.name}</td>
-                      <td className="px-4 py-3">
-                        <span className="rounded-full bg-purple-100 px-2.5 py-1 text-xs font-semibold text-purple-700">
-                          {unit.type}
-                        </span>
+                  {filteredUnits.map((item) => (
+                    <tr key={item.id} className="transition-colors hover:bg-slate-50/80">
+                      <td className="px-6 py-4 font-bold text-slate-800">{item.code}</td>
+                      <td className="px-6 py-4 text-slate-700">{item.name}</td>
+                      <td className="px-6 py-4 text-slate-600">{item.type}</td>
+                      <td className="px-6 py-4">
+                        <div className="flex justify-end gap-1">
+                          <button
+                            onClick={() => handleOpenEdit(item)}
+                            className="rounded-md p-2 text-blue-600 transition-colors hover:bg-blue-50"
+                          >
+                            <PencilSimple size={16} weight="bold" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteClick(item.id)}
+                            className="rounded-md p-2 text-primary transition-colors hover:bg-red-50"
+                          >
+                            <Trash size={16} weight="bold" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-          </div>
-        </TabsContent>
 
-        {/* Categories Tab */}
-        <TabsContent value="categories" className="space-y-4">
-          <div className="flex justify-end">
-            <button
-              onClick={() => setShowCategoryDialog(true)}
-              className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 font-semibold text-white shadow-md transition-all hover:bg-red-700"
-            >
-              <Plus size={20} weight="bold" />
-              Tambah Kategori
-            </button>
-          </div>
+            {/* Pagination Footer */}
+            <div className="flex items-center justify-between border-t bg-slate-50/30 p-4 text-xs text-slate-600">
+              <span className="font-medium">
+                Menampilkan {filteredUnits.length} dari {units.length} baris
+              </span>
+              <div className="flex gap-4">
+                <button
+                  disabled
+                  className="flex h-8 items-center gap-1 border-slate-300 bg-white text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                >
+                  <CaretLeft size={14} weight="bold" /> Previous
+                </button>
+                <button className="flex h-8 items-center gap-1 border-slate-300 bg-white text-xs font-medium text-slate-700 hover:text-slate-900">
+                  Next <CaretRight size={14} weight="bold" />
+                </button>
+              </div>
+            </div>
+          </TabsContent>
 
-          <div className="rounded-xl border-2 border-slate-200 bg-white shadow-sm">
+          {/* Locations Tab */}
+          <TabsContent value="locations" className="m-0 p-0">
             <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="border-b border-slate-200 bg-slate-50">
+              <table className="w-full text-left text-sm">
+                <thead className="border-b bg-slate-50/50 font-medium text-slate-500">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase">ID</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase">Name</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase">Description</th>
+                    <th className="px-6 py-4">Kode Lokasi</th>
+                    <th className="px-6 py-4">Nama Gudang</th>
+                    <th className="px-6 py-4">Kapasitas</th>
+                    <th className="px-6 py-4 text-right">Aksi</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {categories.map((category) => (
-                    <tr key={category.id} className="hover:bg-slate-50">
-                      <td className="px-4 py-3 font-mono text-sm text-slate-600">{category.id}</td>
-                      <td className="px-4 py-3 font-semibold text-slate-900">{category.name}</td>
-                      <td className="px-4 py-3 text-slate-700">{category.description}</td>
+                  {filteredLocations.map((item) => (
+                    <tr key={item.id} className="transition-colors hover:bg-slate-50/80">
+                      <td className="px-6 py-4 font-bold text-slate-800">{item.code}</td>
+                      <td className="px-6 py-4 text-slate-700">{item.name}</td>
+                      <td className="px-6 py-4 text-slate-600">{item.capacity}</td>
+                      <td className="px-6 py-4">
+                        <div className="flex justify-end gap-1">
+                          <button
+                            onClick={() => handleOpenEdit(item)}
+                            className="rounded-md p-2 text-blue-600 transition-colors hover:bg-blue-50"
+                          >
+                            <PencilSimple size={16} weight="bold" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteClick(item.id)}
+                            className="rounded-md p-2 text-primary transition-colors hover:bg-red-50"
+                          >
+                            <Trash size={16} weight="bold" />
+                          </button>
+                        </div>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-          </div>
-        </TabsContent>
 
-        {/* Locations Tab */}
-        <TabsContent value="locations" className="space-y-4">
-          <div className="flex justify-end">
-            <button
-              onClick={() => setShowLocationDialog(true)}
-              className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 font-semibold text-white shadow-md transition-all hover:bg-red-700"
-            >
-              <Plus size={20} weight="bold" />
-              Tambah Lokasi
-            </button>
-          </div>
-
-          <div className="rounded-xl border-2 border-slate-200 bg-white shadow-sm">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="border-b border-slate-200 bg-slate-50">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase">Code</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase">Name</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-slate-600 uppercase">Capacity</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {locations.map((location) => (
-                    <tr key={location.id} className="hover:bg-slate-50">
-                      <td className="px-4 py-3 font-mono font-semibold text-slate-900">{location.code}</td>
-                      <td className="px-4 py-3 text-slate-900">{location.name}</td>
-                      <td className="px-4 py-3 text-right font-medium text-slate-700">{location.capacity}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            {/* Pagination Footer */}
+            <div className="flex items-center justify-between border-t bg-slate-50/30 p-4 text-xs text-slate-600">
+              <span className="font-medium">
+                Menampilkan {filteredLocations.length} dari {locations.length} baris
+              </span>
+              <div className="flex gap-4">
+                <button
+                  disabled
+                  className="flex h-8 items-center gap-1 border-slate-300 bg-white text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                >
+                  <CaretLeft size={14} weight="bold" /> Previous
+                </button>
+                <button className="flex h-8 items-center gap-1 border-slate-300 bg-white text-xs font-medium text-slate-700 hover:text-slate-900">
+                  Next <CaretRight size={14} weight="bold" />
+                </button>
+              </div>
             </div>
-          </div>
-        </TabsContent>
+          </TabsContent>
+        </Card>
       </Tabs>
 
-      {/* Product Dialog */}
-      <Dialog open={showProductDialog} onOpenChange={setShowProductDialog}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>{editingProduct ? 'Edit Produk' : 'Tambah Produk Baru'}</DialogTitle>
-          </DialogHeader>
-          <div className="grid grid-cols-2 gap-4 py-4">
-            <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">Nama Produk</label>
-              <input
-                type="text"
-                value={productForm.name}
-                onChange={(e) => setProductForm({ ...productForm, name: e.target.value })}
-                className="w-full rounded-lg border-2 border-slate-300 px-4 py-2 transition-colors focus:border-primary focus:outline-none"
-              />
+      {/* Add/Edit Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-lg rounded-xl bg-white p-0 shadow-xl">
+            <div className="border-b p-6 pb-4">
+              <h2 className="text-xl font-bold text-slate-900">{getModalTitle()}</h2>
+              <p className="text-sm text-slate-500">
+                {editingItem ? 'Perbarui informasi data master' : 'Tambahkan data baru ke sistem'}
+              </p>
             </div>
-            <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">SKU</label>
-              <input
-                type="text"
-                value={productForm.sku}
-                onChange={(e) => setProductForm({ ...productForm, sku: e.target.value })}
-                className="w-full rounded-lg border-2 border-slate-300 px-4 py-2 transition-colors focus:border-primary focus:outline-none"
-              />
+
+            <form onSubmit={handleSubmit} className="space-y-4 p-6">
+              {activeTab === 'products' && (
+                <>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-slate-700">Nama Produk</label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        placeholder="Contoh: Saos Sambal"
+                        className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-slate-700">SKU / Kode</label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.sku}
+                        onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
+                        placeholder="SSB-001"
+                        className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-slate-700">Harga Jual (Public)</label>
+                      <input
+                        type="number"
+                        required
+                        value={formData.price}
+                        onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                        placeholder="15000"
+                        className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-slate-700">Kategori</label>
+                      <select
+                        value={formData.category}
+                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                        className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none"
+                      >
+                        <option value="Finished Goods">Barang Jadi</option>
+                        <option value="Raw Material">Bahan Baku</option>
+                        <option value="Packaging">Packaging</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between rounded-lg border p-3">
+                    <div className="flex items-center gap-2">
+                      <Globe size={18} className="text-blue-600" />
+                      <label className="text-sm font-medium text-slate-700">Tampilkan di Website?</label>
+                    </div>
+                    <input
+                      type="checkbox"
+                      checked={formData.isPublic}
+                      onChange={(e) => setFormData({ ...formData, isPublic: e.target.checked })}
+                      className="h-5 w-5 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-100"
+                    />
+                  </div>
+                </>
+              )}
+
+              {activeTab === 'units' && (
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-700">Kode Satuan</label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.code}
+                      onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+                      placeholder="KG"
+                      className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-700">Nama Satuan</label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      placeholder="Kilogram"
+                      className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'locations' && (
+                <>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-slate-700">Kode Lokasi</label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.code}
+                        onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+                        placeholder="WH-A"
+                        className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-slate-700">Nama Gudang</label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        placeholder="Gudang Bahan"
+                        className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-700">Kapasitas</label>
+                    <input
+                      type="text"
+                      value={formData.capacity}
+                      onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
+                      placeholder="1000 Pallet"
+                      className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none"
+                    />
+                  </div>
+                </>
+              )}
+
+              <div className="flex justify-end gap-3 border-t pt-4">
+                <Button
+                  type="button"
+                  onClick={() => {
+                    setShowAddModal(false)
+                    setEditingItem(null)
+                  }}
+                  className="bg-slate-100 text-slate-700 hover:bg-slate-200"
+                >
+                  Batal
+                </Button>
+                <Button type="submit">{editingItem ? 'Update Data' : 'Simpan Data'}</Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation */}
+      {showDeleteDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+              <Warning size={24} className="text-primary" weight="bold" />
             </div>
-            <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">Category</label>
-              <select
-                value={productForm.category}
-                onChange={(e) => setProductForm({ ...productForm, category: e.target.value })}
-                className="w-full rounded-lg border-2 border-slate-300 px-4 py-2 transition-colors focus:border-primary focus:outline-none"
+            <h3 className="mb-2 text-lg font-bold text-slate-900">Hapus Data?</h3>
+            <p className="mb-6 text-sm text-slate-600">
+              Aksi ini tidak dapat dibatalkan. Data akan dihapus permanen dari sistem.
+            </p>
+            <div className="flex justify-end gap-3">
+              <Button
+                onClick={() => {
+                  setShowDeleteDialog(false)
+                  setDeletingId(null)
+                }}
+                className="bg-slate-100 text-slate-700 hover:bg-slate-200"
               >
-                {categories.map((cat) => (
-                  <option key={cat.id} value={cat.name}>
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">Harga (Rp)</label>
-              <input
-                type="number"
-                value={productForm.price}
-                onChange={(e) => setProductForm({ ...productForm, price: Number(e.target.value) })}
-                className="w-full rounded-lg border-2 border-slate-300 px-4 py-2 transition-colors focus:border-primary focus:outline-none"
-              />
-            </div>
-            <div className="col-span-2">
-              <label className="mb-2 block text-sm font-semibold text-slate-700">Deskripsi</label>
-              <textarea
-                value={productForm.description}
-                onChange={(e) => setProductForm({ ...productForm, description: e.target.value })}
-                rows={3}
-                className="w-full rounded-lg border-2 border-slate-300 px-4 py-2 transition-colors focus:border-primary focus:outline-none"
-              />
-            </div>
-            <div className="col-span-2">
-              <label className="mb-2 block text-sm font-semibold text-slate-700">Image URL</label>
-              <input
-                type="text"
-                value={productForm.image}
-                onChange={(e) => setProductForm({ ...productForm, image: e.target.value })}
-                className="w-full rounded-lg border-2 border-slate-300 px-4 py-2 transition-colors focus:border-primary focus:outline-none"
-              />
-            </div>
-            <div className="col-span-2">
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={productForm.status === 'Published'}
-                  onChange={(e) => setProductForm({ ...productForm, status: e.target.checked ? 'Published' : 'Draft' })}
-                  className="h-4 w-4"
-                />
-                <span className="font-semibold text-slate-700">Tampilkan di Website?</span>
-              </label>
+                Batal
+              </Button>
+              <Button onClick={confirmDelete}>Ya, Hapus</Button>
             </div>
           </div>
-          <DialogFooter>
-            <button
-              onClick={() => setShowProductDialog(false)}
-              className="rounded-lg border-2 border-slate-300 px-4 py-2 font-semibold text-slate-700 transition-colors hover:bg-slate-100"
-            >
-              Batal
-            </button>
-            <button
-              onClick={handleSaveProduct}
-              className="rounded-lg bg-primary px-4 py-2 font-semibold text-white transition-colors hover:bg-red-700"
-            >
-              {editingProduct ? 'Update' : 'Tambah'}
-            </button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* UoM Dialog */}
-      <Dialog open={showUomDialog} onOpenChange={setShowUomDialog}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Tambah Satuan Baru</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">Code</label>
-              <input
-                type="text"
-                value={uomForm.code}
-                onChange={(e) => setUomForm({ ...uomForm, code: e.target.value.toUpperCase() })}
-                placeholder="e.g. DRUM"
-                className="w-full rounded-lg border-2 border-slate-300 px-4 py-2 transition-colors focus:border-primary focus:outline-none"
-              />
-            </div>
-            <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">Nama</label>
-              <input
-                type="text"
-                value={uomForm.name}
-                onChange={(e) => setUomForm({ ...uomForm, name: e.target.value })}
-                placeholder="e.g. Drum"
-                className="w-full rounded-lg border-2 border-slate-300 px-4 py-2 transition-colors focus:border-primary focus:outline-none"
-              />
-            </div>
-            <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">Type</label>
-              <select
-                value={uomForm.type}
-                onChange={(e) => setUomForm({ ...uomForm, type: e.target.value as 'Mass' | 'Volume' | 'Count' | 'Length' })}
-                className="w-full rounded-lg border-2 border-slate-300 px-4 py-2 transition-colors focus:border-primary focus:outline-none"
-              >
-                <option value="Mass">Mass</option>
-                <option value="Volume">Volume</option>
-                <option value="Count">Count</option>
-                <option value="Length">Length</option>
-              </select>
-            </div>
-          </div>
-          <DialogFooter>
-            <button
-              onClick={() => setShowUomDialog(false)}
-              className="rounded-lg border-2 border-slate-300 px-4 py-2 font-semibold text-slate-700 transition-colors hover:bg-slate-100"
-            >
-              Batal
-            </button>
-            <button
-              onClick={handleSaveUom}
-              className="rounded-lg bg-primary px-4 py-2 font-semibold text-white transition-colors hover:bg-red-700"
-            >
-              Tambah
-            </button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Category Dialog */}
-      <Dialog open={showCategoryDialog} onOpenChange={setShowCategoryDialog}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Tambah Kategori Baru</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">Nama</label>
-              <input
-                type="text"
-                value={categoryForm.name}
-                onChange={(e) => setCategoryForm({ ...categoryForm, name: e.target.value })}
-                className="w-full rounded-lg border-2 border-slate-300 px-4 py-2 transition-colors focus:border-primary focus:outline-none"
-              />
-            </div>
-            <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">Description</label>
-              <textarea
-                value={categoryForm.description}
-                onChange={(e) => setCategoryForm({ ...categoryForm, description: e.target.value })}
-                rows={3}
-                className="w-full rounded-lg border-2 border-slate-300 px-4 py-2 transition-colors focus:border-primary focus:outline-none"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <button
-              onClick={() => setShowCategoryDialog(false)}
-              className="rounded-lg border-2 border-slate-300 px-4 py-2 font-semibold text-slate-700 transition-colors hover:bg-slate-100"
-            >
-              Batal
-            </button>
-            <button
-              onClick={handleSaveCategory}
-              className="rounded-lg bg-primary px-4 py-2 font-semibold text-white transition-colors hover:bg-red-700"
-            >
-              Tambah
-            </button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Location Dialog */}
-      <Dialog open={showLocationDialog} onOpenChange={setShowLocationDialog}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Tambah Lokasi Gudang</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">Code</label>
-              <input
-                type="text"
-                value={locationForm.code}
-                onChange={(e) => setLocationForm({ ...locationForm, code: e.target.value })}
-                placeholder="e.g. WH-C"
-                className="w-full rounded-lg border-2 border-slate-300 px-4 py-2 transition-colors focus:border-primary focus:outline-none"
-              />
-            </div>
-            <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">Nama</label>
-              <input
-                type="text"
-                value={locationForm.name}
-                onChange={(e) => setLocationForm({ ...locationForm, name: e.target.value })}
-                placeholder="e.g. Gudang C"
-                className="w-full rounded-lg border-2 border-slate-300 px-4 py-2 transition-colors focus:border-primary focus:outline-none"
-              />
-            </div>
-            <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">Capacity</label>
-              <input
-                type="text"
-                value={locationForm.capacity}
-                onChange={(e) => setLocationForm({ ...locationForm, capacity: e.target.value })}
-                placeholder="e.g. 300 Pallets"
-                className="w-full rounded-lg border-2 border-slate-300 px-4 py-2 transition-colors focus:border-primary focus:outline-none"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <button
-              onClick={() => setShowLocationDialog(false)}
-              className="rounded-lg border-2 border-slate-300 px-4 py-2 font-semibold text-slate-700 transition-colors hover:bg-slate-100"
-            >
-              Batal
-            </button>
-            <button
-              onClick={handleSaveLocation}
-              className="rounded-lg bg-primary px-4 py-2 font-semibold text-white transition-colors hover:bg-red-700"
-            >
-              Tambah
-            </button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        </div>
+      )}
     </div>
   )
 }
