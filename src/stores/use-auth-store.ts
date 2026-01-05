@@ -9,7 +9,7 @@ export interface User {
   address: string
   city: string
   zipCode: string
-  role: 'PIMPINAN' | 'ADMIN' | 'FINANCE' | 'PROCUREMENT' | 'QC_LAB' | 'HR' | 'WAREHOUSE'
+  role: 'PIMPINAN' | 'ADMIN' | 'FINANCE' | 'PROCUREMENT' | 'QC_LAB' | 'HR' | 'WAREHOUSE' | 'PRODUCTION' | 'QC_INBOUND'
 }
 
 interface AuthState {
@@ -40,7 +40,7 @@ export const useAuthStore = create<AuthState>()(
       },
       logout: () => {
         set({ user: null, isAuthenticated: false })
-        window.location.href = '/internal/login'
+        // Let the calling component handle redirect (internal/login or operation/login)
       }
     }),
     {

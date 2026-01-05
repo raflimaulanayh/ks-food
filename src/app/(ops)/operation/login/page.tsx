@@ -11,18 +11,13 @@ import { Button } from '@/components/atoms/ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/atoms/ui/card'
 import { Input } from '@/components/atoms/ui/input'
 
-const DEMO_ACCOUNTS = [
-  { label: 'Pimpinan (Owner)', email: 'pimpinan@ksfood.id', role: 'PIMPINAN' },
-  { label: 'Administrator', email: 'admin@ksfood.id', role: 'ADMIN' },
-  { label: 'Staff Procurement', email: 'procure@ksfood.id', role: 'PROCUREMENT' },
-  { label: 'Staff Gudang (Warehouse)', email: 'gudang@ksfood.id', role: 'WAREHOUSE' },
-  { label: 'Staff QC (Lab)', email: 'qc@ksfood.id', role: 'QC_LAB' },
-  { label: 'Staff Finance', email: 'finance@ksfood.id', role: 'FINANCE' },
-  { label: 'Staff HR', email: 'hr@ksfood.id', role: 'HR' },
-  { label: 'Customer (Public)', email: 'beli@sederhana.com', role: 'CUSTOMER' }
+const OPERATION_DEMO_ACCOUNTS = [
+  { label: 'Staff Gudang', email: 'gudang@ksfood.id', role: 'WAREHOUSE' },
+  { label: 'Tim Produksi (Lantai Pabrik)', email: 'produksi@ksfood.id', role: 'PRODUCTION' },
+  { label: 'Staff QC (Inbound)', email: 'qc-inbound@ksfood.id', role: 'QC_INBOUND' }
 ]
 
-export default function LoginPage() {
+export default function OperationLoginPage() {
   const router = useRouter()
   const { login } = useAuthStore()
 
@@ -67,17 +62,16 @@ export default function LoginPage() {
       }
 
       // Find the matching demo account to get role
-      const demoAccount = DEMO_ACCOUNTS.find((acc) => acc.email === email)
-      const userRole =
-        (demoAccount?.role as 'PIMPINAN' | 'ADMIN' | 'FINANCE' | 'PROCUREMENT' | 'QC_LAB' | 'HR' | 'WAREHOUSE') || 'ADMIN'
+      const demoAccount = OPERATION_DEMO_ACCOUNTS.find((acc) => acc.email === email)
+      const userRole = (demoAccount?.role as 'WAREHOUSE' | 'PRODUCTION' | 'QC_INBOUND') || 'WAREHOUSE'
 
       // Get name from demo account or use default
-      const userName = demoAccount ? demoAccount.label.split(' ')[0] : 'User'
+      const userName = demoAccount ? demoAccount.label : 'User'
 
       // Pass role and name to login
       login({ email, role: userRole, name: userName })
       toast.success('Login berhasil! Mengalihkan...')
-      router.push('/dashboard')
+      router.push('/operation')
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Gagal masuk ke sistem')
       setLoading(false)
@@ -93,7 +87,7 @@ export default function LoginPage() {
         </div>
         <div>
           <h1 className="text-lg leading-tight font-bold text-white">KS Food</h1>
-          <p className="text-xs text-white/80">Enterprise Resource Planning</p>
+          <p className="text-xs text-white/80">Portal Operasional</p>
         </div>
       </div>
 
@@ -131,7 +125,7 @@ export default function LoginPage() {
                   className="w-full rounded-md border border-amber-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 focus:outline-none"
                 >
                   <option value="">-- Pilih Akun Demo --</option>
-                  {DEMO_ACCOUNTS.map((account) => (
+                  {OPERATION_DEMO_ACCOUNTS.map((account) => (
                     <option key={account.email} value={account.email}>
                       {account.label}
                     </option>
