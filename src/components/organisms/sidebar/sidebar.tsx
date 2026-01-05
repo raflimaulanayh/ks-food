@@ -15,7 +15,8 @@ import {
   Calendar,
   Clock,
   Briefcase,
-  ClipboardText
+  ClipboardText,
+  ArrowsClockwise
 } from '@phosphor-icons/react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -38,6 +39,8 @@ const MENU_ITEMS: MenuItem[] = [
 
   // ADMIN
   { label: 'Manajemen User', href: '/dashboard/admin/users', icon: Users, roles: ['ADMIN'] },
+  { label: 'Kelola Pesanan', href: '/dashboard/admin/orders', icon: ShoppingCart, roles: ['ADMIN'] },
+  { label: 'Sinkronisasi Stok', href: '/dashboard/admin/stock-sync', icon: ArrowsClockwise, roles: ['ADMIN', 'WAREHOUSE'] },
   { label: 'Data Master', href: '/dashboard/admin/master', icon: Package, roles: ['ADMIN'] },
   { label: 'Log Sistem', href: '/dashboard/admin/logs', icon: Shield, roles: ['ADMIN'] },
 
@@ -91,7 +94,7 @@ export function Sidebar() {
       </div>
 
       {/* Navigation Menu */}
-      <div className="flex-1 space-y-1 overflow-y-auto">
+      <div className="flex-1 space-y-1 overflow-x-hidden overflow-y-auto">
         {filteredMenu.map((item) => {
           const Icon = item.icon
           // Check active state with exact match support
@@ -106,9 +109,7 @@ export function Sidebar() {
               href={item.href}
               className={cn(
                 'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all',
-                isActive
-                  ? 'translate-x-1 bg-[#FFC107] font-bold text-[#8B0000] shadow-md'
-                  : 'text-red-50 hover:translate-x-1 hover:bg-white/10'
+                isActive ? 'bg-[#FFC107] font-bold text-[#8B0000] shadow-md' : 'text-red-50 hover:bg-white/10'
               )}
             >
               <Icon className="h-[18px] w-[18px]" weight={isActive ? 'fill' : 'regular'} />
