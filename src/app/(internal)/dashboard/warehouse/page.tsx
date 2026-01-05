@@ -411,13 +411,209 @@ export default function WarehousePage() {
 
           {/* TAB CONTENT: CRITICAL & SAFE (Same as ALL but filtered) */}
           <TabsContent value="critical" className="m-0 p-0">
-            <div className="p-6 text-center text-sm text-slate-400">
-              Menampilkan barang dengan stok kritis. Gunakan tab "Semua Material" untuk kontrol penuh.
+            {/* TOOLBAR */}
+            <div className="flex items-center justify-between gap-4 border-b bg-slate-50/50 p-4">
+              <div className="relative w-full md:w-96">
+                <MagnifyingGlass className="absolute top-2.5 left-3 text-slate-400" size={18} />
+                <input
+                  placeholder="Cari SKU atau Nama Material..."
+                  className="h-10 w-full rounded-lg border border-slate-200 bg-white pr-4 pl-10 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+            </div>
+
+            {/* TABLE */}
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[800px] text-left text-sm">
+                <thead className="border-b bg-slate-50/50 font-medium text-slate-500">
+                  <tr>
+                    <th className="px-6 py-4">Material Info</th>
+                    <th className="w-1/3 px-6 py-4">Ketersediaan (Current / Min)</th>
+                    <th className="px-6 py-4 text-center">Status</th>
+                    <th className="px-6 py-4 text-right">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {filteredItems.map((item) => {
+                    const status = getStatus(item.current, item.min)
+                    const percentage = Math.min((item.current / (item.min * 1.5)) * 100, 100)
+                    const barColor =
+                      status === 'CRITICAL' ? 'bg-red-500' : status === 'WARNING' ? 'bg-amber-500' : 'bg-emerald-500'
+
+                    return (
+                      <tr key={item.id} className="group transition-colors hover:bg-slate-50/80">
+                        <td className="px-6 py-4">
+                          <div className="font-bold text-slate-800">{item.name}</div>
+                          <div className="mt-1 flex items-center gap-1 font-mono text-xs text-slate-500">
+                            <Package size={12} /> {item.sku}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="mb-2 flex justify-between text-xs font-semibold text-slate-700">
+                            <span className={status === 'CRITICAL' ? 'font-bold text-primary' : ''}>
+                              {item.current} {item.unit}
+                            </span>
+                            <span className="text-slate-400">
+                              Min: {item.min} {item.unit}
+                            </span>
+                          </div>
+                          <div className="h-2 w-full overflow-hidden rounded-full border border-slate-100 bg-slate-100">
+                            <div
+                              className={`h-full transition-all duration-500 ${barColor}`}
+                              style={{ width: `${percentage}%` }}
+                            />
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-center">
+                          <span
+                            className={`border px-2.5 py-0.5 shadow-sm ${
+                              status === 'CRITICAL'
+                                ? 'border-red-200 bg-red-50 text-red-700'
+                                : status === 'WARNING'
+                                  ? 'border-amber-200 bg-amber-50 text-amber-700'
+                                  : 'border-green-200 bg-green-50 text-green-700'
+                            } inline-flex rounded-full text-xs font-medium`}
+                          >
+                            {status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          {status === 'CRITICAL' || status === 'WARNING' ? (
+                            <Button onClick={() => handleRestock(item.name)} variant="default" className="h-8">
+                              <ArrowUpRight size={14} /> Restock
+                            </Button>
+                          ) : (
+                            <Button disabled className="h-8 gap-1 bg-emerald-600 text-xs text-white">
+                              Aman
+                            </Button>
+                          )}
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* FOOTER */}
+            <div className="flex items-center justify-between border-t bg-slate-50/50 p-4">
+              <span className="text-xs font-medium text-slate-500">Menampilkan {filteredItems.length} material</span>
+              <div className="flex gap-2">
+                <button
+                  disabled
+                  className="flex h-8 w-8 items-center justify-center rounded border border-slate-200 bg-white p-0 text-slate-400 disabled:opacity-50"
+                >
+                  <CaretLeft size={16} />
+                </button>
+                <button className="flex h-8 w-8 items-center justify-center rounded border border-slate-200 bg-white p-0 text-slate-600 hover:bg-slate-50">
+                  <CaretRight size={16} />
+                </button>
+              </div>
             </div>
           </TabsContent>
           <TabsContent value="safe" className="m-0 p-0">
-            <div className="p-6 text-center text-sm text-slate-400">
-              Menampilkan barang dengan stok aman. Gunakan tab "Semua Material" untuk kontrol penuh.
+            {/* TOOLBAR */}
+            <div className="flex items-center justify-between gap-4 border-b bg-slate-50/50 p-4">
+              <div className="relative w-full md:w-96">
+                <MagnifyingGlass className="absolute top-2.5 left-3 text-slate-400" size={18} />
+                <input
+                  placeholder="Cari SKU atau Nama Material..."
+                  className="h-10 w-full rounded-lg border border-slate-200 bg-white pr-4 pl-10 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+            </div>
+
+            {/* TABLE */}
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[800px] text-left text-sm">
+                <thead className="border-b bg-slate-50/50 font-medium text-slate-500">
+                  <tr>
+                    <th className="px-6 py-4">Material Info</th>
+                    <th className="w-1/3 px-6 py-4">Ketersediaan (Current / Min)</th>
+                    <th className="px-6 py-4 text-center">Status</th>
+                    <th className="px-6 py-4 text-right">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {filteredItems.map((item) => {
+                    const status = getStatus(item.current, item.min)
+                    const percentage = Math.min((item.current / (item.min * 1.5)) * 100, 100)
+                    const barColor =
+                      status === 'CRITICAL' ? 'bg-red-500' : status === 'WARNING' ? 'bg-amber-500' : 'bg-emerald-500'
+
+                    return (
+                      <tr key={item.id} className="group transition-colors hover:bg-slate-50/80">
+                        <td className="px-6 py-4">
+                          <div className="font-bold text-slate-800">{item.name}</div>
+                          <div className="mt-1 flex items-center gap-1 font-mono text-xs text-slate-500">
+                            <Package size={12} /> {item.sku}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="mb-2 flex justify-between text-xs font-semibold text-slate-700">
+                            <span className={status === 'CRITICAL' ? 'font-bold text-primary' : ''}>
+                              {item.current} {item.unit}
+                            </span>
+                            <span className="text-slate-400">
+                              Min: {item.min} {item.unit}
+                            </span>
+                          </div>
+                          <div className="h-2 w-full overflow-hidden rounded-full border border-slate-100 bg-slate-100">
+                            <div
+                              className={`h-full transition-all duration-500 ${barColor}`}
+                              style={{ width: `${percentage}%` }}
+                            />
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-center">
+                          <span
+                            className={`border px-2.5 py-0.5 shadow-sm ${
+                              status === 'CRITICAL'
+                                ? 'border-red-200 bg-red-50 text-red-700'
+                                : status === 'WARNING'
+                                  ? 'border-amber-200 bg-amber-50 text-amber-700'
+                                  : 'border-green-200 bg-green-50 text-green-700'
+                            } inline-flex rounded-full text-xs font-medium`}
+                          >
+                            {status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          {status === 'CRITICAL' || status === 'WARNING' ? (
+                            <Button onClick={() => handleRestock(item.name)} variant="default" className="h-8">
+                              <ArrowUpRight size={14} /> Restock
+                            </Button>
+                          ) : (
+                            <Button disabled className="h-8 gap-1 bg-emerald-600 text-xs text-white">
+                              Aman
+                            </Button>
+                          )}
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* FOOTER */}
+            <div className="flex items-center justify-between border-t bg-slate-50/50 p-4">
+              <span className="text-xs font-medium text-slate-500">Menampilkan {filteredItems.length} material</span>
+              <div className="flex gap-2">
+                <button
+                  disabled
+                  className="flex h-8 w-8 items-center justify-center rounded border border-slate-200 bg-white p-0 text-slate-400 disabled:opacity-50"
+                >
+                  <CaretLeft size={16} />
+                </button>
+                <button className="flex h-8 w-8 items-center justify-center rounded border border-slate-200 bg-white p-0 text-slate-600 hover:bg-slate-50">
+                  <CaretRight size={16} />
+                </button>
+              </div>
             </div>
           </TabsContent>
         </Card>

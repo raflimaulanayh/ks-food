@@ -15,7 +15,6 @@ import { Input } from '@/components/atoms/ui/input'
 const DEMO_ACCOUNTS = [
   { label: 'Pimpinan (Owner)', email: 'pimpinan@ksfood.id', role: 'PIMPINAN' },
   { label: 'Administrator', email: 'admin@ksfood.id', role: 'ADMIN' },
-  { label: 'Staff Procurement', email: 'procure@ksfood.id', role: 'PROCUREMENT' },
   { label: 'Staff Gudang (Warehouse)', email: 'gudang@ksfood.id', role: 'WAREHOUSE' },
   { label: 'Staff QC (Lab)', email: 'qc@ksfood.id', role: 'QC_LAB' },
   { label: 'Staff Finance', email: 'finance@ksfood.id', role: 'FINANCE' },

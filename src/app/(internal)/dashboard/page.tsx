@@ -1200,7 +1200,7 @@ export default function DashboardPage() {
 
   // STRICT ROLE SWITCHING
   if (user.role === 'QC_LAB') return <QCView />
-  if (user.role === 'PROCUREMENT') return <ProcurementView />
+  if (user.role === 'WAREHOUSE') return <ProcurementView />
   if (user.role === 'FINANCE') return <FinanceView />
   if (user.role === 'HR') return <HRView />
   if (user.role === 'PIMPINAN') return <DirectorView />

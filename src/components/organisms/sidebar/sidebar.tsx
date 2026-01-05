@@ -47,13 +47,10 @@ const MENU_ITEMS: MenuItem[] = [
   { label: 'Payroll & Gaji', href: '/dashboard/hr/payroll', icon: CreditCard, roles: ['HR'] },
   { label: 'Rekrutmen', href: '/dashboard/hr/recruitment', icon: Briefcase, roles: ['HR'] },
 
-  // PROCUREMENT
-  { label: 'Perencanaan', href: '/dashboard/procurement/planning', icon: Calendar, roles: ['PROCUREMENT'] },
-  { label: 'Purchase Order', href: '/dashboard/procurement/orders', icon: ShoppingCart, roles: ['PROCUREMENT'] },
-  { label: 'Monitor Stok', href: '/dashboard/warehouse', icon: Package, roles: ['PROCUREMENT'] },
-
   // WAREHOUSE
-  { label: 'Manajemen Gudang', href: '/dashboard/warehouse', icon: Package, roles: ['WAREHOUSE'] },
+  { label: 'Perencanaan', href: '/dashboard/procurement/planning', icon: Calendar, roles: ['WAREHOUSE'] },
+  { label: 'Purchase Order', href: '/dashboard/procurement/orders', icon: ShoppingCart, roles: ['WAREHOUSE'] },
+  { label: 'Monitor Stok', href: '/dashboard/warehouse', icon: Package, roles: ['WAREHOUSE'] },
 
   // FINANCE
   { label: 'Invoices', href: '/dashboard/finance/invoices', icon: CreditCard, roles: ['FINANCE'] },
