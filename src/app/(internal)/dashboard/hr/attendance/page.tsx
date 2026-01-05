@@ -184,10 +184,10 @@ export default function AttendancePage() {
                 <Input placeholder="Cari Pegawai atau NIK..." className="border-slate-200 bg-white pl-10" />
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" className="gap-2 border-slate-200 text-slate-600">
+                <Button variant="outline-red" className="gap-2 border-slate-200 text-slate-600">
                   <CalendarBlank size={16} /> Hari Ini
                 </Button>
-                <Button variant="outline" className="gap-2 border-slate-200 text-slate-600">
+                <Button variant="outline-red" className="gap-2 border-slate-200 text-slate-600">
                   <Funnel size={16} /> Semua Shift
                 </Button>
               </div>
@@ -285,15 +285,15 @@ export default function AttendancePage() {
                           <div className="flex justify-end gap-2">
                             <Button
                               size="icon"
-                              variant="outline"
+                              variant="outline-red"
                               onClick={() => handleRejectClick(row)}
-                              className="h-8 w-8 border-slate-200 text-red-600 shadow-sm hover:border-red-200 hover:bg-red-50"
+                              className="h-8 w-8 border-slate-200 text-primary shadow-sm hover:border-red-200 hover:bg-red-50"
                             >
                               <XCircle size={18} weight="bold" />
                             </Button>
                             <Button
                               size="icon"
-                              variant="outline"
+                              variant="outline-red"
                               onClick={() => handleApproveClick(row)}
                               className="h-8 w-8 border-slate-200 text-emerald-600 shadow-sm hover:border-emerald-200 hover:bg-emerald-50"
                             >
@@ -318,10 +318,10 @@ export default function AttendancePage() {
               <span className="font-bold text-slate-700">128</span> data
             </span>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" className="h-8 gap-1 border-slate-200 text-slate-600" disabled>
+              <Button variant="outline-slate" size="sm" disabled>
                 <CaretLeft size={14} /> Previous
               </Button>
-              <Button variant="outline" size="sm" className="h-8 gap-1 border-slate-200 text-slate-600">
+              <Button variant="outline-slate" size="sm">
                 Next <CaretRight size={14} />
               </Button>
             </div>
@@ -342,7 +342,7 @@ export default function AttendancePage() {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button variant="outline" onClick={() => setIsApproveOpen(false)}>
+            <Button variant="outline-red" onClick={() => setIsApproveOpen(false)}>
               Batal
             </Button>
             <Button className="bg-emerald-600 text-white hover:bg-emerald-700" onClick={confirmApprove}>
@@ -376,7 +376,7 @@ export default function AttendancePage() {
             />
           </div>
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button variant="outline" onClick={() => setIsRejectOpen(false)}>
+            <Button variant="outline-red" onClick={() => setIsRejectOpen(false)}>
               Batal
             </Button>
             <Button variant="destructive" onClick={confirmReject}>

@@ -16,7 +16,7 @@ interface AuthState {
   user: User | null
   isAuthenticated: boolean
   login: (userInfo: Partial<User>) => void
-  logout: () => void
+  logout: (isOperation?: boolean) => void
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -38,9 +38,9 @@ export const useAuthStore = create<AuthState>()(
         }
         set({ user: mockUser, isAuthenticated: true })
       },
-      logout: () => {
+      logout: (isOperation?: boolean) => {
         set({ user: null, isAuthenticated: false })
-        // Let the calling component handle redirect (internal/login or operation/login)
+        window.location.href = isOperation ? '/operation/login' : '/internal/login'
       }
     }),
     {

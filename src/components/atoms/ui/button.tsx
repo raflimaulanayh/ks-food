@@ -24,7 +24,7 @@ const buttonVariants = cva(
         ghost: 'hover:bg-accent hover:text-accent-foreground',
         link: 'text-primary underline-offset-4 hover:underline',
         accent: 'bg-accent text-white shadow-xs hover:bg-accent/90 disabled:bg-slate-600',
-        'outline-slate': 'bg-transparent text-slate-500 shadow-xs hover:bg-slate-300/80 border border-slate-300',
+        'outline-slate': 'bg-transparent text-slate-500 shadow-xs hover:bg-slate-200/80 border border-slate-200',
         'outline-red': 'bg-transparent text-primary shadow-xs hover:bg-primary/10 border border-primary',
         'outline-yellow': 'bg-transparent text-secondary shadow-xs hover:bg-secondary/10 border border-secondary',
         'outline-orange': 'bg-transparent text-accent shadow-xs hover:bg-accent/10 border border-accent',
@@ -46,7 +46,7 @@ const buttonVariants = cva(
         '2xl': 'rounded-2xl',
         '3xl': 'rounded-3xl',
         '4xl': 'rounded-4xl',
-        default: 'rounded',
+        default: 'rounded-lg',
         full: 'rounded-full'
       }
     },

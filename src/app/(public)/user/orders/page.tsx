@@ -153,7 +153,7 @@ export default function MyOrdersPage() {
                     </div>
 
                     <div className="flex w-full gap-2 sm:w-auto">
-                      <Button variant="outline" className="flex-1 sm:flex-none">
+                      <Button variant="outline-red" className="flex-1 sm:flex-none">
                         Detail
                       </Button>
 

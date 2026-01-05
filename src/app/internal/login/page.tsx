@@ -3,6 +3,7 @@
 import { useAuthStore } from '@/stores/use-auth-store'
 import { Factory, Lightning, SignIn } from '@phosphor-icons/react'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
@@ -103,13 +104,14 @@ export default function LoginPage() {
         transition={{ duration: 0.4 }}
         className="w-full max-w-md"
       >
-        <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-lg ring-4 ring-primary/10">
-            <Factory size={40} weight="duotone" className="text-primary" />
+        <header className="mb-8 flex flex-col items-center gap-4 text-center">
+          <Image src="/logo.png" alt="Logo" width={150} height={150} />
+
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900">Selamat Datang</h1>
+            <p className="text-sm text-slate-600">Silakan masuk untuk mengakses sistem</p>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">Selamat Datang</h1>
-          <p className="mt-2 text-sm text-slate-600">Silakan masuk untuk mengakses sistem</p>
-        </div>
+        </header>
 
         <Card className="overflow-hidden border-slate-200 shadow-xl">
           <CardHeader className="space-y-1 text-center">
@@ -140,7 +142,7 @@ export default function LoginPage() {
               </div>
 
               <div className="space-y-4 pt-2">
-                <div className="space-y-2">
+                <div className="flex flex-col gap-y-2">
                   <label
                     className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     htmlFor="email"
@@ -158,7 +160,7 @@ export default function LoginPage() {
                   />
                 </div>
 
-                <div className="space-y-2">
+                <div className="flex flex-col gap-y-2">
                   <div className="flex items-center justify-between">
                     <label
                       className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"

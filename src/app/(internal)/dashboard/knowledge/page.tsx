@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
+import { Button } from '@/components/atoms/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -257,17 +258,17 @@ export default function KnowledgePage() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-12rem)] gap-6">
+    <div className="flex min-h-[calc(100vh-12rem)] flex-col gap-4 lg:h-[calc(100vh-12rem)] lg:flex-row lg:gap-6">
       {/* Left Panel - Document Manager (60%) */}
-      <div className="flex w-[60%] flex-col">
-        <div className="mb-4 flex items-center justify-between">
+      <div className="flex min-h-[500px] flex-col lg:w-[60%]">
+        <div className="mb-4 flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Pustaka Pengetahuan</h1>
-            <p className="mt-1 text-sm text-slate-500">Kelola dokumen SOP dan Lesson Learned</p>
+            <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">Pustaka Pengetahuan</h1>
+            <p className="mt-1 text-xs text-slate-500 sm:text-sm">Kelola dokumen SOP dan Lesson Learned</p>
           </div>
           <button
             onClick={() => handleOpenForm()}
-            className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary/90"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary/90 sm:w-auto"
           >
             <Plus size={20} weight="bold" />
             Tambah Data
@@ -275,12 +276,12 @@ export default function KnowledgePage() {
         </div>
 
         {/* Tabs */}
-        <div className="mb-4 flex gap-2">
+        <div className="scrollbar-hide mb-4 flex gap-2 overflow-x-auto">
           <button
             onClick={() => setActiveTab('ALL')}
             className={cn(
-              'rounded-lg px-4 py-2 text-sm font-semibold transition-colors',
-              activeTab === 'ALL' ? 'bg-primary text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+              'rounded-lg px-3 py-2 text-xs font-semibold whitespace-nowrap transition-colors sm:px-4 sm:text-sm',
+              activeTab === 'ALL' ? 'bg-primary text-white' : 'border border-primary text-primary hover:bg-red-50'
             )}
           >
             Semua ({accessibleDocs.length})
@@ -288,8 +289,8 @@ export default function KnowledgePage() {
           <button
             onClick={() => setActiveTab('SOP')}
             className={cn(
-              'rounded-lg px-4 py-2 text-sm font-semibold transition-colors',
-              activeTab === 'SOP' ? 'bg-primary text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+              'rounded-lg px-3 py-2 text-xs font-semibold whitespace-nowrap transition-colors sm:px-4 sm:text-sm',
+              activeTab === 'SOP' ? 'bg-primary text-white' : 'border border-primary text-primary hover:bg-red-50'
             )}
           >
             SOP ({accessibleDocs.filter((d) => d.category === 'SOP').length})
@@ -297,8 +298,8 @@ export default function KnowledgePage() {
           <button
             onClick={() => setActiveTab('LESSON_LEARNED')}
             className={cn(
-              'rounded-lg px-4 py-2 text-sm font-semibold transition-colors',
-              activeTab === 'LESSON_LEARNED' ? 'bg-primary text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+              'rounded-lg px-3 py-2 text-xs font-semibold whitespace-nowrap transition-colors sm:px-4 sm:text-sm',
+              activeTab === 'LESSON_LEARNED' ? 'bg-primary text-white' : 'border border-primary text-primary hover:bg-red-50'
             )}
           >
             Lesson Learned ({accessibleDocs.filter((d) => d.category === 'LESSON_LEARNED').length})
@@ -306,7 +307,7 @@ export default function KnowledgePage() {
         </div>
 
         {/* Document List */}
-        <div className="flex-1 space-y-3 overflow-y-auto rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+        <div className="flex-1 space-y-2 overflow-hidden overflow-y-auto rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
           {filteredDocs.length === 0 ? (
             <div className="flex h-full items-center justify-center text-slate-500">
               <p>Belum ada dokumen</p>
@@ -315,43 +316,45 @@ export default function KnowledgePage() {
             filteredDocs.map((doc) => (
               <div
                 key={doc.id}
-                className="group relative rounded-lg border border-slate-200 bg-slate-50 p-4 transition-all hover:border-primary hover:shadow-md"
+                className="group relative rounded-lg border border-slate-200 bg-slate-50 p-3 transition-all hover:border-primary hover:shadow-md"
               >
-                <div className="mb-2 flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-slate-900">{doc.title}</h3>
-                      {doc.category === 'CONFIDENTIAL' && <Lock size={16} weight="fill" className="text-primary" />}
+                <div className="mb-1.5 flex items-start justify-between gap-2">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5">
+                      <h3 className="truncate text-sm font-semibold text-slate-900">{doc.title}</h3>
+                      {doc.category === 'CONFIDENTIAL' && <Lock size={14} weight="fill" className="shrink-0 text-primary" />}
                     </div>
-                    <div className="mt-1 flex items-center gap-2 text-xs text-slate-500">
-                      <span className={cn('rounded-full px-2 py-0.5 font-semibold', getCategoryBadge(doc.category))}>
+                    <div className="mt-1 flex flex-wrap items-center gap-1.5 text-[10px] text-slate-500">
+                      <span className={cn('rounded-full px-1.5 py-0.5 font-semibold', getCategoryBadge(doc.category))}>
                         {getCategoryLabel(doc.category)}
                       </span>
                       <span>•</span>
-                      <span>{doc.author}</span>
-                      <span>•</span>
-                      <span>{new Date(doc.date).toLocaleDateString('id-ID', { dateStyle: 'medium' })}</span>
+                      <span className="truncate">{doc.author}</span>
+                      <span className="hidden sm:inline">•</span>
+                      <span className="hidden sm:inline">
+                        {new Date(doc.date).toLocaleDateString('id-ID', { dateStyle: 'medium' })}
+                      </span>
                     </div>
                   </div>
 
-                  <div className="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                  <div className="flex shrink-0 gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
                     <button
                       onClick={() => handleOpenForm(doc.id)}
-                      className="rounded-lg p-2 text-blue-600 transition-colors hover:bg-blue-50"
+                      className="rounded-lg p-1.5 text-blue-600 transition-colors hover:bg-blue-50"
                       title="Edit"
                     >
-                      <Pencil size={18} weight="fill" />
+                      <Pencil size={16} weight="fill" />
                     </button>
                     <button
                       onClick={() => handleDeleteClick(doc.id)}
-                      className="rounded-lg p-2 text-secondary transition-colors hover:bg-red-50"
+                      className="rounded-lg p-1.5 text-primary transition-colors hover:bg-red-50"
                       title="Hapus"
                     >
-                      <Trash size={18} weight="fill" />
+                      <Trash size={16} weight="fill" />
                     </button>
                   </div>
                 </div>
-                <p className="line-clamp-2 text-sm text-slate-600">{doc.content}</p>
+                <p className="line-clamp-2 text-xs text-slate-600">{doc.content}</p>
               </div>
             ))
           )}
@@ -359,7 +362,7 @@ export default function KnowledgePage() {
       </div>
 
       {/* Right Panel - Chatbot (40%) */}
-      <div className="flex w-[40%] flex-col rounded-lg border border-slate-200 bg-white shadow-sm">
+      <div className="flex min-h-[500px] flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm lg:w-[40%]">
         {/* Chat Header */}
         <div className="flex items-center gap-3 border-b border-slate-200 bg-gradient-to-r from-primary to-red-700 px-4 py-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20">
@@ -385,7 +388,7 @@ export default function KnowledgePage() {
                 <div
                   className={cn(
                     'max-w-[80%] rounded-2xl px-4 py-2.5 text-sm',
-                    msg.role === 'user' ? 'bg-primary text-white' : 'bg-slate-100 text-slate-800'
+                    msg.role === 'user' ? 'bg-primary text-white' : 'bg-gray-100 text-slate-800'
                   )}
                 >
                   {msg.text}
@@ -524,18 +527,12 @@ export default function KnowledgePage() {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <button
-              onClick={() => setShowDeleteDialog(false)}
-              className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100"
-            >
+            <Button onClick={() => setShowDeleteDialog(false)} variant="outline-red">
               Batal
-            </button>
-            <button
-              onClick={handleConfirmDelete}
-              className="rounded-lg bg-secondary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700"
-            >
+            </Button>
+            <Button onClick={handleConfirmDelete} variant="default">
               Hapus
-            </button>
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

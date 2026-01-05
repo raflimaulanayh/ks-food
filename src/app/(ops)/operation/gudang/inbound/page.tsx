@@ -213,7 +213,7 @@ export default function InboundPage() {
             <p className="text-xs text-slate-500">Pilih PO untuk memulai penerimaan</p>
           </div>
 
-          <div className="space-y-2">
+          <div className="flex flex-col gap-y-2">
             {poList.map((po) => (
               <Card
                 key={po.id}
@@ -513,7 +513,7 @@ export default function InboundPage() {
           <p className="text-xs text-slate-500">Scan QR untuk menerima barang</p>
         </div>
 
-        <div className="space-y-2">
+        <div className="flex flex-col gap-y-2">
           {selectedPO.items.map((item) => (
             <Card key={item.id} className="border-2 border-slate-200 bg-white p-4">
               <div className="flex items-start justify-between gap-3">

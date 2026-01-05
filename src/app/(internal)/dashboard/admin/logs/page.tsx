@@ -202,7 +202,7 @@ export default function SystemLogsPage() {
               <option value="INFO">Info</option>
             </select>
           </div>
-          <Button className="gap-2 border-slate-300 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900">
+          <Button variant="outline-red">
             <Download size={16} weight="bold" /> Export Logs
           </Button>
         </div>
@@ -244,7 +244,11 @@ export default function SystemLogsPage() {
                     </div>
                   </td>
                   <td className="px-6 py-3 text-right">
-                    <Button className="h-8 border border-slate-200 bg-white text-xs font-semibold text-blue-600 shadow-sm hover:bg-blue-50 hover:text-blue-700">
+                    <Button
+                      variant="outline-red"
+                      className="h-8 border-blue-600 text-blue-600 hover:bg-blue-50"
+                      url={`/dashboard/admin/logs/raw?id=${log.id}`}
+                    >
                       View Raw
                     </Button>
                   </td>
@@ -264,16 +268,13 @@ export default function SystemLogsPage() {
         {/* Footer with Pagination */}
         <div className="flex items-center justify-between border-t bg-slate-50/30 p-4 text-xs text-slate-600">
           <span className="font-medium">Menampilkan {filteredLogs.length} dari 14,205 baris</span>
-          <div className="flex gap-4">
-            <button
-              disabled
-              className="flex h-8 items-center gap-1 border-slate-300 bg-white text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
-            >
-              <CaretLeft size={14} weight="bold" /> Previous
-            </button>
-            <button className="flex h-8 items-center gap-1 border-slate-300 bg-white text-xs font-medium text-slate-700 hover:text-slate-900">
-              Next <CaretRight size={14} weight="bold" />
-            </button>
+          <div className="flex gap-2">
+            <Button variant="outline-slate" size="sm" disabled>
+              <CaretLeft size={14} /> Previous
+            </Button>
+            <Button variant="outline-slate" size="sm">
+              Next <CaretRight size={14} />
+            </Button>
           </div>
         </div>
       </Card>

@@ -13,7 +13,8 @@ import {
   ShoppingCartSimple,
   Bank,
   Users,
-  ArrowRight
+  ArrowRight,
+  Key
 } from '@phosphor-icons/react'
 import { useState } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
@@ -30,8 +31,10 @@ import {
   DialogFooter,
   DialogDescription
 } from '@/components/atoms/ui/dialog'
+import { Input } from '@/components/atoms/ui/input'
 import { Label } from '@/components/atoms/ui/label'
 import { Textarea } from '@/components/atoms/ui/textarea'
+import { DashboardHeader } from '@/components/molecules/dashboard/dashboard-header'
 
 // MOCK DATA
 const financialTrend = [
@@ -73,13 +76,35 @@ export default function DirectorView() {
   const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false)
   const [selectedApproval, setSelectedApproval] = useState<(typeof pendingApprovals)[0] | null>(null)
   const [rejectReason, setRejectReason] = useState('')
+  const [pinInput, setPinInput] = useState('')
+  const [pinError, setPinError] = useState('')
+  const [rejectPinInput, setRejectPinInput] = useState('')
+  const [rejectPinError, setRejectPinError] = useState('')
 
   const handleApproveClick = (item: (typeof pendingApprovals)[0]) => {
     setSelectedApproval(item)
+    setPinInput('')
+    setPinError('')
     setIsApproveDialogOpen(true)
   }
 
   const confirmApprove = () => {
+    if (!pinInput) {
+      setPinError('PIN wajib diisi')
+
+      return
+    }
+
+    if (pinInput.length < 4) {
+      setPinError('PIN minimal 4 digit')
+
+      return
+    }
+
+    // TODO: Validate PIN with backend/stored PIN
+    // For now, we'll accept any PIN with 4+ digits
+    // Example: if (pinInput !== '1234') { setPinError('PIN salah'); return; }
+
     if (selectedApproval) {
       setApprovals((prev) => prev.filter((a) => a.id !== selectedApproval.id))
       toast.success('Persetujuan Diberikan', {
@@ -87,23 +112,35 @@ export default function DirectorView() {
       })
       setIsApproveDialogOpen(false)
       setSelectedApproval(null)
+      setPinInput('')
+      setPinError('')
     }
   }
 
   const handleRejectClick = (item: (typeof pendingApprovals)[0]) => {
     setSelectedApproval(item)
     setRejectReason('')
+    setRejectPinInput('')
+    setRejectPinError('')
     setIsRejectDialogOpen(true)
   }
 
   const confirmReject = () => {
-    if (!rejectReason.trim()) {
-      toast.error('Alasan diperlukan', {
-        description: 'Mohon isi alasan penolakan terlebih dahulu'
-      })
+    if (!rejectPinInput) {
+      setRejectPinError('PIN wajib diisi')
 
       return
     }
+
+    if (rejectPinInput.length < 4) {
+      setRejectPinError('PIN minimal 4 digit')
+
+      return
+    }
+
+    // TODO: Validate PIN with backend/stored PIN
+    // For now, we'll accept any PIN with 4+ digits
+    // Example: if (rejectPinInput !== '1234') { setRejectPinError('PIN salah'); return; }
 
     if (selectedApproval) {
       setApprovals((prev) => prev.filter((a) => a.id !== selectedApproval.id))
@@ -113,6 +150,8 @@ export default function DirectorView() {
       setIsRejectDialogOpen(false)
       setSelectedApproval(null)
       setRejectReason('')
+      setRejectPinInput('')
+      setRejectPinError('')
     }
   }
 
@@ -127,27 +166,21 @@ export default function DirectorView() {
 
   return (
     <div className="space-y-6 pt-2 pb-10">
-      {/* HEADER */}
-      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Executive Dashboard</h1>
-          <p className="mt-1 text-sm text-slate-500">Ringkasan kesehatan bisnis dan pusat persetujuan strategis.</p>
-        </div>
-        <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white px-4 py-2.5 shadow-sm">
-          <Clock size={20} className="text-blue-600" weight="duotone" />
-          <div className="text-right">
-            <div className="text-sm font-bold text-slate-800">Senin, 28 Jan 2026</div>
-            <div className="text-[10px] text-slate-500">Shift 1 - Operasional Normal</div>
-          </div>
-        </div>
-      </div>
+      <DashboardHeader
+        title="Executive Dashboard"
+        subtitle="Ringkasan kesehatan bisnis dan pusat persetujuan strategis."
+        onFilterChange={(filters) => {
+          // Handle filter change if needed
+          console.info('Filter changed:', filters)
+        }}
+      />
 
       {/* KPI CARDS */}
       <div className="grid animate-in gap-6 duration-500 fade-in slide-in-from-bottom-4 md:grid-cols-4">
         <Card className="group relative overflow-hidden border-l-[6px] border-emerald-500 bg-white p-6 shadow-sm transition-transform hover:-translate-y-1">
           <div className="relative z-10">
             <p className="text-xs font-bold tracking-wider text-slate-500 uppercase">Net Profit (YTD)</p>
-            <h3 className="mt-1 text-2xl font-bold text-slate-800">{formatIDR(1800)}</h3>
+            <h3 className="mt-1 text-2xl font-bold text-slate-800">{formatIDR(180)}</h3>
             <div className="mt-3 flex items-center gap-2">
               <span className="inline-flex items-center gap-1 rounded-full border border-emerald-100 bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
                 <TrendUp size={10} weight="bold" /> +12% dari target
@@ -162,7 +195,7 @@ export default function DirectorView() {
         <Card className="group relative overflow-hidden border-l-[6px] border-blue-500 bg-white p-6 shadow-sm transition-transform hover:-translate-y-1">
           <div className="relative z-10">
             <p className="text-xs font-bold tracking-wider text-slate-500 uppercase">Total Revenue</p>
-            <h3 className="mt-1 text-2xl font-bold text-slate-800">{formatIDR(5800)}</h3>
+            <h3 className="mt-1 text-2xl font-bold text-slate-800">{formatIDR(580)}</h3>
             <div className="mt-3 flex items-center gap-2">
               <span className="inline-flex items-center gap-1 rounded-full border border-blue-100 bg-blue-50 px-2 py-0.5 text-[10px] font-bold text-blue-700">
                 <TrendUp size={10} weight="bold" /> +5% MoM
@@ -177,7 +210,7 @@ export default function DirectorView() {
         <Card className="group relative overflow-hidden border-l-[6px] border-red-500 bg-white p-6 shadow-sm transition-transform hover:-translate-y-1">
           <div className="relative z-10">
             <p className="text-xs font-bold tracking-wider text-slate-500 uppercase">Operational Cost</p>
-            <h3 className="mt-1 text-2xl font-bold text-slate-800">{formatIDR(4000)}</h3>
+            <h3 className="mt-1 text-2xl font-bold text-slate-800">{formatIDR(400)}</h3>
             <div className="mt-3 flex items-center gap-2">
               <span className="inline-flex items-center gap-1 rounded-full border border-slate-100 bg-slate-50 px-2 py-0.5 text-[10px] font-bold text-slate-700">
                 Within budget
@@ -243,7 +276,7 @@ export default function DirectorView() {
           </div>
           <div className="space-y-3 p-3">
             {approvals.map((item) => (
-              <div key={item.id} className="space-y-3 rounded-lg border border-slate-100 bg-slate-50/30 p-3">
+              <div key={item.id} className="space-y-3 rounded-lg border border-slate-200 bg-slate-50/30 p-3">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex min-w-0 flex-1 items-start gap-3">
                     <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-purple-100">
@@ -275,11 +308,7 @@ export default function DirectorView() {
                   )}
                 </div>
                 <div className="grid grid-cols-2 gap-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => handleRejectClick(item)}
-                    className="h-9 gap-1.5 border-slate-200 bg-white text-xs font-medium text-red-600 hover:bg-red-50 hover:text-red-700"
-                  >
+                  <Button variant="outline-red" onClick={() => handleRejectClick(item)} className="h-9 gap-1.5">
                     <XCircle size={14} /> Reject
                   </Button>
                   <Button
@@ -293,7 +322,7 @@ export default function DirectorView() {
             ))}
           </div>
           <div className="border-t bg-white p-3">
-            <Button className="w-full gap-2 bg-amber-500 text-sm font-semibold text-white hover:bg-amber-600">
+            <Button url="/dashboard/approvals" variant="default" className="w-full">
               Lihat Semua Approval <ArrowRight size={16} />
             </Button>
           </div>
@@ -309,7 +338,7 @@ export default function DirectorView() {
           </DialogHeader>
 
           {selectedApproval && (
-            <div className="space-y-3 py-4">
+            <div className="space-y-4 py-4">
               <div className="rounded-lg border border-slate-100 bg-slate-50 p-4">
                 <div className="flex items-center gap-3">
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-purple-100">
@@ -332,15 +361,46 @@ export default function DirectorView() {
                 </div>
               </div>
 
+              <div className="space-y-2">
+                <Label htmlFor="pin-input" className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                  Masukkan PIN Pimpinan
+                </Label>
+                <Input
+                  id="pin-input"
+                  type="password"
+                  inputMode="numeric"
+                  placeholder="******"
+                  value={pinInput}
+                  onChange={(e) => {
+                    setPinInput(e.target.value.replace(/\D/g, ''))
+                    setPinError('')
+                  }}
+                  maxLength={6}
+                  className={`h-16 text-center text-2xl font-bold ${pinError ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+                  autoComplete="off"
+                />
+                {pinError && <p className="text-xs font-medium text-red-600">{pinError}</p>}
+                <p className="text-xs text-slate-500">
+                  PIN diperlukan untuk memastikan persetujuan dilakukan oleh pimpinan yang berwenang.
+                </p>
+              </div>
+
               <div className="rounded-lg bg-emerald-50 p-3 text-sm text-emerald-700">
-                <p className="font-medium">✓ Permohonan akan disetujui</p>
+                <p className="font-medium">Permohonan akan disetujui</p>
                 <p className="mt-1 text-xs">Tindakan ini akan memproses permohonan untuk tahap berikutnya.</p>
               </div>
             </div>
           )}
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsApproveDialogOpen(false)}>
+            <Button
+              variant="outline-red"
+              onClick={() => {
+                setIsApproveDialogOpen(false)
+                setPinInput('')
+                setPinError('')
+              }}
+            >
               Batal
             </Button>
             <Button onClick={confirmApprove} className="gap-2 bg-emerald-600 text-white hover:bg-emerald-700">
@@ -370,16 +430,38 @@ export default function DirectorView() {
                 )}
               </div>
 
-              <div className="space-y-2">
-                <Label>
-                  Alasan Penolakan <span className="text-red-500">*</span>
-                </Label>
+              <div className="flex flex-col gap-y-2">
+                <Label>Alasan Penolakan</Label>
                 <Textarea
                   placeholder="Contoh: Tidak sesuai budget, perlu revisi dokumen, dll."
                   value={rejectReason}
                   onChange={(e) => setRejectReason(e.target.value)}
                   className="min-h-[100px] resize-none border-slate-200"
                 />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="reject-pin-input" className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                  Masukkan PIN Pimpinan
+                </Label>
+                <Input
+                  id="reject-pin-input"
+                  type="password"
+                  inputMode="numeric"
+                  placeholder="******"
+                  value={rejectPinInput}
+                  onChange={(e) => {
+                    setRejectPinInput(e.target.value.replace(/\D/g, ''))
+                    setRejectPinError('')
+                  }}
+                  maxLength={6}
+                  className={`h-16 text-center text-2xl font-bold ${rejectPinError ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+                  autoComplete="off"
+                />
+                {rejectPinError && <p className="text-xs font-medium text-red-600">{rejectPinError}</p>}
+                <p className="text-xs text-slate-500">
+                  PIN diperlukan untuk memastikan penolakan dilakukan oleh pimpinan yang berwenang.
+                </p>
               </div>
 
               <div className="rounded-lg bg-red-50 p-3 text-sm text-red-700">
@@ -391,10 +473,12 @@ export default function DirectorView() {
 
           <DialogFooter>
             <Button
-              variant="outline"
+              variant="outline-red"
               onClick={() => {
                 setIsRejectDialogOpen(false)
                 setRejectReason('')
+                setRejectPinInput('')
+                setRejectPinError('')
               }}
             >
               Batal

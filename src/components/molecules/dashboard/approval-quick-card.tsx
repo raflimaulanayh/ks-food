@@ -136,9 +136,9 @@ export const ApprovalQuickCard = ({ request, onApprove, onReject }: ApprovalQuic
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-2">
+          <div className="flex flex-col gap-y-2">
             <label htmlFor="quick-reason" className="text-sm font-medium text-slate-700">
-              Alasan Penolakan <span className="text-primary">*</span>
+              Alasan Penolakan
             </label>
             <textarea
               id="quick-reason"

@@ -130,9 +130,9 @@ export function QRScanner({ onScanSuccess, onScanError, autoStart = false }: QRS
       {/* Error Message - Overlay */}
       {error && (
         <div className="absolute inset-x-4 top-1/2 z-10 -translate-y-1/2 rounded-lg border border-red-200 bg-red-50/95 p-4 text-center backdrop-blur-sm">
-          <XCircle size={24} className="mx-auto mb-2 text-red-600" weight="fill" />
+          <XCircle size={24} className="mx-auto mb-2 text-primary" weight="fill" />
           <p className="text-sm font-semibold text-red-700">{error}</p>
-          <p className="mt-1 text-xs text-red-600">Gunakan input manual di bawah</p>
+          <p className="mt-1 text-xs text-primary">Gunakan input manual di bawah</p>
         </div>
       )}
 

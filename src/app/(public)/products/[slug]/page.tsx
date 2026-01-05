@@ -346,29 +346,29 @@ export default function ProductDetailPage() {
               </div>
             </div>
             <div className="flex flex-1 flex-wrap items-center gap-3">
-              <Button variant="outline" className="border-primary bg-white text-primary hover:bg-primary/5">
+              <Button variant="outline-red" className="border-primary bg-white text-primary hover:bg-primary/5">
                 Semua
               </Button>
               <Button
-                variant="outline"
+                variant="outline-red"
                 className="border-slate-200 bg-white text-slate-600 hover:border-primary hover:bg-slate-50 hover:text-primary"
               >
                 5 Bintang ({product.reviewsCount})
               </Button>
               <Button
-                variant="outline"
+                variant="outline-red"
                 className="border-slate-200 bg-white text-slate-600 hover:border-primary hover:bg-slate-50 hover:text-primary"
               >
                 4 Bintang (2)
               </Button>
               <Button
-                variant="outline"
+                variant="outline-red"
                 className="border-slate-200 bg-white text-slate-600 hover:border-primary hover:bg-slate-50 hover:text-primary"
               >
                 3 Bintang (0)
               </Button>
               <Button
-                variant="outline"
+                variant="outline-red"
                 className="border-slate-200 bg-white text-slate-600 hover:border-primary hover:bg-slate-50 hover:text-primary"
               >
                 Dengan Media (59)

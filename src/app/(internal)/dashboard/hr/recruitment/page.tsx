@@ -159,14 +159,6 @@ export default function RecruitmentPage() {
   }
 
   const confirmReject = () => {
-    if (!rejectReason.trim()) {
-      toast.error('Alasan diperlukan', {
-        description: 'Mohon isi alasan penolakan terlebih dahulu'
-      })
-
-      return
-    }
-
     if (candidateToReject) {
       setCandidates((prev) =>
         prev.map((c) => (c.id === candidateToReject.id ? { ...c, status: 'rejected' as CandidateStatus } : c))
@@ -255,7 +247,7 @@ export default function RecruitmentPage() {
               </Card>
 
               {/* CANDIDATE CARDS */}
-              <div className="space-y-3">
+              <div className="flex flex-col gap-y-3">
                 {stageCandidates.length === 0 ? (
                   <div className="rounded-lg border-2 border-dashed border-slate-200 bg-slate-50 p-6 text-center">
                     <p className="text-sm text-slate-400">Tidak ada kandidat</p>
@@ -290,15 +282,15 @@ export default function RecruitmentPage() {
                       {/* Action Buttons */}
                       <div className="flex gap-2 border-t border-slate-100 pt-3">
                         <Button
-                          variant="outline"
+                          variant="outline-red"
                           size="sm"
                           onClick={() => handleReject(candidate.id, candidate.name)}
-                          className="gap-1 border-red-200 text-red-600 hover:bg-red-50"
+                          className="gap-1 border-red-200 text-primary hover:bg-red-50"
                         >
                           <X size={14} weight="bold" />
                         </Button>
                         <Button
-                          variant="outline"
+                          variant="outline-red"
                           size="sm"
                           onClick={() => handleViewDetail(candidate)}
                           className="flex-1 gap-2 border-slate-200 text-slate-600"
@@ -397,7 +389,7 @@ export default function RecruitmentPage() {
                 </div>
 
                 {/* Details Grid */}
-                <div className="space-y-3">
+                <div className="flex flex-col gap-y-3">
                   <div>
                     <Label className="text-xs text-slate-500">Rating Kandidat</Label>
                     <div className="mt-2 flex items-center gap-1">
@@ -484,10 +476,10 @@ export default function RecruitmentPage() {
               </div>
 
               <DialogFooter>
-                <Button variant="outline" onClick={() => setIsDetailOpen(false)}>
+                <Button variant="outline-red" onClick={() => setIsDetailOpen(false)}>
                   Tutup
                 </Button>
-                <Button className="gap-2 bg-primary text-white hover:bg-red-700">
+                <Button>
                   <Eye size={16} /> Download CV
                 </Button>
               </DialogFooter>
@@ -505,7 +497,7 @@ export default function RecruitmentPage() {
           </DialogHeader>
 
           <div className="space-y-4 py-4">
-            <div className="space-y-2">
+            <div className="flex flex-col gap-y-2">
               <Label>
                 Nama Kandidat <span className="text-red-500">*</span>
               </Label>
@@ -518,7 +510,7 @@ export default function RecruitmentPage() {
               />
             </div>
 
-            <div className="space-y-2">
+            <div className="flex flex-col gap-y-2">
               <Label>
                 Posisi Dilamar <span className="text-red-500">*</span>
               </Label>
@@ -539,7 +531,7 @@ export default function RecruitmentPage() {
 
           <DialogFooter>
             <Button
-              variant="outline"
+              variant="outline-red"
               onClick={() => {
                 setIsAddOpen(false)
                 setNewCandidate({ name: '', role: '' })
@@ -565,10 +557,8 @@ export default function RecruitmentPage() {
           </DialogHeader>
 
           <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label>
-                Alasan Penolakan <span className="text-red-500">*</span>
-              </Label>
+            <div className="flex flex-col gap-y-2">
+              <Label>Alasan Penolakan</Label>
               <Textarea
                 placeholder="Contoh: Tidak memenuhi kualifikasi minimum, pengalaman kurang sesuai, dll."
                 value={rejectReason}
@@ -585,7 +575,7 @@ export default function RecruitmentPage() {
 
           <DialogFooter>
             <Button
-              variant="outline"
+              variant="outline-red"
               onClick={() => {
                 setIsRejectOpen(false)
                 setRejectReason('')
@@ -594,7 +584,7 @@ export default function RecruitmentPage() {
             >
               Batal
             </Button>
-            <Button onClick={confirmReject} className="gap-2 bg-red-600 text-white hover:bg-red-700">
+            <Button onClick={confirmReject} variant="default">
               <X size={16} weight="bold" /> Tolak Kandidat
             </Button>
           </DialogFooter>

@@ -137,10 +137,7 @@ export default function WarehousePage() {
           <p className="mt-1 text-sm text-slate-500">Kelola penerimaan barang (Inbound) dan monitor level stok</p>
         </div>
         <div className="flex gap-2">
-          <Button
-            onClick={handleReportDownload}
-            className="gap-2 border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-          >
+          <Button onClick={handleReportDownload} variant="outline-red">
             <DownloadSimple size={16} /> Report
           </Button>
 
@@ -203,8 +200,8 @@ export default function WarehousePage() {
       <Tabs defaultValue="inbound" className="w-full" onValueChange={setActiveTab}>
         <Card className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
           {/* TAB HEADER */}
-          <div className="border-b bg-white px-6 pt-2">
-            <TabsList className="h-auto gap-8 bg-transparent p-0">
+          <div className="scrollbar-hide overflow-x-auto border-b bg-white px-6 pt-2">
+            <TabsList className="h-auto gap-4 bg-transparent p-0 lg:gap-8">
               <TabsTrigger
                 value="inbound"
                 className="rounded-none border-b-2 border-transparent px-2 py-3 font-medium transition-all data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-none"
@@ -212,7 +209,7 @@ export default function WarehousePage() {
                 <div className="flex items-center gap-2">
                   <Truck size={16} weight="bold" /> Barang Masuk
                   {inboundList.length > 0 && (
-                    <span className="inline-flex h-5 items-center rounded-full bg-blue-600 px-1.5 text-[10px] font-bold text-white">
+                    <span className="inline-flex h-5 items-center rounded-full bg-primary px-1.5 text-[10px] font-bold text-white">
                       {inboundList.length}
                     </span>
                   )}
@@ -250,30 +247,30 @@ export default function WarehousePage() {
 
           {/* TAB CONTENT: INBOUND */}
           <TabsContent value="inbound" className="m-0 p-0">
-            <div className="p-6">
+            <div className="p-4">
               {inboundList.length > 0 ? (
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                   {inboundList.map((shipment) => (
                     <Card
                       key={shipment.id}
                       className="group border-slate-200 shadow-sm transition-colors hover:border-red-200"
                     >
-                      <div className="flex items-center justify-between p-4">
-                        <div className="flex items-start gap-3">
-                          <div className="flex items-center justify-center rounded-xl bg-red-50 p-3 text-primary transition-colors">
-                            <Cube size={24} weight="bold" />
+                      <div className="flex items-center justify-between gap-3 p-3">
+                        <div className="flex min-w-0 flex-1 items-start gap-2">
+                          <div className="flex shrink-0 items-center justify-center rounded-lg bg-red-50 p-2 text-primary transition-colors">
+                            <Cube size={20} weight="bold" />
                           </div>
-                          <div>
-                            <div className="mb-1 flex items-center gap-2">
-                              <span className="font-bold text-slate-800">{shipment.item}</span>
-                              <span className="rounded border border-slate-200 bg-slate-50 px-1.5 py-0.5 text-xs font-normal text-slate-600">
+                          <div className="min-w-0 flex-1">
+                            <div className="mb-0.5 flex flex-wrap items-center gap-1.5">
+                              <span className="truncate text-sm font-bold text-slate-800">{shipment.item}</span>
+                              <span className="shrink-0 rounded border border-slate-200 bg-slate-50 px-1.5 py-0.5 text-[10px] font-normal text-slate-600">
                                 {shipment.po}
                               </span>
                             </div>
-                            <p className="text-sm text-slate-500">{shipment.supplier}</p>
-                            <div className="mt-2 flex items-center gap-2 text-xs font-medium text-slate-600">
+                            <p className="truncate text-xs text-slate-500">{shipment.supplier}</p>
+                            <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[10px] font-medium text-slate-600">
                               <span
-                                className={`rounded-full border px-2 py-0.5 ${
+                                className={`rounded-full border px-1.5 py-0.5 ${
                                   shipment.status === 'Arrived'
                                     ? 'border-green-200 bg-green-50 text-green-700'
                                     : 'border-amber-200 bg-amber-50 text-amber-700'
@@ -290,9 +287,9 @@ export default function WarehousePage() {
                         </div>
                         <Button
                           onClick={() => handleReceive(shipment.id, shipment.item, shipment.qty, shipment.unit)}
-                          className="gap-2 bg-primary px-6 font-bold text-white shadow-md shadow-red-100 hover:bg-red-700"
+                          className="h-8 shrink-0 gap-1.5 bg-primary px-3 text-xs font-bold text-white shadow-md shadow-red-100 hover:bg-red-700"
                         >
-                          <ClipboardText size={18} weight="bold" /> Terima
+                          <ClipboardText size={16} weight="bold" /> Terima
                         </Button>
                       </div>
                     </Card>
@@ -324,7 +321,7 @@ export default function WarehousePage() {
 
             {/* TABLE */}
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
+              <table className="w-full min-w-[800px] text-left text-sm">
                 <thead className="border-b bg-slate-50/50 font-medium text-slate-500">
                   <tr>
                     <th className="px-6 py-4">Material Info</th>
@@ -379,14 +376,11 @@ export default function WarehousePage() {
                         </td>
                         <td className="px-6 py-4 text-right">
                           {status === 'CRITICAL' || status === 'WARNING' ? (
-                            <Button
-                              onClick={() => handleRestock(item.name)}
-                              className="h-8 gap-1 border-red-200 bg-white text-xs font-medium text-primary shadow-sm hover:bg-red-50 hover:text-red-700"
-                            >
+                            <Button onClick={() => handleRestock(item.name)} variant="default" className="h-8">
                               <ArrowUpRight size={14} /> Restock
                             </Button>
                           ) : (
-                            <Button disabled className="h-8 gap-1 text-xs text-slate-400">
+                            <Button disabled className="h-8 gap-1 bg-emerald-600 text-xs text-white">
                               Aman
                             </Button>
                           )}

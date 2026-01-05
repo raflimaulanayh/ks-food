@@ -23,7 +23,7 @@ export const CtaSplit = () => {
               <Button size="lg" url="/b2b" className="w-full sm:w-auto">
                 Jelajahi Solusi B2B
               </Button>
-              <Button size="lg" variant="outline" url="/contact" className="w-full sm:w-auto">
+              <Button size="lg" variant="outline-red" url="/contact" className="w-full sm:w-auto">
                 Hubungi Tim Sales
               </Button>
             </div>

@@ -165,9 +165,9 @@ export default function PayrollPage() {
         <Card className="flex items-center justify-between border-slate-200 bg-white p-6 shadow-sm">
           <div>
             <p className="text-xs font-bold tracking-wider text-slate-500 uppercase">Total Potongan</p>
-            <h3 className="mt-1 text-2xl font-bold text-red-600">{formatIDR(totalDeduction)}</h3>
+            <h3 className="mt-1 text-2xl font-bold text-primary">{formatIDR(totalDeduction)}</h3>
           </div>
-          <div className="rounded-xl bg-red-50 p-3 text-red-600">
+          <div className="rounded-xl bg-red-50 p-3 text-primary">
             <TrendDown size={28} weight="duotone" />
           </div>
         </Card>
@@ -230,7 +230,7 @@ export default function PayrollPage() {
                   </TableCell>
                   <TableCell className="font-mono text-slate-600">{formatIDR(row.basic)}</TableCell>
                   <TableCell className="font-mono text-emerald-600">{formatIDR(row.allow)}</TableCell>
-                  <TableCell className="font-mono text-red-600">{formatIDR(row.deduct)}</TableCell>
+                  <TableCell className="font-mono text-primary">{formatIDR(row.deduct)}</TableCell>
                   <TableCell className="font-bold text-slate-900">{formatIDR(row.basic + row.allow - row.deduct)}</TableCell>
                   <TableCell>
                     <Badge
@@ -247,7 +247,7 @@ export default function PayrollPage() {
                   <TableCell className="text-right">
                     <Button
                       size="sm"
-                      variant="outline"
+                      variant="outline-red"
                       onClick={() => handleOpenSlip(row)}
                       className="h-8 gap-2 border-slate-200 text-slate-600"
                     >
@@ -265,10 +265,10 @@ export default function PayrollPage() {
             Menampilkan {payrollData.length} dari {payrollData.length} data
           </span>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" disabled>
+            <Button variant="outline-red" size="sm" disabled>
               <CaretLeft size={14} /> Previous
             </Button>
-            <Button variant="outline" size="sm" disabled>
+            <Button variant="outline-red" size="sm" disabled>
               Next <CaretRight size={14} />
             </Button>
           </div>
@@ -295,7 +295,7 @@ export default function PayrollPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsRunModalOpen(false)}>
+            <Button variant="outline-red" onClick={() => setIsRunModalOpen(false)}>
               Batal
             </Button>
             <Button onClick={handleRunPayroll} className="gap-2 bg-emerald-600 text-white hover:bg-emerald-700">
@@ -345,7 +345,7 @@ export default function PayrollPage() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-600">Potongan (BPJS/Pajak)</span>
-                  <span className="font-medium text-red-600">- {formatIDR(selectedEmp.deduct)}</span>
+                  <span className="font-medium text-primary">- {formatIDR(selectedEmp.deduct)}</span>
                 </div>
               </div>
 
@@ -360,7 +360,7 @@ export default function PayrollPage() {
           )}
 
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button variant="outline" className="gap-2 text-slate-600">
+            <Button variant="outline-red" className="gap-2 text-slate-600">
               <PaperPlaneTilt size={16} /> Kirim Email
             </Button>
             <Button className="gap-2 bg-slate-900 text-white">

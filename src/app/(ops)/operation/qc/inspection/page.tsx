@@ -225,7 +225,7 @@ export default function QCInspectionPage() {
           {/* Waiting Inspection */}
           <div className="mb-6">
             <h3 className="mb-2 text-sm font-bold text-amber-600">Menunggu Inspeksi</h3>
-            <div className="space-y-2">
+            <div className="flex flex-col gap-y-2">
               {materials
                 .filter((m) => m.status === 'waiting')
                 .map((material) => (
@@ -277,7 +277,7 @@ export default function QCInspectionPage() {
           {/* Completed Inspection */}
           <div>
             <h3 className="mb-2 text-sm font-bold text-slate-600">Sudah Diinspeksi</h3>
-            <div className="space-y-2">
+            <div className="flex flex-col gap-y-2">
               {materials
                 .filter((m) => m.status === 'approved' || m.status === 'rejected')
                 .map((material) => (
@@ -319,7 +319,7 @@ export default function QCInspectionPage() {
                         {material.status === 'approved' ? (
                           <CheckCircle size={20} className="text-green-600" weight="fill" />
                         ) : (
-                          <XCircle size={20} className="text-red-600" weight="fill" />
+                          <XCircle size={20} className="text-primary" weight="fill" />
                         )}
                       </div>
                     </div>
@@ -467,8 +467,8 @@ export default function QCInspectionPage() {
           <div className="mb-4 grid grid-cols-2 gap-3">
             <Button
               onClick={() => handleSubmitInspection('rejected')}
-              variant="outline"
-              className="h-12 gap-2 border-2 border-red-300 text-red-600 hover:bg-red-50"
+              variant="outline-red"
+              className="h-12 gap-2 border-2 border-red-300 text-primary hover:bg-red-50"
             >
               <XCircle size={18} weight="fill" />
               <span className="text-sm">Tolak Material</span>

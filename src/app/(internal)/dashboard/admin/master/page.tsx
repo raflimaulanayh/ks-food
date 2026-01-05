@@ -212,7 +212,7 @@ export default function DataMasterPage() {
           <p className="mt-1 text-sm text-slate-500">Pusat data produk, satuan ukur, dan lokasi gudang</p>
         </div>
 
-        <Button onClick={handleOpenCreate}>
+        <Button onClick={handleOpenCreate} variant="default">
           <Plus size={18} weight="bold" />{' '}
           {activeTab === 'products' ? 'Tambah Produk' : activeTab === 'units' ? 'Tambah Satuan' : 'Tambah Lokasi'}
         </Button>
@@ -222,8 +222,8 @@ export default function DataMasterPage() {
       <Tabs defaultValue="products" className="w-full" onValueChange={setActiveTab}>
         <Card className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
           {/* Custom Tab List */}
-          <div className="border-b bg-white px-6 pt-2">
-            <TabsList className="h-auto gap-8 bg-transparent p-0">
+          <div className="scrollbar-hide overflow-x-auto border-b bg-white px-2 pt-2 lg:px-6">
+            <TabsList className="h-auto gap-4 bg-transparent p-0 lg:gap-8">
               <TabsTrigger
                 value="products"
                 className="rounded-none border-b-2 border-transparent px-2 py-3 font-medium transition-all data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-none"
@@ -268,7 +268,7 @@ export default function DataMasterPage() {
           {/* Products Tab */}
           <TabsContent value="products" className="m-0 p-0">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
+              <table className="w-full min-w-[1000px] text-left text-sm">
                 <thead className="border-b bg-slate-50/50 font-medium text-slate-500">
                   <tr>
                     <th className="px-6 py-4">Produk</th>
@@ -334,16 +334,13 @@ export default function DataMasterPage() {
               <span className="font-medium">
                 Menampilkan {filteredProducts.length} dari {products.length} baris
               </span>
-              <div className="flex gap-4">
-                <button
-                  disabled
-                  className="flex h-8 items-center gap-1 border-slate-300 bg-white text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
-                >
-                  <CaretLeft size={14} weight="bold" /> Previous
-                </button>
-                <button className="flex h-8 items-center gap-1 border-slate-300 bg-white text-xs font-medium text-slate-700 hover:text-slate-900">
-                  Next <CaretRight size={14} weight="bold" />
-                </button>
+              <div className="flex gap-2">
+                <Button variant="outline-slate" size="sm" disabled>
+                  <CaretLeft size={14} /> Previous
+                </Button>
+                <Button variant="outline-slate" size="sm">
+                  Next <CaretRight size={14} />
+                </Button>
               </div>
             </div>
           </TabsContent>
@@ -351,7 +348,7 @@ export default function DataMasterPage() {
           {/* Units Tab */}
           <TabsContent value="units" className="m-0 p-0">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
+              <table className="w-full min-w-[700px] text-left text-sm">
                 <thead className="border-b bg-slate-50/50 font-medium text-slate-500">
                   <tr>
                     <th className="px-6 py-4">Kode</th>
@@ -393,16 +390,13 @@ export default function DataMasterPage() {
               <span className="font-medium">
                 Menampilkan {filteredUnits.length} dari {units.length} baris
               </span>
-              <div className="flex gap-4">
-                <button
-                  disabled
-                  className="flex h-8 items-center gap-1 border-slate-300 bg-white text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
-                >
-                  <CaretLeft size={14} weight="bold" /> Previous
-                </button>
-                <button className="flex h-8 items-center gap-1 border-slate-300 bg-white text-xs font-medium text-slate-700 hover:text-slate-900">
-                  Next <CaretRight size={14} weight="bold" />
-                </button>
+              <div className="flex gap-2">
+                <Button variant="outline-slate" size="sm" disabled>
+                  <CaretLeft size={14} /> Previous
+                </Button>
+                <Button variant="outline-slate" size="sm">
+                  Next <CaretRight size={14} />
+                </Button>
               </div>
             </div>
           </TabsContent>
@@ -410,7 +404,7 @@ export default function DataMasterPage() {
           {/* Locations Tab */}
           <TabsContent value="locations" className="m-0 p-0">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
+              <table className="w-full min-w-[700px] text-left text-sm">
                 <thead className="border-b bg-slate-50/50 font-medium text-slate-500">
                   <tr>
                     <th className="px-6 py-4">Kode Lokasi</th>
@@ -452,16 +446,13 @@ export default function DataMasterPage() {
               <span className="font-medium">
                 Menampilkan {filteredLocations.length} dari {locations.length} baris
               </span>
-              <div className="flex gap-4">
-                <button
-                  disabled
-                  className="flex h-8 items-center gap-1 border-slate-300 bg-white text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
-                >
-                  <CaretLeft size={14} weight="bold" /> Previous
-                </button>
-                <button className="flex h-8 items-center gap-1 border-slate-300 bg-white text-xs font-medium text-slate-700 hover:text-slate-900">
-                  Next <CaretRight size={14} weight="bold" />
-                </button>
+              <div className="flex gap-2">
+                <Button variant="outline-slate" size="sm" disabled>
+                  <CaretLeft size={14} /> Previous
+                </Button>
+                <Button variant="outline-slate" size="sm">
+                  Next <CaretRight size={14} />
+                </Button>
               </div>
             </div>
           </TabsContent>
@@ -483,7 +474,7 @@ export default function DataMasterPage() {
               {activeTab === 'products' && (
                 <>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
+                    <div className="flex flex-col gap-y-2">
                       <label className="text-sm font-medium text-slate-700">Nama Produk</label>
                       <input
                         type="text"
@@ -494,7 +485,7 @@ export default function DataMasterPage() {
                         className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none"
                       />
                     </div>
-                    <div className="space-y-2">
+                    <div className="flex flex-col gap-y-2">
                       <label className="text-sm font-medium text-slate-700">SKU / Kode</label>
                       <input
                         type="text"
@@ -507,7 +498,7 @@ export default function DataMasterPage() {
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
+                    <div className="flex flex-col gap-y-2">
                       <label className="text-sm font-medium text-slate-700">Harga Jual (Public)</label>
                       <input
                         type="number"
@@ -518,7 +509,7 @@ export default function DataMasterPage() {
                         className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none"
                       />
                     </div>
-                    <div className="space-y-2">
+                    <div className="flex flex-col gap-y-2">
                       <label className="text-sm font-medium text-slate-700">Kategori</label>
                       <select
                         value={formData.category}
@@ -548,7 +539,7 @@ export default function DataMasterPage() {
 
               {activeTab === 'units' && (
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
+                  <div className="flex flex-col gap-y-2">
                     <label className="text-sm font-medium text-slate-700">Kode Satuan</label>
                     <input
                       type="text"
@@ -559,7 +550,7 @@ export default function DataMasterPage() {
                       className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none"
                     />
                   </div>
-                  <div className="space-y-2">
+                  <div className="flex flex-col gap-y-2">
                     <label className="text-sm font-medium text-slate-700">Nama Satuan</label>
                     <input
                       type="text"
@@ -576,7 +567,7 @@ export default function DataMasterPage() {
               {activeTab === 'locations' && (
                 <>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
+                    <div className="flex flex-col gap-y-2">
                       <label className="text-sm font-medium text-slate-700">Kode Lokasi</label>
                       <input
                         type="text"
@@ -587,7 +578,7 @@ export default function DataMasterPage() {
                         className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none"
                       />
                     </div>
-                    <div className="space-y-2">
+                    <div className="flex flex-col gap-y-2">
                       <label className="text-sm font-medium text-slate-700">Nama Gudang</label>
                       <input
                         type="text"
@@ -599,7 +590,7 @@ export default function DataMasterPage() {
                       />
                     </div>
                   </div>
-                  <div className="space-y-2">
+                  <div className="flex flex-col gap-y-2">
                     <label className="text-sm font-medium text-slate-700">Kapasitas</label>
                     <input
                       type="text"
@@ -619,11 +610,13 @@ export default function DataMasterPage() {
                     setShowAddModal(false)
                     setEditingItem(null)
                   }}
-                  className="bg-slate-100 text-slate-700 hover:bg-slate-200"
+                  variant="outline-red"
                 >
                   Batal
                 </Button>
-                <Button type="submit">{editingItem ? 'Update Data' : 'Simpan Data'}</Button>
+                <Button variant="default" type="submit">
+                  {editingItem ? 'Update Data' : 'Simpan Data'}
+                </Button>
               </div>
             </form>
           </div>
@@ -651,7 +644,9 @@ export default function DataMasterPage() {
               >
                 Batal
               </Button>
-              <Button onClick={confirmDelete}>Ya, Hapus</Button>
+              <Button variant="default" onClick={confirmDelete}>
+                Ya, Hapus
+              </Button>
             </div>
           </div>
         </div>

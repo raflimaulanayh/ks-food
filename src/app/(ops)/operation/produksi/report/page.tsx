@@ -238,7 +238,7 @@ export default function ProductionReportPage() {
           {/* Active JO */}
           <div className="mb-6">
             <h3 className="mb-2 text-sm font-bold text-emerald-600">Aktif / Terjadwal</h3>
-            <div className="space-y-2">
+            <div className="flex flex-col gap-y-2">
               {jobOrders
                 .filter((jo) => jo.status === 'scheduled' || jo.status === 'in-progress')
                 .map((jo) => (
@@ -291,7 +291,7 @@ export default function ProductionReportPage() {
           {/* Completed JO */}
           <div>
             <h3 className="mb-2 text-sm font-bold text-slate-600">Selesai Dilaporkan</h3>
-            <div className="space-y-2">
+            <div className="flex flex-col gap-y-2">
               {jobOrders
                 .filter((jo) => jo.status === 'completed')
                 .map((jo) => (
@@ -311,7 +311,7 @@ export default function ProductionReportPage() {
 
                         <div className="text-xs text-slate-600">
                           Hasil: <strong className="text-green-600">{jo.actualQty}</strong> • Reject:{' '}
-                          <strong className="text-red-600">{jo.rejectQty}</strong>
+                          <strong className="text-primary">{jo.rejectQty}</strong>
                         </div>
 
                         <div className="mt-1 text-xs text-slate-500">
@@ -641,7 +641,7 @@ export default function ProductionReportPage() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-600">Reject:</span>
-                      <span className="font-bold text-red-600">
+                      <span className="font-bold text-primary">
                         {rejectQty || 0} {selectedJO.unit}
                       </span>
                     </div>
@@ -756,7 +756,7 @@ export default function ProductionReportPage() {
                 </div>
                 <div>
                   <p className="text-xs text-slate-600">Reject:</p>
-                  <p className="text-lg font-bold text-red-600">
+                  <p className="text-lg font-bold text-primary">
                     {selectedJO.rejectQty} {selectedJO.unit}
                   </p>
                 </div>

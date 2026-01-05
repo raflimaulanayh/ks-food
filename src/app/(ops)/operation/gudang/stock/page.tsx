@@ -149,7 +149,7 @@ export default function StockCheckPage() {
       case 'menipis':
         return <Warning size={20} weight="fill" className="text-amber-600" />
       case 'kritis':
-        return <Warning size={20} weight="fill" className="text-red-600" />
+        return <Warning size={20} weight="fill" className="text-primary" />
       default:
         return <Package size={20} />
     }
@@ -235,7 +235,7 @@ export default function StockCheckPage() {
           </div>
 
           {/* Batch Cards */}
-          <div className="space-y-2">
+          <div className="flex flex-col gap-y-2">
             {selectedItem.batches
               .sort((a, b) => new Date(a.expiredDate).getTime() - new Date(b.expiredDate).getTime())
               .map((batch, idx) => {
@@ -399,7 +399,7 @@ export default function StockCheckPage() {
         </div>
 
         {/* Stock List - Improved Cards */}
-        <div className="space-y-2">
+        <div className="flex flex-col gap-y-2">
           {filteredStock.map((item) => (
             <Card
               key={item.id}

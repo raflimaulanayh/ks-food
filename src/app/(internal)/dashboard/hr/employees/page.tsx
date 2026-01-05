@@ -260,7 +260,7 @@ export default function EmployeesPage() {
                 variant="ghost"
                 size="sm"
                 onClick={() => openDetail(emp)}
-                className="w-full gap-2 bg-red-50 font-medium text-red-600 shadow-sm transition-all hover:bg-primary hover:text-white"
+                className="w-full gap-2 bg-red-50 font-medium text-primary shadow-sm transition-all hover:bg-primary hover:text-white"
               >
                 Lihat Profil <CaretRight size={14} weight="bold" />
               </Button>
@@ -287,7 +287,7 @@ export default function EmployeesPage() {
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
+              <div className="flex flex-col gap-y-2">
                 <Label>
                   Nama Lengkap <span className="text-red-500">*</span>
                 </Label>
@@ -297,13 +297,13 @@ export default function EmployeesPage() {
                   placeholder="Nama Pegawai"
                 />
               </div>
-              <div className="space-y-2">
+              <div className="flex flex-col gap-y-2">
                 <Label>NIK</Label>
                 <Input disabled placeholder="Auto Generated" className="bg-slate-50" />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
+              <div className="flex flex-col gap-y-2">
                 <Label>
                   Departemen <span className="text-red-500">*</span>
                 </Label>
@@ -321,7 +321,7 @@ export default function EmployeesPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
+              <div className="flex flex-col gap-y-2">
                 <Label>
                   Jabatan <span className="text-red-500">*</span>
                 </Label>
@@ -333,7 +333,7 @@ export default function EmployeesPage() {
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
+              <div className="flex flex-col gap-y-2">
                 <Label>Email</Label>
                 <Input
                   value={newEmp.email}
@@ -341,7 +341,7 @@ export default function EmployeesPage() {
                   placeholder="email@kantor.com"
                 />
               </div>
-              <div className="space-y-2">
+              <div className="flex flex-col gap-y-2">
                 <Label>
                   Status <span className="text-red-500">*</span>
                 </Label>
@@ -360,10 +360,10 @@ export default function EmployeesPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsAddOpen(false)}>
+            <Button variant="outline-red" onClick={() => setIsAddOpen(false)}>
               Batal
             </Button>
-            <Button onClick={handleAddSubmit} className="bg-primary text-white hover:bg-red-700">
+            <Button variant="default" onClick={handleAddSubmit}>
               Simpan Data
             </Button>
           </DialogFooter>

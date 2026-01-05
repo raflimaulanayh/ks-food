@@ -234,7 +234,7 @@ export default function CheckoutPage() {
             )}
             <Button
               onClick={handleCloseSuccess}
-              variant="outline"
+              variant="outline-red"
               className="w-full border-primary py-6 font-bold text-primary hover:bg-primary/5"
             >
               Lihat Pesanan Saya

@@ -1,7 +1,7 @@
 'use client'
 
 import { ApprovalRequest } from '@/data/mock-approvals'
-import { CheckCircle, Package, Scroll, Truck, User, XCircle } from '@phosphor-icons/react'
+import { CheckCircle, Package, Scroll, User, XCircle } from '@phosphor-icons/react'
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 
@@ -172,9 +172,9 @@ export const ApprovalCard = ({ request, onApprove, onReject }: ApprovalCardProps
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-2">
+          <div className="flex flex-col gap-y-2">
             <label htmlFor="reason" className="text-sm font-medium text-slate-700">
-              Alasan Penolakan <span className="text-primary">*</span>
+              Alasan Penolakan
             </label>
             <textarea
               id="reason"

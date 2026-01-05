@@ -213,6 +213,7 @@ export default function SOPPage() {
   const filteredSOP = sopData.filter((sop) => {
     const matchSearch = sop.title.toLowerCase().includes(searchQuery.toLowerCase())
     const matchCategory = selectedCategory === 'all' || sop.category === selectedCategory
+
     return matchSearch && matchCategory
   })
 
@@ -251,7 +252,7 @@ export default function SOPPage() {
         {/* Header */}
         <header className="border-b border-slate-200 bg-white shadow-sm">
           <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-4">
-            <Button variant="outline" size="icon" onClick={() => setSelectedSOP(null)} className="h-10 w-10">
+            <Button variant="outline-red" size="icon" onClick={() => setSelectedSOP(null)} className="h-10 w-10">
               <ArrowLeft size={20} />
             </Button>
             <div className="flex-1">
@@ -380,7 +381,7 @@ export default function SOPPage() {
               <ul className="space-y-2">
                 {selectedSOP.safetyNotes.map((note, idx) => (
                   <li key={idx} className="flex items-start gap-2 text-sm text-red-900">
-                    <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-red-600" />
+                    <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
                     {note}
                   </li>
                 ))}
@@ -399,7 +400,7 @@ export default function SOPPage() {
       <header className="border-b border-slate-200 bg-white shadow-sm">
         <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-4">
           <Link href="/operation">
-            <Button variant="outline" size="icon" className="h-10 w-10">
+            <Button variant="outline-red" size="icon" className="h-10 w-10">
               <ArrowLeft size={20} />
             </Button>
           </Link>

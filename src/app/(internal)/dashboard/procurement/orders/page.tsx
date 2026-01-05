@@ -225,7 +225,7 @@ export default function PurchaseOrderPage() {
                     className="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
                   />
                 </div>
-                <div className="space-y-2">
+                <div className="flex flex-col gap-y-2">
                   <label className="text-sm font-medium text-slate-700">Tanggal Pengiriman</label>
                   <input
                     type="date"
@@ -255,7 +255,7 @@ export default function PurchaseOrderPage() {
                   <ShoppingCart size={14} /> Tambah Item Barang
                 </label>
                 <div className="flex flex-col items-end gap-2 md:flex-row">
-                  <div className="flex-1 space-y-1">
+                  <div className="w-full flex-1 space-y-1">
                     <span className="text-[10px] font-bold text-slate-500 uppercase">Nama Barang</span>
                     <input
                       placeholder="Contoh: Tepung"
@@ -264,7 +264,7 @@ export default function PurchaseOrderPage() {
                       className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm focus:border-red-500 focus:ring-1 focus:ring-red-100 focus:outline-none"
                     />
                   </div>
-                  <div className="w-20 space-y-1">
+                  <div className="w-full space-y-1 sm:w-20">
                     <span className="text-[10px] font-bold text-slate-500 uppercase">Qty</span>
                     <input
                       type="number"
@@ -273,7 +273,7 @@ export default function PurchaseOrderPage() {
                       className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm focus:border-red-500 focus:ring-1 focus:ring-red-100 focus:outline-none"
                     />
                   </div>
-                  <div className="w-24 space-y-1">
+                  <div className="w-full space-y-1 sm:w-24">
                     <span className="text-[10px] font-bold text-slate-500 uppercase">Satuan</span>
                     <select
                       value={newItemUnit}
@@ -286,7 +286,7 @@ export default function PurchaseOrderPage() {
                       <option value="Box">Box</option>
                     </select>
                   </div>
-                  <div className="w-32 space-y-1">
+                  <div className="w-full space-y-1 sm:w-32">
                     <span className="text-[10px] font-bold text-slate-500 uppercase">Harga (@)</span>
                     <input
                       type="number"
@@ -295,7 +295,7 @@ export default function PurchaseOrderPage() {
                       className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm focus:border-red-500 focus:ring-1 focus:ring-red-100 focus:outline-none"
                     />
                   </div>
-                  <Button onClick={handleAddItem} className="h-9 bg-slate-800 text-white hover:bg-slate-900">
+                  <Button onClick={handleAddItem} variant="default">
                     <Plus size={16} weight="bold" />
                   </Button>
                 </div>
@@ -303,7 +303,7 @@ export default function PurchaseOrderPage() {
 
               {/* SECTION 3: ITEM LIST TABLE */}
               <div className="max-h-[200px] overflow-y-auto rounded-md border">
-                <table className="w-full text-sm">
+                <table className="w-full min-w-[700px] text-sm">
                   <thead className="bg-slate-50">
                     <tr className="border-b">
                       <th className="px-4 py-3 text-left font-medium text-slate-600">Barang</th>
@@ -352,19 +352,12 @@ export default function PurchaseOrderPage() {
               </div>
             </div>
 
-            <DialogFooter>
-              <Button
-                onClick={() => setIsDialogOpen(false)}
-                className="border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-              >
+            <DialogFooter className="flex flex-col gap-4 pb-6">
+              <Button onClick={() => setIsDialogOpen(false)} variant="outline-red">
                 Batal
               </Button>
-              <Button
-                onClick={handleSubmit}
-                className="bg-primary font-bold !text-white hover:bg-red-700"
-                disabled={tempItems.length === 0}
-              >
-                Simpan & Proses PO
+              <Button onClick={handleSubmit} variant="default" disabled={tempItems.length === 0}>
+                Simpan & Proses PO Simpan & Proses PO
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -408,7 +401,7 @@ export default function PurchaseOrderPage() {
             </TabsList>
           </div>
 
-          <div className="flex flex-col items-center justify-between gap-4 border-b bg-slate-50/50 p-4 md:flex-row">
+          <div className="flex items-center justify-between gap-4 border-b bg-slate-50/50 p-4">
             <div className="relative w-full md:w-96">
               <MagnifyingGlass className="absolute top-2.5 left-3 text-slate-400" size={18} />
               <input
@@ -426,7 +419,7 @@ export default function PurchaseOrderPage() {
 
           <TabsContent value={activeTab} className="m-0 p-0">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
+              <table className="w-full min-w-[1000px] text-left text-sm">
                 <thead className="border-b bg-slate-50/50 font-medium text-slate-500">
                   <tr>
                     <th className="px-6 py-4">No. PO</th>
@@ -545,16 +538,13 @@ export default function PurchaseOrderPage() {
               <span className="font-medium">
                 Menampilkan {filteredPO.length} dari {orders.length} baris
               </span>
-              <div className="flex gap-4">
-                <button
-                  disabled
-                  className="flex h-8 items-center gap-1 text-xs font-medium text-slate-700 disabled:opacity-50"
-                >
-                  <CaretLeft size={14} weight="bold" /> Previous
-                </button>
-                <button className="flex h-8 items-center gap-1 text-xs font-medium text-slate-700">
-                  Next <CaretRight size={14} weight="bold" />
-                </button>
+              <div className="flex gap-2">
+                <Button variant="outline-slate" size="sm" disabled>
+                  <CaretLeft size={14} /> Previous
+                </Button>
+                <Button variant="outline-slate" size="sm">
+                  Next <CaretRight size={14} />
+                </Button>
               </div>
             </div>
           </TabsContent>

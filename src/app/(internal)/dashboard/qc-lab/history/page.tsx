@@ -202,7 +202,7 @@ export default function QCHistoryPage() {
                 <SelectItem value="rejected">Rejected</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="outline" className="gap-2 border-slate-200 text-slate-600">
+            <Button variant="outline-red" className="gap-2 border-slate-200 text-slate-600">
               <Funnel size={16} /> Filter
             </Button>
           </div>
@@ -268,10 +268,10 @@ export default function QCHistoryPage() {
             <span className="font-bold text-slate-700">{mockInspectionHistory.length}</span> data
           </span>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="h-8 gap-1 border-slate-200 text-slate-600" disabled>
+            <Button variant="outline-red" size="sm" className="h-8 gap-1 border-slate-200 text-slate-600" disabled>
               <CaretLeft size={14} /> Previous
             </Button>
-            <Button variant="outline" size="sm" className="h-8 gap-1 border-slate-200 text-slate-600">
+            <Button variant="outline-red" size="sm" className="h-8 gap-1 border-slate-200 text-slate-600">
               Next <CaretRight size={14} />
             </Button>
           </div>
@@ -370,7 +370,7 @@ export default function QCHistoryPage() {
               </div>
 
               <DialogFooter className="gap-2 sm:gap-0">
-                <Button variant="outline" onClick={() => setIsDetailOpen(false)}>
+                <Button variant="outline-red" onClick={() => setIsDetailOpen(false)}>
                   Tutup
                 </Button>
                 <Button onClick={handlePrintCOA} className="gap-2 bg-blue-600 text-white hover:bg-blue-700">

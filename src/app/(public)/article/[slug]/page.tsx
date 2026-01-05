@@ -103,7 +103,7 @@ export default function ArticleDetailPage() {
                 </div>
                 <div className="flex flex-col gap-3 sm:flex-row">
                   <Button className="bg-secondary text-primary hover:bg-secondary/90">Dapatkan Saus BBQ</Button>
-                  <Button variant="outline" className="border-white text-white hover:bg-white hover:text-primary">
+                  <Button variant="outline-red" className="border-white text-white hover:bg-white hover:text-primary">
                     Lihat Resep Lainnya
                   </Button>
                 </div>

@@ -23,7 +23,11 @@ import {
   Receipt,
   ChartPieSlice,
   UserCheck,
-  UserMinus
+  UserMinus,
+  ArrowRight,
+  ListChecks,
+  CaretLeft,
+  CaretRight
 } from '@phosphor-icons/react'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
@@ -46,6 +50,7 @@ import { Label } from '@/components/atoms/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/atoms/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/atoms/ui/table'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/atoms/ui/tabs'
+import { DashboardHeader } from '@/components/molecules/dashboard/dashboard-header'
 import DirectorView from '@/components/templates/dashboard-views/DirectorView'
 
 // --- MOCK DATA ADMIN ---
@@ -54,6 +59,55 @@ const dataAdmin = [
   { name: 'Week 2', request: 3500, error: 15 },
   { name: 'Week 3', request: 5000, error: 45 },
   { name: 'Week 4', request: 4800, error: 10 }
+]
+
+// --- MOCK RECENT ACTIVITY LOGS ---
+const recentActivityLogs = [
+  {
+    id: 1,
+    timestamp: '2026-01-02 14:35:22',
+    level: 'SUCCESS',
+    module: 'USER',
+    message: "User 'Budi Santoso' created successfully",
+    user: 'Rafli Maulana',
+    ip: '10.0.0.12'
+  },
+  {
+    id: 2,
+    timestamp: '2026-01-02 14:00:18',
+    level: 'WARNING',
+    module: 'AUTH',
+    message: 'Failed Login Attempt (3x) for admin@ksfood.id',
+    user: 'Unknown',
+    ip: '192.168.0.15'
+  },
+  {
+    id: 3,
+    timestamp: '2026-01-02 13:03:08',
+    level: 'SUCCESS',
+    module: 'SCHEDULER',
+    message: 'Daily Stock Calculation Job finished in 2.5s',
+    user: 'System',
+    ip: '127.0.0.1'
+  },
+  {
+    id: 4,
+    timestamp: '2026-01-02 12:45:18',
+    level: 'ERROR',
+    module: 'FINANCE',
+    message: 'Payment Gateway Timeout (Invoice #INV-99)',
+    user: 'Dewi Lestari',
+    ip: '10.0.0.8'
+  },
+  {
+    id: 5,
+    timestamp: '2026-01-02 09:08:05',
+    level: 'SUCCESS',
+    module: 'GUDANG',
+    message: 'Inbound Stock Approved (PO #4021)',
+    user: 'Budi Santoso',
+    ip: '10.0.0.32'
+  }
 ]
 
 // --- MOCK DATA PROCUREMENT ---
@@ -98,35 +152,18 @@ const dataHR = [
 // 1. ADMIN VIEW (Original Code Preserved)
 // ==========================================
 const AdminView = () => {
-  const [currentTime, setCurrentTime] = useState(new Date())
   const [selectedYear, setSelectedYear] = useState('2026')
-
-  useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000)
-
-    return () => clearInterval(timer)
-  }, [])
-
-  const formatTime = (date: Date) =>
-    date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
-  const formatDate = (date: Date) =>
-    date.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
 
   return (
     <div className="space-y-6 pt-2 pb-10">
-      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Panel Admin</h1>
-          <p className="mt-1 text-sm text-slate-500">Monitoring sistem, pengguna, dan aktivitas keamanan</p>
-        </div>
-        <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white px-4 py-2.5 shadow-sm">
-          <Clock size={20} className="text-blue-600" weight="duotone" />
-          <div className="text-right">
-            <div className="text-lg font-bold text-slate-800">{formatTime(currentTime)}</div>
-            <div className="text-[10px] text-slate-500">{formatDate(currentTime)}</div>
-          </div>
-        </div>
-      </div>
+      <DashboardHeader
+        title="Panel Admin"
+        subtitle="Monitoring sistem, pengguna, dan aktivitas keamanan"
+        onFilterChange={(filters) => {
+          // Handle filter change if needed
+          console.info('Filter changed:', filters)
+        }}
+      />
 
       <div className="grid animate-in gap-6 duration-500 fade-in slide-in-from-bottom-4 md:grid-cols-4">
         <Card className="group relative overflow-hidden border-l-[6px] border-blue-600 bg-white p-6 shadow-sm transition-transform hover:-translate-y-1">
@@ -190,42 +227,123 @@ const AdminView = () => {
         </Card>
       </div>
 
-      <Card className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        <div className="border-b bg-white p-4">
-          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-            <div>
-              <h3 className="font-bold text-slate-800">System Request Performance</h3>
-              <p className="text-xs text-slate-500">Weekly monitoring</p>
+      {/* Chart & Activity Log Section - 2 Columns */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        {/* System Request Performance Chart - 2/3 width */}
+        <Card className="flex min-h-[400px] flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm lg:col-span-2 lg:h-full">
+          <div className="border-b bg-white p-4">
+            <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+              <div>
+                <h3 className="font-bold text-slate-800">Performa Request Sistem</h3>
+                <p className="text-xs text-slate-500">Monitoring mingguan</p>
+              </div>
+              <select
+                value={selectedYear}
+                onChange={(e) => setSelectedYear(e.target.value)}
+                className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none"
+              >
+                <option value="2026">2026</option>
+                <option value="2025">2025</option>
+              </select>
             </div>
-            <select
-              value={selectedYear}
-              onChange={(e) => setSelectedYear(e.target.value)}
-              className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none"
-            >
-              <option value="2026">2026</option>
-              <option value="2025">2025</option>
-            </select>
           </div>
-        </div>
-        <div className="p-6">
-          <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={dataAdmin}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-              <XAxis dataKey="name" tick={{ fill: '#64748b', fontSize: 12 }} />
-              <YAxis tick={{ fill: '#64748b', fontSize: 12 }} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: '#fff',
-                  border: '1px solid #e2e8f0',
-                  borderRadius: '8px',
-                  fontSize: '12px'
-                }}
-              />
-              <Bar dataKey="request" fill="#3b82f6" radius={[8, 8, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </Card>
+          <div className="flex-1 p-6">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={dataAdmin}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                <XAxis dataKey="name" tick={{ fill: '#64748b', fontSize: 12 }} />
+                <YAxis tick={{ fill: '#64748b', fontSize: 12 }} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#fff',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '8px',
+                    fontSize: '12px'
+                  }}
+                />
+                <Bar dataKey="request" fill="#3b82f6" radius={[8, 8, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+
+        {/* Recent Activity Log Widget - 1/3 width */}
+        <Card className="flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+          <div className="flex items-center justify-between border-b bg-white p-4">
+            <div className="flex items-center gap-2">
+              <ListChecks size={28} className="text-blue-600" />
+              <div>
+                <h3 className="font-bold text-slate-800">Log Aktivitas Terbaru</h3>
+                <p className="text-xs text-slate-500">Aktivitas dan event sistem terkini</p>
+              </div>
+            </div>
+            <Badge className="bg-blue-50 text-blue-600">{recentActivityLogs.length} Terbaru</Badge>
+          </div>
+          <div className="flex-1 divide-y divide-slate-100 overflow-y-auto">
+            {recentActivityLogs.map((log) => {
+              const getLevelBadge = (level: string) => {
+                switch (level) {
+                  case 'SUCCESS':
+                    return 'bg-emerald-100 text-emerald-700 border-emerald-200'
+                  case 'WARNING':
+                    return 'bg-amber-100 text-amber-700 border-amber-200'
+                  case 'ERROR':
+                    return 'bg-red-100 text-red-700 border-red-200'
+                  case 'CRITICAL':
+                    return 'bg-purple-100 text-purple-700 border-purple-200'
+                  default:
+                    return 'bg-slate-100 text-slate-700 border-slate-200'
+                }
+              }
+
+              const getLevelText = (level: string) => {
+                switch (level) {
+                  case 'SUCCESS':
+                    return 'SUKSES'
+                  case 'WARNING':
+                    return 'PERINGATAN'
+                  case 'ERROR':
+                    return 'ERROR'
+                  case 'CRITICAL':
+                    return 'KRITIS'
+                  default:
+                    return level
+                }
+              }
+
+              return (
+                <div key={log.id} className="p-4 transition-colors hover:bg-slate-50">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 space-y-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Badge variant="outline" className={`border ${getLevelBadge(log.level)} text-[10px] font-bold`}>
+                          {getLevelText(log.level)}
+                        </Badge>
+                        <Badge variant="outline" className="border-0 bg-slate-100 text-[10px] font-semibold text-slate-600">
+                          {log.module}
+                        </Badge>
+                      </div>
+                      <p className="text-sm font-medium text-slate-800">{log.message}</p>
+                      <div className="flex flex-col gap-1 text-xs text-slate-500">
+                        <span className="flex items-center gap-1">
+                          <Users size={12} weight="bold" />
+                          {log.user}
+                        </span>
+                        <span className="text-xs text-slate-400">{log.timestamp}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+          <div className="border-t bg-white p-3">
+            <Button url="/dashboard/admin/logs" variant="default" className="w-full gap-2">
+              Lihat Semua Log <ArrowRight size={16} />
+            </Button>
+          </div>
+        </Card>
+      </div>
     </div>
   )
 }
@@ -234,35 +352,17 @@ const AdminView = () => {
 // 2. PROCUREMENT VIEW (Original Code Preserved)
 // ==========================================
 const ProcurementView = () => {
-  const [currentTime, setCurrentTime] = useState(new Date())
   const [selectedMonth, setSelectedMonth] = useState('Semua')
-
-  useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000)
-
-    return () => clearInterval(timer)
-  }, [])
-
-  const formatTime = (date: Date) =>
-    date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
-  const formatDate = (date: Date) =>
-    date.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
 
   return (
     <div className="space-y-6 pt-2 pb-10">
-      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Ringkasan Pengadaan</h1>
-          <p className="mt-1 text-sm text-slate-500">Overview PO, stok material, dan performa supplier</p>
-        </div>
-        <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white px-4 py-2.5 shadow-sm">
-          <Clock size={20} className="text-blue-600" weight="duotone" />
-          <div className="text-right">
-            <div className="text-lg font-bold text-slate-800">{formatTime(currentTime)}</div>
-            <div className="text-[10px] text-slate-500">{formatDate(currentTime)}</div>
-          </div>
-        </div>
-      </div>
+      <DashboardHeader
+        title="Ringkasan Pengadaan"
+        subtitle="Overview PO, stok material, dan performa supplier"
+        onFilterChange={(filters) => {
+          console.info('Filter changed:', filters)
+        }}
+      />
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
         <Card className="group relative overflow-hidden border-l-[6px] border-amber-500 bg-white p-6 shadow-sm transition-transform hover:-translate-y-1">
@@ -373,22 +473,10 @@ const ProcurementView = () => {
 // 3. QC VIEW (Quality Control Dashboard)
 // ==========================================
 const QCView = () => {
-  const [currentTime, setCurrentTime] = useState(new Date())
   const [selectedDay, setSelectedDay] = useState('Semua')
   const [activeTab, setActiveTab] = useState('incoming')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [selectedItem, setSelectedItem] = useState<any>(null)
-
-  useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000)
-
-    return () => clearInterval(timer)
-  }, [])
-
-  const formatTime = (date: Date) =>
-    date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
-  const formatDate = (date: Date) =>
-    date.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
 
   // Mock inspection data
   const [incomingItems, setIncomingItems] = useState([
@@ -453,20 +541,14 @@ const QCView = () => {
 
   return (
     <div className="space-y-6 pt-2 pb-10">
-      {/* HEADER */}
-      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Laboratorium QC</h1>
-          <p className="mt-1 text-sm text-slate-500">Pemeriksaan kualitas bahan baku (Incoming) dan produk jadi.</p>
-        </div>
-        <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white px-4 py-2.5 shadow-sm">
-          <Clock size={20} className="text-blue-600" weight="duotone" />
-          <div className="text-right">
-            <div className="text-lg font-bold text-slate-800">{formatTime(currentTime)}</div>
-            <div className="text-[10px] text-slate-500">{formatDate(currentTime)}</div>
-          </div>
-        </div>
-      </div>
+      <DashboardHeader
+        title="Laboratorium QC"
+        subtitle="Pemeriksaan kualitas bahan baku (Incoming) dan produk jadi."
+        onFilterChange={(filters) => {
+          // Handle filter change if needed
+          console.info('Filter changed:', filters)
+        }}
+      />
 
       {/* KPI CARDS */}
       <div className="grid animate-in gap-6 duration-500 fade-in slide-in-from-bottom-4 md:grid-cols-4">
@@ -722,12 +804,12 @@ const QCView = () => {
           {/* PAGINATION FOOTER */}
           <div className="flex items-center justify-between border-t bg-slate-50 px-6 py-4">
             <p className="text-sm text-slate-600">Menampilkan 5 data terbaru</p>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" disabled className="h-8 text-xs">
-                Previous
+            <div className="flex gap-2">
+              <Button variant="outline-slate" size="sm" disabled>
+                <CaretLeft size={14} /> Previous
               </Button>
-              <Button variant="outline" size="sm" className="h-8 text-xs">
-                Next
+              <Button variant="outline-slate" size="sm">
+                Next <CaretRight size={14} />
               </Button>
             </div>
           </div>
@@ -743,7 +825,7 @@ const QCView = () => {
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
+              <div className="flex flex-col gap-y-2">
                 <Label>Visual Check</Label>
                 <Select defaultValue="pass">
                   <SelectTrigger>
@@ -755,18 +837,18 @@ const QCView = () => {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
+              <div className="flex flex-col gap-y-2">
                 <Label>pH Level</Label>
                 <Input type="number" placeholder="7.0" />
               </div>
             </div>
-            <div className="space-y-2">
+            <div className="flex flex-col gap-y-2">
               <Label>Catatan Lab</Label>
               <Input placeholder="Opsional..." />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+            <Button variant="outline-red" onClick={() => setIsDialogOpen(false)}>
               Batal
             </Button>
             <Button variant="destructive" onClick={() => submitResult('Rejected')}>
@@ -786,35 +868,16 @@ const QCView = () => {
 // 4. FINANCE VIEW (Financial Dashboard)
 // ==========================================
 const FinanceView = () => {
-  const [currentTime, setCurrentTime] = useState(new Date())
-
-  useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000)
-
-    return () => clearInterval(timer)
-  }, [])
-
-  const formatTime = (date: Date) =>
-    date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
-  const formatDate = (date: Date) =>
-    date.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
-
   return (
     <div className="space-y-6 pt-2 pb-10">
-      {/* HEADER */}
-      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Dashboard Keuangan</h1>
-          <p className="mt-1 text-sm text-slate-500">Monitoring arus kas, hutang dagang, dan status pembayaran.</p>
-        </div>
-        <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white px-4 py-2.5 shadow-sm">
-          <Clock size={20} className="text-blue-600" weight="duotone" />
-          <div className="text-right">
-            <div className="text-lg font-bold text-slate-800">{formatTime(currentTime)}</div>
-            <div className="text-[10px] text-slate-500">{formatDate(currentTime)}</div>
-          </div>
-        </div>
-      </div>
+      <DashboardHeader
+        title="Dashboard Keuangan"
+        subtitle="Monitoring arus kas, hutang dagang, dan status pembayaran."
+        onFilterChange={(filters) => {
+          // Handle filter change if needed
+          console.info('Filter changed:', filters)
+        }}
+      />
 
       {/* KPI CARDS */}
       <div className="grid animate-in gap-6 duration-500 fade-in slide-in-from-bottom-4 md:grid-cols-4">
@@ -935,7 +998,7 @@ const FinanceView = () => {
                     </td>
                     <td className="px-4 py-3 text-right">
                       <div className="font-bold text-slate-800">{inv.val}</div>
-                      <Button size="sm" variant="outline" className="mt-1 h-6 border-blue-200 text-[10px] text-blue-600">
+                      <Button size="sm" variant="outline-red" className="mt-1 h-6 border-blue-200 text-[10px] text-blue-600">
                         Bayar
                       </Button>
                     </td>
@@ -954,35 +1017,16 @@ const FinanceView = () => {
 // 5. HR VIEW (Human Resources Dashboard)
 // ==========================================
 const HRView = () => {
-  const [currentTime, setCurrentTime] = useState(new Date())
-
-  useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000)
-
-    return () => clearInterval(timer)
-  }, [])
-
-  const formatTime = (date: Date) =>
-    date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
-  const formatDate = (date: Date) =>
-    date.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
-
   return (
     <div className="space-y-6 pt-2 pb-10">
-      {/* HEADER */}
-      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Dashboard HRD</h1>
-          <p className="mt-1 text-sm text-slate-500">Monitoring kepegawaian, absensi, dan rekrutmen.</p>
-        </div>
-        <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white px-4 py-2.5 shadow-sm">
-          <Clock size={20} className="text-blue-600" weight="duotone" />
-          <div className="text-right">
-            <div className="text-lg font-bold text-slate-800">{formatTime(currentTime)}</div>
-            <div className="text-[10px] text-slate-500">{formatDate(currentTime)}</div>
-          </div>
-        </div>
-      </div>
+      <DashboardHeader
+        title="Dashboard HRD"
+        subtitle="Monitoring kepegawaian, absensi, dan rekrutmen."
+        onFilterChange={(filters) => {
+          // Handle filter change if needed
+          console.info('Filter changed:', filters)
+        }}
+      />
 
       {/* KPI CARDS */}
       <div className="grid animate-in gap-6 duration-500 fade-in slide-in-from-bottom-4 md:grid-cols-4">

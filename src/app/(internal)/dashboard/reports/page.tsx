@@ -105,7 +105,7 @@ export default function BusinessReportsPage() {
         </div>
         <div className="flex gap-2">
           <Button
-            variant="outline"
+            variant="outline-red"
             onClick={handleExportPDF}
             className="gap-2 border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
           >
@@ -128,8 +128,8 @@ export default function BusinessReportsPage() {
             <button
               onClick={() => handleDateRangeChange('month')}
               className={cn(
-                'rounded-lg px-4 py-1.5 text-sm font-medium transition-colors',
-                dateRange === 'month' ? 'bg-red-600 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                'rounded-lg px-2 py-1.5 text-xs font-medium transition-colors sm:px-4 sm:text-sm',
+                dateRange === 'month' ? 'bg-primary text-white' : 'border border-primary text-primary hover:bg-red-50'
               )}
             >
               Bulan Ini
@@ -137,8 +137,8 @@ export default function BusinessReportsPage() {
             <button
               onClick={() => handleDateRangeChange('quarter')}
               className={cn(
-                'rounded-lg px-4 py-1.5 text-sm font-medium transition-colors',
-                dateRange === 'quarter' ? 'bg-red-600 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                'rounded-lg px-2 py-1.5 text-xs font-medium transition-colors sm:px-4 sm:text-sm',
+                dateRange === 'quarter' ? 'bg-primary text-white' : 'border border-primary text-primary hover:bg-red-50'
               )}
             >
               Kuartal Ini
@@ -146,8 +146,8 @@ export default function BusinessReportsPage() {
             <button
               onClick={() => handleDateRangeChange('year')}
               className={cn(
-                'rounded-lg px-4 py-1.5 text-sm font-medium transition-colors',
-                dateRange === 'year' ? 'bg-red-600 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                'rounded-lg px-2 py-1.5 text-xs font-medium transition-colors sm:px-4 sm:text-sm',
+                dateRange === 'year' ? 'bg-primary text-white' : 'border border-primary text-primary hover:bg-red-50'
               )}
             >
               Tahun Ini
@@ -158,42 +158,42 @@ export default function BusinessReportsPage() {
 
       {/* Tabs */}
       <Card className="border-slate-200 bg-white shadow-sm">
-        <div className="flex border-b border-slate-200">
+        <div className="scrollbar-hide flex overflow-x-auto border-b border-slate-200">
           <button
             onClick={() => setActiveTab('financial')}
             className={cn(
               'group relative flex-1 px-6 py-3 text-sm font-semibold transition-colors',
-              activeTab === 'financial' ? 'text-red-600' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+              activeTab === 'financial' ? 'text-primary' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
             )}
           >
             <span className="flex items-center justify-center gap-2">
               <CurrencyCircleDollar size={18} weight="duotone" /> Keuangan
             </span>
-            {activeTab === 'financial' && <div className="absolute right-0 bottom-0 left-0 h-0.5 bg-red-600"></div>}
+            {activeTab === 'financial' && <div className="absolute right-0 bottom-0 left-0 h-0.5 bg-primary"></div>}
           </button>
           <button
             onClick={() => setActiveTab('sales')}
             className={cn(
               'group relative flex-1 px-6 py-3 text-sm font-semibold transition-colors',
-              activeTab === 'sales' ? 'text-red-600' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+              activeTab === 'sales' ? 'text-primary' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
             )}
           >
             <span className="flex items-center justify-center gap-2">
               <ChartBar size={18} weight="duotone" /> Penjualan
             </span>
-            {activeTab === 'sales' && <div className="absolute right-0 bottom-0 left-0 h-0.5 bg-red-600"></div>}
+            {activeTab === 'sales' && <div className="absolute right-0 bottom-0 left-0 h-0.5 bg-primary"></div>}
           </button>
           <button
             onClick={() => setActiveTab('operational')}
             className={cn(
               'group relative flex-1 px-6 py-3 text-sm font-semibold transition-colors',
-              activeTab === 'operational' ? 'text-red-600' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+              activeTab === 'operational' ? 'text-primary' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
             )}
           >
             <span className="flex items-center justify-center gap-2">
               <Factory size={18} weight="duotone" /> Operasional
             </span>
-            {activeTab === 'operational' && <div className="absolute right-0 bottom-0 left-0 h-0.5 bg-red-600"></div>}
+            {activeTab === 'operational' && <div className="absolute right-0 bottom-0 left-0 h-0.5 bg-primary"></div>}
           </button>
         </div>
 
@@ -201,7 +201,7 @@ export default function BusinessReportsPage() {
           {isLoading ? (
             <div className="flex h-96 items-center justify-center">
               <div className="text-center">
-                <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-red-600 border-t-transparent"></div>
+                <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
                 <p className="mt-4 text-sm text-slate-500">Memuat data...</p>
               </div>
             </div>
@@ -308,7 +308,7 @@ export default function BusinessReportsPage() {
                       <p className="text-xs text-slate-500">Berdasarkan margin profit tertinggi</p>
                     </div>
                     <div className="overflow-x-auto">
-                      <table className="w-full">
+                      <table className="w-full min-w-[700px]">
                         <thead className="border-b border-slate-100 bg-slate-50">
                           <tr>
                             <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase">#</th>
@@ -378,7 +378,7 @@ export default function BusinessReportsPage() {
                         <p className="text-xs text-slate-500">Top klien berdasarkan nilai transaksi</p>
                       </div>
                       <div className="p-6">
-                        <div className="space-y-3">
+                        <div className="flex flex-col gap-y-3">
                           {B2B_SALES_DATA.map((client, idx) => (
                             <div
                               key={idx}

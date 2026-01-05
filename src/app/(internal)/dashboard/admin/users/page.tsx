@@ -179,7 +179,7 @@ export default function UserManagementPage() {
           <p className="mt-1 text-sm text-slate-500">Kelola akun staf internal, hak akses, dan data pelanggan</p>
         </div>
 
-        <Button onClick={handleOpenCreate}>
+        <Button onClick={handleOpenCreate} variant="default">
           <Plus size={18} weight="bold" /> Tambah User Baru
         </Button>
       </div>
@@ -188,8 +188,8 @@ export default function UserManagementPage() {
       <Tabs defaultValue="staff" className="w-full" onValueChange={setActiveTab}>
         <Card className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
           {/* Custom Tab List */}
-          <div className="border-b bg-white px-6 pt-2">
-            <TabsList className="h-auto gap-6 bg-transparent p-0">
+          <div className="border-b bg-white px-2 pt-2 lg:px-6">
+            <TabsList className="h-auto gap-3 bg-transparent p-0 lg:gap-6">
               <TabsTrigger
                 value="staff"
                 className="rounded-none border-b-2 border-transparent px-2 py-3 font-medium transition-all data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-none"
@@ -247,12 +247,10 @@ export default function UserManagementPage() {
               )}
             </div>
             <div className="flex w-full gap-2 md:w-auto">
-              <Button className="gap-2 border border-slate-300 bg-white text-slate-700 hover:bg-slate-100 hover:text-slate-900">
+              <Button variant="outline-red">
                 <Funnel size={16} weight="bold" /> Filter
               </Button>
-              <Button className="gap-2 border border-slate-300 bg-white text-slate-700 hover:bg-slate-100 hover:text-slate-900">
-                Export CSV
-              </Button>
+              <Button variant="outline-red">Export CSV</Button>
             </div>
           </div>
 
@@ -421,16 +419,13 @@ export default function UserManagementPage() {
               <span className="font-medium">
                 Menampilkan {filteredCustomers.length} dari {customerList.length} baris
               </span>
-              <div className="flex gap-4">
-                <button
-                  disabled
-                  className="flex h-8 items-center gap-1 border-slate-300 bg-white text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
-                >
-                  <CaretLeft size={14} weight="bold" /> Previous
-                </button>
-                <button className="flex h-8 items-center gap-1 border-slate-300 bg-white text-xs font-medium text-slate-700 hover:text-slate-900">
-                  Next <CaretRight size={14} weight="bold" />
-                </button>
+              <div className="flex gap-2">
+                <Button variant="outline-slate" size="sm" disabled>
+                  <CaretLeft size={14} /> Previous
+                </Button>
+                <Button variant="outline-slate" size="sm">
+                  Next <CaretRight size={14} />
+                </Button>
               </div>
             </div>
           </TabsContent>
@@ -457,8 +452,8 @@ export default function UserManagementPage() {
                   <div className="flex items-center gap-2 border-b pb-2 text-sm font-semibold text-slate-800">
                     <Shield size={16} className="text-blue-600" /> Informasi Akun & Akses
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="flex flex-col gap-y-2">
                       <label className="text-sm font-medium text-slate-700">Email Perusahaan</label>
                       <input
                         type="email"
@@ -469,7 +464,7 @@ export default function UserManagementPage() {
                         className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none"
                       />
                     </div>
-                    <div className="space-y-2">
+                    <div className="flex flex-col gap-y-2">
                       <label className="text-sm font-medium text-slate-700">Role / Jabatan</label>
                       <select
                         value={formData.role}
@@ -486,7 +481,7 @@ export default function UserManagementPage() {
                     </div>
                     {!editingUser && (
                       <>
-                        <div className="space-y-2">
+                        <div className="flex flex-col gap-y-2">
                           <label className="text-sm font-medium text-slate-700">Password Default</label>
                           <input
                             type="password"
@@ -496,7 +491,7 @@ export default function UserManagementPage() {
                             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none"
                           />
                         </div>
-                        <div className="space-y-2">
+                        <div className="flex flex-col gap-y-2">
                           <label className="text-sm font-medium text-slate-700">PIN (Absensi)</label>
                           <input
                             type="text"
@@ -518,7 +513,7 @@ export default function UserManagementPage() {
                     <User size={16} className="text-amber-600" /> Data Pribadi
                   </div>
                   <div className="space-y-4">
-                    <div className="space-y-2">
+                    <div className="flex flex-col gap-y-2">
                       <label className="text-sm font-medium text-slate-700">Nama Lengkap (Sesuai KTP)</label>
                       <input
                         type="text"
@@ -529,8 +524,8 @@ export default function UserManagementPage() {
                         className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none"
                       />
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <div className="flex flex-col gap-y-2">
                         <label className="text-sm font-medium text-slate-700">Nomor HP / WhatsApp</label>
                         <input
                           type="tel"
@@ -541,7 +536,7 @@ export default function UserManagementPage() {
                           className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none"
                         />
                       </div>
-                      <div className="space-y-2">
+                      <div className="flex flex-col gap-y-2">
                         <label className="text-sm font-medium text-slate-700">Tanggal Lahir</label>
                         <input
                           type="date"
@@ -551,7 +546,7 @@ export default function UserManagementPage() {
                         />
                       </div>
                     </div>
-                    <div className="space-y-2">
+                    <div className="flex flex-col gap-y-2">
                       <label className="text-sm font-medium text-slate-700">Jenis Kelamin</label>
                       <div className="flex gap-4">
                         <label className="flex cursor-pointer items-center gap-2 rounded-lg border px-4 py-2 hover:bg-slate-50">
@@ -586,8 +581,8 @@ export default function UserManagementPage() {
                   <div className="flex items-center gap-2 border-b pb-2 text-sm font-semibold text-slate-800">
                     <MapPin size={16} className="text-primary" /> Alamat Domisili
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="col-span-2 space-y-2">
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="space-y-2 sm:col-span-2">
                       <label className="text-sm font-medium text-slate-700">Alamat Lengkap</label>
                       <input
                         type="text"
@@ -597,7 +592,7 @@ export default function UserManagementPage() {
                         className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none"
                       />
                     </div>
-                    <div className="space-y-2">
+                    <div className="flex flex-col gap-y-2">
                       <label className="text-sm font-medium text-slate-700">Label Alamat</label>
                       <input
                         type="text"
@@ -607,7 +602,7 @@ export default function UserManagementPage() {
                         className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none"
                       />
                     </div>
-                    <div className="space-y-2">
+                    <div className="flex flex-col gap-y-2">
                       <label className="text-sm font-medium text-slate-700">Koordinat GPS (Opsional)</label>
                       <input
                         type="text"
@@ -630,11 +625,11 @@ export default function UserManagementPage() {
                     setShowAddModal(false)
                     setEditingUser(null)
                   }}
-                  className="bg-slate-100 text-slate-700 hover:bg-slate-200"
+                  variant="outline-red"
                 >
                   Batal
                 </Button>
-                <Button type="submit" form="user-form">
+                <Button type="submit" form="user-form" variant="default">
                   {editingUser ? 'Update Data' : 'Simpan Data Karyawan'}
                 </Button>
               </div>
@@ -664,7 +659,9 @@ export default function UserManagementPage() {
               >
                 Batal
               </Button>
-              <Button onClick={confirmDelete}>Ya, Hapus</Button>
+              <Button variant="default" onClick={confirmDelete}>
+                Ya, Hapus
+              </Button>
             </div>
           </div>
         </div>

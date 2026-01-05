@@ -1,12 +1,13 @@
 'use client'
 
 import { useAuthStore } from '@/stores/use-auth-store'
-import { Warning, ShoppingCart, Truck, Wallet, FileText, CheckCircle, Clock } from '@phosphor-icons/react'
+import { Warning, ShoppingCart, Truck, Wallet, FileText, CheckCircle } from '@phosphor-icons/react'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
 import { Card } from '@/components/atoms/ui/card'
+import { DashboardHeader } from '@/components/molecules/dashboard/dashboard-header'
 
 // Mock Data - Spending Trend
 const spendingData = [
@@ -50,18 +51,8 @@ const recentPOs = [
 export default function ProcurementPlanningPage() {
   const { user } = useAuthStore()
   const router = useRouter()
-  const [currentTime, setCurrentTime] = useState(new Date())
   const [selectedMonth, setSelectedMonth] = useState('Semua')
   const [selectedYear, setSelectedYear] = useState('2026')
-
-  // Real-time Clock
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date())
-    }, 1000)
-
-    return () => clearInterval(timer)
-  }, [])
 
   // Auth Check
   useEffect(() => {
@@ -72,32 +63,16 @@ export default function ProcurementPlanningPage() {
 
   if (!user) return null
 
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
-  }
-
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
-  }
-
   return (
     <div className="space-y-6 pt-2 pb-10">
-      {/* Header with Clock */}
-      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Perencanaan & Pengadaan</h1>
-          <p className="mt-1 text-sm text-slate-500">Monitor stok material, purchase order, dan performa supplier</p>
-        </div>
-
-        {/* Real-time Clock */}
-        <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white px-4 py-2.5 shadow-sm">
-          <Clock size={20} className="text-blue-600" weight="duotone" />
-          <div className="text-right">
-            <div className="text-lg font-bold text-slate-800">{formatTime(currentTime)}</div>
-            <div className="text-[10px] text-slate-500">{formatDate(currentTime)}</div>
-          </div>
-        </div>
-      </div>
+      <DashboardHeader
+        title="Perencanaan & Pengadaan"
+        subtitle="Monitor stok material, purchase order, dan performa supplier"
+        onFilterChange={(filters) => {
+          // Handle filter change if needed
+          console.info('Filter changed:', filters)
+        }}
+      />
 
       {/* Stats Widgets */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-4">

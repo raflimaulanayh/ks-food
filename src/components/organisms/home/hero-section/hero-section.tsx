@@ -41,7 +41,7 @@ export const HeroSection = () => {
               <Button size="lg" variant="secondary" className="max-sm:w-full">
                 Jelajahi Produk Kami
               </Button>
-              <Button size="lg" variant="outline" className="max-sm:w-full">
+              <Button size="lg" variant="outline-red" className="max-sm:w-full">
                 Hubungi Sales
               </Button>
             </div>

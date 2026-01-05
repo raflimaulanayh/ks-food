@@ -167,7 +167,7 @@ export default function InvoicesPage() {
                     {inv.status === 'Lunas' ? (
                       <Button
                         size="sm"
-                        variant="outline"
+                        variant="outline-red"
                         onClick={() => handleViewProof(inv)}
                         className="h-8 gap-2 border-slate-200 text-slate-600"
                       >
@@ -192,10 +192,10 @@ export default function InvoicesPage() {
             <span className="font-bold text-slate-700">4</span> data
           </span>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="h-8 gap-1 border-slate-200 text-slate-600" disabled>
+            <Button variant="outline-red" size="sm" className="h-8 gap-1 border-slate-200 text-slate-600" disabled>
               <CaretLeft size={14} /> Previous
             </Button>
-            <Button variant="outline" size="sm" className="h-8 gap-1 border-slate-200 text-slate-600" disabled>
+            <Button variant="outline-red" size="sm" className="h-8 gap-1 border-slate-200 text-slate-600" disabled>
               Next <CaretRight size={14} />
             </Button>
           </div>
@@ -211,16 +211,16 @@ export default function InvoicesPage() {
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
+              <div className="flex flex-col gap-y-2">
                 <Label>No. Invoice</Label>
                 <Input placeholder="INV-..." />
               </div>
-              <div className="space-y-2">
+              <div className="flex flex-col gap-y-2">
                 <Label>Ref. PO</Label>
                 <Input placeholder="Cari PO..." />
               </div>
             </div>
-            <div className="space-y-2">
+            <div className="flex flex-col gap-y-2">
               <Label>Supplier</Label>
               <Select>
                 <SelectTrigger>
@@ -234,16 +234,16 @@ export default function InvoicesPage() {
               </Select>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
+              <div className="flex flex-col gap-y-2">
                 <Label>Jatuh Tempo</Label>
                 <Input type="date" />
               </div>
-              <div className="space-y-2">
+              <div className="flex flex-col gap-y-2">
                 <Label>Nominal (Rp)</Label>
                 <Input type="number" placeholder="0" />
               </div>
             </div>
-            <div className="space-y-2">
+            <div className="flex flex-col gap-y-2">
               <Label>Upload Scan File (PDF/JPG)</Label>
               <div className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-slate-200 p-6 text-slate-400 hover:bg-slate-50">
                 <UploadSimple size={24} className="mb-2" />
@@ -252,7 +252,7 @@ export default function InvoicesPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsUploadOpen(false)}>
+            <Button variant="outline-red" onClick={() => setIsUploadOpen(false)}>
               Batal
             </Button>
             <Button onClick={handleUploadSubmit} className="bg-blue-600 text-white hover:bg-blue-700">

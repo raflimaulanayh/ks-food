@@ -38,13 +38,35 @@ export default function ApprovalsPage() {
   const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false)
   const [selectedRequest, setSelectedRequest] = useState<ApprovalRequest | null>(null)
   const [rejectReason, setRejectReason] = useState('')
+  const [pinInput, setPinInput] = useState('')
+  const [pinError, setPinError] = useState('')
+  const [rejectPinInput, setRejectPinInput] = useState('')
+  const [rejectPinError, setRejectPinError] = useState('')
 
   const handleApproveClick = (request: ApprovalRequest) => {
     setSelectedRequest(request)
+    setPinInput('')
+    setPinError('')
     setIsApproveDialogOpen(true)
   }
 
   const confirmApprove = () => {
+    if (!pinInput) {
+      setPinError('PIN wajib diisi')
+
+      return
+    }
+
+    if (pinInput.length < 4) {
+      setPinError('PIN minimal 4 digit')
+
+      return
+    }
+
+    // TODO: Validate PIN with backend/stored PIN
+    // For now, we'll accept any PIN with 4+ digits
+    // Example: if (pinInput !== '1234') { setPinError('PIN salah'); return; }
+
     if (selectedRequest) {
       setRequests((prev) => prev.filter((r) => r.id !== selectedRequest.id))
       toast.success('Permintaan Disetujui', {
@@ -52,23 +74,35 @@ export default function ApprovalsPage() {
       })
       setIsApproveDialogOpen(false)
       setSelectedRequest(null)
+      setPinInput('')
+      setPinError('')
     }
   }
 
   const handleRejectClick = (request: ApprovalRequest) => {
     setSelectedRequest(request)
     setRejectReason('')
+    setRejectPinInput('')
+    setRejectPinError('')
     setIsRejectDialogOpen(true)
   }
 
   const confirmReject = () => {
-    if (!rejectReason.trim()) {
-      toast.error('Alasan diperlukan', {
-        description: 'Mohon isi alasan penolakan terlebih dahulu'
-      })
+    if (!rejectPinInput) {
+      setRejectPinError('PIN wajib diisi')
 
       return
     }
+
+    if (rejectPinInput.length < 4) {
+      setRejectPinError('PIN minimal 4 digit')
+
+      return
+    }
+
+    // TODO: Validate PIN with backend/stored PIN
+    // For now, we'll accept any PIN with 4+ digits
+    // Example: if (rejectPinInput !== '1234') { setRejectPinError('PIN salah'); return; }
 
     if (selectedRequest) {
       setRequests((prev) => prev.filter((r) => r.id !== selectedRequest.id))
@@ -78,6 +112,8 @@ export default function ApprovalsPage() {
       setIsRejectDialogOpen(false)
       setSelectedRequest(null)
       setRejectReason('')
+      setRejectPinInput('')
+      setRejectPinError('')
     }
   }
 
@@ -131,24 +167,31 @@ export default function ApprovalsPage() {
         <h1 className="text-2xl font-bold tracking-tight text-slate-900">Pusat Persetujuan</h1>
         <p className="mt-1 text-sm text-slate-500">
           Tinjau dan kelola permintaan operasional yang masuk.{' '}
-          <span className="font-semibold text-red-600">{pendingCount} permintaan menunggu</span>
+          <span className="font-semibold text-primary">{pendingCount} permintaan menunggu</span>
         </p>
       </div>
 
       {/* Tabs */}
       <div className="flex flex-wrap items-center gap-2">
         {TABS.map((tab) => (
-          <button
+          <Button
+            variant={activeTab === tab.value ? 'default' : 'outline-red'}
             key={tab.value}
             onClick={() => setActiveTab(tab.value)}
-            className={cn(
-              'rounded-lg px-4 py-2 text-sm font-semibold transition-colors',
-              activeTab === tab.value ? 'bg-red-600 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-            )}
+            className="font-semibold"
           >
             {tab.label}
-            {tab.value === 'ALL' && <Badge className="ml-2 bg-white text-red-600">{requests.length}</Badge>}
-          </button>
+            {tab.value === 'ALL' && (
+              <Badge
+                className={cn(
+                  'ml-2 bg-white text-primary',
+                  activeTab !== tab.value ? 'bg-primary text-white' : 'bg-white text-primary'
+                )}
+              >
+                {requests.length}
+              </Badge>
+            )}
+          </Button>
         ))}
       </div>
 
@@ -167,7 +210,7 @@ export default function ApprovalsPage() {
       </Card>
 
       {/* Request List */}
-      <div className="space-y-3">
+      <div className="flex flex-col gap-y-3">
         {filteredRequests.length === 0 ? (
           <Card className="border-2 border-dashed border-slate-300 bg-slate-50 p-12 text-center shadow-sm">
             <p className="text-sm text-slate-500">
@@ -189,7 +232,7 @@ export default function ApprovalsPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, x: -100 }}
                 >
-                  <Card className="border-slate-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md">
+                  <Card className="border-slate-200 bg-white p-4 shadow transition-shadow hover:shadow-sm">
                     <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                       {/* Left Section */}
                       <div className="flex items-start gap-4">
@@ -230,8 +273,6 @@ export default function ApprovalsPage() {
                             >
                               {getTypeLabel(request.type)}
                             </Badge>
-                            <span className="text-xs text-slate-400">•</span>
-                            <span className="font-mono text-xs font-medium text-slate-600">{request.id}</span>
                             {request.priority === 'high' && <Badge className="bg-red-100 text-red-700">Urgent</Badge>}
                           </div>
 
@@ -260,11 +301,7 @@ export default function ApprovalsPage() {
 
                       {/* Right Section - Actions */}
                       <div className="flex shrink-0 gap-2">
-                        <Button
-                          variant="outline"
-                          onClick={() => handleRejectClick(request)}
-                          className="gap-1.5 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
-                        >
+                        <Button variant="outline-red" onClick={() => handleRejectClick(request)}>
                           <XCircle size={16} weight="fill" /> Tolak
                         </Button>
                         <Button
@@ -292,11 +329,10 @@ export default function ApprovalsPage() {
           </DialogHeader>
 
           {selectedRequest && (
-            <div className="space-y-3 py-4">
+            <div className="space-y-4 py-4">
               <div className="rounded-lg border border-slate-100 bg-slate-50 p-4">
                 <h4 className="font-bold text-slate-900">{selectedRequest.title}</h4>
                 <p className="text-sm text-slate-500">{selectedRequest.requester}</p>
-                <p className="text-xs text-slate-400">{selectedRequest.id}</p>
                 {selectedRequest.amount && (
                   <p className="mt-2 text-base font-bold text-emerald-600">
                     Rp {selectedRequest.amount.toLocaleString('id-ID')}
@@ -304,15 +340,46 @@ export default function ApprovalsPage() {
                 )}
               </div>
 
+              <div className="space-y-2">
+                <Label htmlFor="pin-input" className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                  Masukkan PIN Pimpinan
+                </Label>
+                <Input
+                  id="pin-input"
+                  type="password"
+                  inputMode="numeric"
+                  placeholder="******"
+                  value={pinInput}
+                  onChange={(e) => {
+                    setPinInput(e.target.value.replace(/\D/g, ''))
+                    setPinError('')
+                  }}
+                  maxLength={6}
+                  className={`h-16 text-center text-2xl font-bold ${pinError ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+                  autoComplete="off"
+                />
+                {pinError && <p className="text-xs font-medium text-red-600">{pinError}</p>}
+                <p className="text-xs text-slate-500">
+                  PIN diperlukan untuk memastikan persetujuan dilakukan oleh pimpinan yang berwenang.
+                </p>
+              </div>
+
               <div className="rounded-lg bg-emerald-50 p-3 text-sm text-emerald-700">
-                <p className="font-medium">✓ Permintaan akan disetujui</p>
+                <p className="font-medium">Permintaan akan disetujui</p>
                 <p className="mt-1 text-xs">Tindakan ini akan memproses permintaan untuk tahap berikutnya.</p>
               </div>
             </div>
           )}
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsApproveDialogOpen(false)}>
+            <Button
+              variant="outline-red"
+              onClick={() => {
+                setIsApproveDialogOpen(false)
+                setPinInput('')
+                setPinError('')
+              }}
+            >
               Batal
             </Button>
             <Button onClick={confirmApprove} className="gap-2 bg-emerald-600 text-white hover:bg-emerald-700">
@@ -339,10 +406,8 @@ export default function ApprovalsPage() {
                 <p className="text-xs text-slate-500">{selectedRequest.requester}</p>
               </div>
 
-              <div className="space-y-2">
-                <Label>
-                  Alasan Penolakan <span className="text-red-500">*</span>
-                </Label>
+              <div className="flex flex-col gap-y-2">
+                <Label>Alasan Penolakan</Label>
                 <Textarea
                   placeholder="Contoh: Dokumen tidak lengkap, budget tidak tersedia, dll."
                   value={rejectReason}
@@ -351,7 +416,31 @@ export default function ApprovalsPage() {
                 />
               </div>
 
-              <div className="rounded-lg bg-red-50 p-3 text-sm text-red-700">
+              <div className="space-y-2">
+                <Label htmlFor="reject-pin-input" className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                  Masukkan PIN Pimpinan
+                </Label>
+                <Input
+                  id="reject-pin-input"
+                  type="password"
+                  inputMode="numeric"
+                  placeholder="******"
+                  value={rejectPinInput}
+                  onChange={(e) => {
+                    setRejectPinInput(e.target.value.replace(/\D/g, ''))
+                    setRejectPinError('')
+                  }}
+                  maxLength={6}
+                  className={`h-16 text-center text-2xl font-bold ${rejectPinError ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+                  autoComplete="off"
+                />
+                {rejectPinError && <p className="text-xs font-medium text-red-600">{rejectPinError}</p>}
+                <p className="text-xs text-slate-500">
+                  PIN diperlukan untuk memastikan penolakan dilakukan oleh pimpinan yang berwenang.
+                </p>
+              </div>
+
+              <div className="rounded-lg bg-red-50 p-3 text-sm text-primary">
                 <p className="font-medium">⚠️ Peringatan</p>
                 <p className="mt-1 text-xs">Permintaan yang ditolak akan dihapus dari daftar approval.</p>
               </div>
@@ -360,15 +449,17 @@ export default function ApprovalsPage() {
 
           <DialogFooter>
             <Button
-              variant="outline"
+              variant="outline-red"
               onClick={() => {
                 setIsRejectDialogOpen(false)
                 setRejectReason('')
+                setRejectPinInput('')
+                setRejectPinError('')
               }}
             >
               Batal
             </Button>
-            <Button onClick={confirmReject} className="gap-2 bg-red-600 text-white hover:bg-red-700">
+            <Button onClick={confirmReject} className="gap-2 bg-primary text-white hover:bg-red-700">
               <XCircle size={16} /> Tolak Permintaan
             </Button>
           </DialogFooter>

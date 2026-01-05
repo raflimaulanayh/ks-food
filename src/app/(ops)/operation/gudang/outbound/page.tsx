@@ -304,7 +304,7 @@ export default function OutboundPage() {
           {/* Pending/Picking Orders */}
           <div className="mb-6">
             <h3 className="mb-2 text-sm font-bold text-blue-600">Perlu Diproses</h3>
-            <div className="space-y-2">
+            <div className="flex flex-col gap-y-2">
               {orders
                 .filter((o) => o.status === 'pending' || o.status === 'picking' || o.status === 'ready')
                 .map((order) => (
@@ -371,7 +371,7 @@ export default function OutboundPage() {
           {/* Shipped Orders */}
           <div>
             <h3 className="mb-2 text-sm font-bold text-slate-600">Sudah Dikirim</h3>
-            <div className="space-y-2">
+            <div className="flex flex-col gap-y-2">
               {orders
                 .filter((o) => o.status === 'shipped')
                 .map((order) => (
@@ -633,7 +633,7 @@ export default function OutboundPage() {
           <p className="text-xs text-slate-500">Scan setiap item untuk picking</p>
         </div>
 
-        <div className="space-y-2">
+        <div className="flex flex-col gap-y-2">
           {selectedOrder.items.map((item) => (
             <Card key={item.id} className="border-2 border-slate-200 bg-white p-4">
               <div className="flex items-start justify-between gap-3">

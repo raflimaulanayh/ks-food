@@ -84,7 +84,7 @@ export default function StockMonitorPage() {
               Fitur ini untuk penyesuaian darurat. Gunakan modul Gudang untuk Inbound resmi.
             </p>
           </div>
-          <div className="space-y-2">
+          <div className="flex flex-col gap-y-2">
             {items.slice(0, 3).map((item) => (
               <div key={item.id} className="flex items-center justify-between rounded border border-amber-200 bg-white p-2">
                 <span className="text-sm font-medium">{item.name}</span>
@@ -258,16 +258,13 @@ export default function StockMonitorPage() {
               <span className="font-medium">
                 Menampilkan {filteredItems.length} dari {items.length} baris
               </span>
-              <div className="flex gap-4">
-                <button
-                  disabled
-                  className="flex h-8 items-center gap-1 border-slate-300 bg-white text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
-                >
-                  <CaretLeft size={14} weight="bold" /> Previous
-                </button>
-                <button className="flex h-8 items-center gap-1 border-slate-300 bg-white text-xs font-medium text-slate-700 hover:text-slate-900">
-                  Next <CaretRight size={14} weight="bold" />
-                </button>
+              <div className="flex gap-2">
+                <Button variant="outline-slate" size="sm" disabled>
+                  <CaretLeft size={14} /> Previous
+                </Button>
+                <Button variant="outline-slate" size="sm">
+                  Next <CaretRight size={14} />
+                </Button>
               </div>
             </div>
           </TabsContent>

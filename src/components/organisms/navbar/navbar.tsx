@@ -15,6 +15,7 @@ import {
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 
 import { Container } from '@/components/templates/container'
@@ -34,6 +35,7 @@ export const Navbar = () => {
   const cartItemsCount = useCartStore((state) => state.getTotalItems())
   const { isAuthenticated, user, logout } = useAuthStore()
   const [mounted, setMounted] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
     setMounted(true)
@@ -41,6 +43,7 @@ export const Navbar = () => {
 
   const handleLogout = () => {
     logout()
+    router.push('/internal/login')
   }
   // ...
 

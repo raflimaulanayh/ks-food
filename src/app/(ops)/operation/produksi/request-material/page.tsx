@@ -270,7 +270,7 @@ export default function RequestMaterialPage() {
           {/* Active Requests */}
           <div className="mb-6">
             <h3 className="mb-2 text-sm font-bold text-emerald-600">Perlu Diambil</h3>
-            <div className="space-y-2">
+            <div className="flex flex-col gap-y-2">
               {requests
                 .filter((r) => r.status === 'pending' || r.status === 'in-progress')
                 .map((request) => (
@@ -315,7 +315,7 @@ export default function RequestMaterialPage() {
           {/* Completed Requests */}
           <div>
             <h3 className="mb-2 text-sm font-bold text-slate-600">Sudah Selesai</h3>
-            <div className="space-y-2">
+            <div className="flex flex-col gap-y-2">
               {requests
                 .filter((r) => r.status === 'completed')
                 .map((request) => (
@@ -612,7 +612,7 @@ export default function RequestMaterialPage() {
           <p className="text-xs text-slate-500">Scan untuk mengambil material dari gudang</p>
         </div>
 
-        <div className="space-y-2">
+        <div className="flex flex-col gap-y-2">
           {selectedRequest.items.map((item) => (
             <Card key={item.id} className="border-2 border-slate-200 bg-white p-4">
               <div className="flex items-start justify-between gap-3">

@@ -93,8 +93,7 @@ export default function OperationPage() {
   if (!user) return null
 
   const handleLogout = () => {
-    logout()
-    router.push('/operation/login')
+    logout(true)
   }
 
   return (
@@ -157,7 +156,7 @@ export default function OperationPage() {
               <p className="truncate text-xs font-medium text-slate-600">Stok Kritis</p>
               <p className="text-lg font-bold text-red-700">5</p>
             </div>
-            <Warning size={20} className="size-8 shrink-0 text-red-600" weight="fill" />
+            <Warning size={20} className="size-8 shrink-0 text-primary" weight="fill" />
           </div>
 
           <div className="flex items-center justify-between gap-3 rounded-xl border-2 border-amber-200 bg-amber-50 p-3">
