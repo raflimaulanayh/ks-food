@@ -242,7 +242,7 @@ export default function UserManagementPage() {
                   <option value="FINANCE">Finance</option>
                   <option value="PROCUREMENT">Procurement</option>
                   <option value="WAREHOUSE">Warehouse</option>
-                  <option value="QC_LAB">QC Lab</option>
+                  <option value="QC">QC Lab</option>
                 </select>
               )}
             </div>
@@ -475,7 +475,7 @@ export default function UserManagementPage() {
                         <option value="ADMIN">Admin System</option>
                         <option value="WAREHOUSE">Warehouse / Gudang</option>
                         <option value="PROCUREMENT">Procurement</option>
-                        <option value="QC_LAB">QC Staff</option>
+                        <option value="QC">QC Staff</option>
                         <option value="FINANCE">Finance</option>
                       </select>
                     </div>

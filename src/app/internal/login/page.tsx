@@ -16,7 +16,8 @@ const DEMO_ACCOUNTS = [
   { label: 'Pimpinan (Owner)', email: 'pimpinan@ksfood.id', role: 'PIMPINAN' },
   { label: 'Administrator', email: 'admin@ksfood.id', role: 'ADMIN' },
   { label: 'Staff Gudang (Warehouse)', email: 'gudang@ksfood.id', role: 'WAREHOUSE' },
-  { label: 'Staff QC (Lab)', email: 'qc@ksfood.id', role: 'QC_LAB' },
+  { label: 'Staff Produksi', email: 'produksi@ksfood.id', role: 'PRODUCTION' },
+  { label: 'Staff QC (Lab)', email: 'qc@ksfood.id', role: 'QC' },
   { label: 'Staff Finance', email: 'finance@ksfood.id', role: 'FINANCE' },
   { label: 'Staff HR', email: 'hr@ksfood.id', role: 'HR' },
   { label: 'Customer (Public)', email: 'beli@sederhana.com', role: 'CUSTOMER' }
@@ -69,7 +70,7 @@ export default function LoginPage() {
       // Find the matching demo account to get role
       const demoAccount = DEMO_ACCOUNTS.find((acc) => acc.email === email)
       const userRole =
-        (demoAccount?.role as 'PIMPINAN' | 'ADMIN' | 'FINANCE' | 'PROCUREMENT' | 'QC_LAB' | 'HR' | 'WAREHOUSE') || 'ADMIN'
+        (demoAccount?.role as 'PIMPINAN' | 'ADMIN' | 'FINANCE' | 'PROCUREMENT' | 'QC' | 'HR' | 'WAREHOUSE') || 'ADMIN'
 
       // Get name from demo account or use default
       const userName = demoAccount ? demoAccount.label.split(' ')[0] : 'User'

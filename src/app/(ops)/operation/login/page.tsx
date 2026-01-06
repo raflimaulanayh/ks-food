@@ -15,7 +15,7 @@ import { Input } from '@/components/atoms/ui/input'
 const OPERATION_DEMO_ACCOUNTS = [
   { label: 'Staff Gudang', email: 'gudang@ksfood.id', role: 'WAREHOUSE' },
   { label: 'Tim Produksi (Lantai Pabrik)', email: 'produksi@ksfood.id', role: 'PRODUCTION' },
-  { label: 'Staff QC (Inbound)', email: 'qc-inbound@ksfood.id', role: 'QC_INBOUND' }
+  { label: 'Staff QC (Inbound)', email: 'qc-inbound@ksfood.id', role: 'QC' }
 ]
 
 export default function OperationLoginPage() {
@@ -64,7 +64,7 @@ export default function OperationLoginPage() {
 
       // Find the matching demo account to get role
       const demoAccount = OPERATION_DEMO_ACCOUNTS.find((acc) => acc.email === email)
-      const userRole = (demoAccount?.role as 'WAREHOUSE' | 'PRODUCTION' | 'QC_INBOUND') || 'WAREHOUSE'
+      const userRole = (demoAccount?.role as 'WAREHOUSE' | 'PRODUCTION' | 'QC') || 'WAREHOUSE'
 
       // Get name from demo account or use default
       const userName = demoAccount ? demoAccount.label : 'User'

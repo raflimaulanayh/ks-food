@@ -39,7 +39,7 @@ const INITIAL_DOCUMENTS: KnowledgeDocument[] = [
       'Root Cause: Sensor timbangan garam error akibat belum dikalibrasi selama 2 minggu.\n\nDampak: Batch #1025 Saos Sambal Bawang ditolak QC karena kadar garam melebihi standar (3.5% vs standar 2.8%).\n\nSolusi Implementasi:\n- Kalibrasi wajib timbangan setiap pagi sebelum shift dimulai\n- Checklist digital di tablet operator\n- Alarm otomatis jika timbangan tidak dikalibrasi >24 jam\n\nHasil: Tidak ada lagi kasus over-salting sejak Desember 2024.',
     author: 'Ratna Sari (QC Lead)',
     date: '2024-12-28',
-    allowedRoles: ['QC_LAB', 'PIMPINAN']
+    allowedRoles: ['QC', 'PIMPINAN']
   },
   {
     id: 'DOC-003',
@@ -69,7 +69,7 @@ const INITIAL_DOCUMENTS: KnowledgeDocument[] = [
       'Root Cause: Suhu heater mesin sealer tidak stabil (berkisar 160-180°C, seharusnya konstan 170°C).\n\nDampak: 3% produk Saos Tomat 500ml mengalami bocor saat distribusi, komplain customer meningkat.\n\nInvestigasi:\n- Elemen pemanas heater sudah aus (umur 3 tahun)\n- Thermostat tidak akurat\n\nSolusi:\n- Ganti heater element dengan yang baru\n- Install digital temperature controller dengan alarm\n- Operator cek suhu setiap 30 menit, catat di logbook\n\nHasil: Defect rate turun dari 3% menjadi 0.5% dalam 1 bulan.',
     author: 'Budi Santoso (Maintenance Lead)',
     date: '2024-12-20',
-    allowedRoles: ['QC_LAB', 'PIMPINAN']
+    allowedRoles: ['QC', 'PIMPINAN']
   },
   {
     id: 'DOC-006',
@@ -119,7 +119,7 @@ const INITIAL_DOCUMENTS: KnowledgeDocument[] = [
       'PROSEDUR SELEKSI SUPPLIER:\n\n1. Supplier wajib kirim sampel produk\n   - Minimal 3 sampel untuk testing\n   - Sertifikat BPOM/Halal (jika ada)\n\n2. Cek Legalitas Perusahaan\n   - SIUP/NIB (wajib)\n   - NPWP\n   - Surat Domisili Usaha\n\n3. Tes Lab QC (WAJIB LULUS)\n   - Sample dikirim ke Lab QC\n   - Uji mikrobiologi, kimia, fisik\n   - Kriteria: Min score 80/100\n\n4. Negosiasi Harga & TOP\n   - Benchmark dengan supplier existing\n   - TOP standar: 30 hari setelah invoice\n   - Min order: sesuai kapasitas produksi\n\n5. Trial Order\n   - Order kecil (1-2x kebutuhan produksi)\n   - Evaluasi ketepatan waktu pengiriman\n\n6. Approval Akhir\n   - Manager Procurement → Pimpinan\n   - Kontrak resmi ditandatangani',
     author: 'Manager Procurement',
     date: '2025-01-01',
-    allowedRoles: ['PROCUREMENT', 'PIMPINAN', 'QC_LAB']
+    allowedRoles: ['PROCUREMENT', 'PIMPINAN', 'QC']
   },
   {
     id: 'DOC-011',
@@ -149,7 +149,7 @@ const INITIAL_DOCUMENTS: KnowledgeDocument[] = [
       'PROSEDUR PENERIMAAN BARANG:\\n\\n1. Cek Surat Jalan dari Driver\\n   - Cocokkan nomor SJ dengan PO\\n   - Verifikasi nama supplier\\n\\n2. Cek Fisik Barang\\n   - Tidak penyok/bocor\\n   - Kemasan tidak rusak\\n   - Jumlah sesuai SJ\\n\\n3. Scan QR Code Batch\\n   - Input ke sistem WMS\\n   - Catat tanggal expired\\n\\n4. Penyimpanan\\n   - Simpan di Rak sesuai zonasi\\n   - Terapkan FIFO/FEFO\\n   - Pisahkan barang rusak di Red Zone',
     author: 'Supervisor Warehouse',
     date: '2025-01-01',
-    allowedRoles: ['WAREHOUSE', 'PIMPINAN', 'QC_LAB']
+    allowedRoles: ['WAREHOUSE', 'PIMPINAN', 'QC']
   },
   {
     id: 'DOC-014',
@@ -210,6 +210,36 @@ const INITIAL_DOCUMENTS: KnowledgeDocument[] = [
     author: 'IT Infrastructure Team',
     date: '2025-01-01',
     allowedRoles: ['ADMIN', 'PIMPINAN']
+  },
+  {
+    id: 'DOC-020',
+    title: 'Lesson Learned: Warna Sambal Tidak Konsisten',
+    category: 'LESSON_LEARNED',
+    content:
+      'Kategori: Quality (Kualitas)\nProduk: Sambal Bawang Original\n\n❌ PROBLEM:\nWarna sambal tidak konsisten, kadang terlalu pucat dibanding standar yang seharusnya merah cerah.\n\n💡 SOLUTION:\nPastikan cabai merah yang digunakan memiliki tingkat kematangan yang sama (merah tua). Tambahkan standarisasi visual cabai sebelum proses blending. Implementasi color matching card untuk QC visual.\n\n✓ IMPACT:\nKualitas warna produk menjadi lebih konsisten. Customer complaint terkait warna berkurang hingga 80%. Standardisasi cabai merah membantu tim produksi maintain consistency.\n\nTags: warna, cabai, kualitas, visual-qc',
+    author: 'Supervisor A (Tim Produksi)',
+    date: '2024-01-15',
+    allowedRoles: ['PRODUCTION', 'QC', 'PIMPINAN']
+  },
+  {
+    id: 'DOC-021',
+    title: 'Lesson Learned: Waktu Produksi Saus Tomat Terlalu Lama',
+    category: 'LESSON_LEARNED',
+    content:
+      'Kategori: Process (Proses)\nProduk: Saus Tomat Premium\n\n❌ PROBLEM:\nProses pemasakan terlalu lama (60+ menit) menyebabkan overcook dan kehilangan vitamin serta warna segar dari tomat.\n\n💡 SOLUTION:\nOptimalkan suhu pemasakan dari 95°C menjadi 85°C dan tambahkan sedikit tekanan (0.5 bar) untuk mempercepat reducing. Update SOP dengan parameter baru.\n\n✓ IMPACT:\nWaktu produksi turun dari 60 menit menjadi 45 menit (efisiensi 25%). Kualitas nutrisi dan warna tetap terjaga bahkan lebih baik. Throughput harian naik 20%.\n\nTags: efisiensi, suhu, nutrisi, throughput',
+    author: 'Supervisor B (Tim Produksi)',
+    date: '2024-01-10',
+    allowedRoles: ['PRODUCTION', 'QC', 'PIMPINAN']
+  },
+  {
+    id: 'DOC-022',
+    title: 'Lesson Learned: Blender Industri Sering Overheat',
+    category: 'LESSON_LEARNED',
+    content:
+      'Kategori: Equipment (Peralatan)\nProduk: Mayonaise Creamy\n\n❌ PROBLEM:\nBlender industri sering overheat saat processing batch besar, menyebabkan downtime dan delay produksi.\n\n💡 SOLUTION:\n1. Batasi kapasitas blending maksimal 70% dari kapasitas total (dari 100kg jadi 70kg per batch)\n2. Tambahkan waktu cooling 5 menit setiap 3 batch\n3. Install temperature sensor dengan auto-shutoff di 75°C\n4. Schedule maintenance preventif setiap minggu\n\n✓ IMPACT:\nEquipment lebih awet, lifecycle increased 40%. Zero downtime akibat overheat sejak implementasi. Produktivitas stabil tanpa interupsi.\n\nTags: blender, maintenance, kapasitas, preventive-maintenance',
+    author: 'Teknisi C (Maintenance Team)',
+    date: '2024-01-05',
+    allowedRoles: ['PRODUCTION', 'PIMPINAN']
   }
 ]
 

@@ -4,7 +4,7 @@ export type Staff = {
   id: number
   name: string
   email: string
-  role: 'PIMPINAN' | 'ADMIN' | 'HR' | 'FINANCE' | 'PROCUREMENT' | 'WAREHOUSE' | 'QC_LAB'
+  role: 'PIMPINAN' | 'ADMIN' | 'HR' | 'FINANCE' | 'PROCUREMENT' | 'WAREHOUSE' | 'QC'
   phone: string
   status: 'Active' | 'Suspended'
   joinDate: string

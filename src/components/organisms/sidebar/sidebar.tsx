@@ -16,14 +16,15 @@ import {
   Clock,
   Briefcase,
   ClipboardText,
-  ArrowsClockwise
+  ArrowsClockwise,
+  CalendarBlank
 } from '@phosphor-icons/react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 import { cn } from '@/utils/cn'
 
-type UserRole = 'PIMPINAN' | 'ADMIN' | 'FINANCE' | 'PROCUREMENT' | 'QC_LAB' | 'HR' | 'WAREHOUSE' | 'ALL'
+type UserRole = 'PIMPINAN' | 'ADMIN' | 'FINANCE' | 'PROCUREMENT' | 'PRODUCTION' | 'QC' | 'HR' | 'WAREHOUSE' | 'ALL'
 
 interface MenuItem {
   label: string
@@ -62,9 +63,14 @@ const MENU_ITEMS: MenuItem[] = [
   { label: 'Laporan Bisnis', href: '/dashboard/reports', icon: ChartBar, roles: ['PIMPINAN'] },
   { label: 'Persetujuan', href: '/dashboard/approvals', icon: Cpu, roles: ['PIMPINAN'] },
 
-  // QC_LAB
-  { label: 'Riwayat Inspeksi', href: '/dashboard/qc-lab/history', icon: ClipboardText, roles: ['QC_LAB'] },
-  { label: 'Laporan & Analisa', href: '/dashboard/qc-lab/reports', icon: ChartBar, roles: ['QC_LAB'] },
+  // QC
+  { label: 'Riwayat Inspeksi', href: '/dashboard/qc-lab/history', icon: ClipboardText, roles: ['QC'] },
+  { label: 'Laporan & Analisa', href: '/dashboard/qc-lab/reports', icon: ChartBar, roles: ['QC'] },
+
+  // PRODUCTION
+  { label: 'Jadwal Produksi', href: '/dashboard/production/schedule', icon: CalendarBlank, roles: ['PRODUCTION', 'ADMIN'] },
+  { label: 'Plan Produksi', href: '/dashboard/production/planning', icon: ClipboardText, roles: ['PRODUCTION', 'ADMIN'] },
+  { label: 'SOP & Resep', href: '/dashboard/production/sop', icon: BookOpen, roles: ['PRODUCTION', 'ADMIN'] },
 
   // KNOWLEDGE (ALL)
   { label: 'Pustaka Ilmu', href: '/dashboard/knowledge', icon: BookOpen, roles: ['ALL'] }

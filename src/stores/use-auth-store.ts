@@ -1,6 +1,9 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
+// Types
+export type UserRole = 'ADMIN' | 'WAREHOUSE' | 'PROCUREMENT' | 'PRODUCTION' | 'FINANCE' | 'HR' | 'QC' | 'PIMPINAN'
+
 export interface User {
   id: string
   name: string
@@ -9,7 +12,7 @@ export interface User {
   address: string
   city: string
   zipCode: string
-  role: 'PIMPINAN' | 'ADMIN' | 'FINANCE' | 'PROCUREMENT' | 'QC_LAB' | 'HR' | 'WAREHOUSE' | 'PRODUCTION' | 'QC_INBOUND'
+  role: UserRole
 }
 
 interface AuthState {

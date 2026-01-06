@@ -73,7 +73,7 @@ export interface InternalUser {
   id: string
   name: string
   email: string
-  role: 'PIMPINAN' | 'ADMIN' | 'FINANCE' | 'PROCUREMENT' | 'WAREHOUSE' | 'QC_LAB' | 'HR'
+  role: 'PIMPINAN' | 'ADMIN' | 'FINANCE' | 'PROCUREMENT' | 'WAREHOUSE' | 'QC' | 'HR'
   status: 'Active' | 'Inactive'
   joinDate: string
 }

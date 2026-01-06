@@ -31,7 +31,7 @@ export default function QCReportsPage() {
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">Laporan & Analisa Kualitas</h1>
           <p className="mt-1 text-sm text-slate-500">Pusat data analitik performa kualitas dan generator laporan.</p>
         </div>
-        <Button variant="outline-red" className="gap-2 bg-white text-slate-600 shadow-sm">
+        <Button variant="outline-red">
           <CalendarBlank size={18} /> Januari 2026
         </Button>
       </div>

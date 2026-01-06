@@ -55,7 +55,7 @@ export default function KnowledgePage() {
   const chatEndRef = useRef<HTMLDivElement>(null)
 
   const user = useAuthStore((s) => s.user)
-  const userRole = user?.role || 'QC_LAB'
+  const userRole = user?.role || 'QC'
 
   // Filter documents based on user role
   const accessibleDocs = documents.filter((doc) => {
@@ -158,6 +158,60 @@ export default function KnowledgePage() {
   }
 
   const generateBotResponse = (input: string): string => {
+    const searchTerms = input.toLowerCase().trim()
+
+    // Split search into keywords for flexible matching
+    const keywords = searchTerms.split(/\s+/).filter((k) => k.length > 2) // Filter out short words like "di", "ke", etc.
+
+    // Search in accessible documents with relevance scoring
+    const scoredDocs = accessibleDocs.map((doc) => {
+      let score = 0
+      const titleLower = doc.title.toLowerCase()
+      const contentLower = doc.content.toLowerCase()
+
+      // Exact phrase match gets highest score
+      if (titleLower.includes(searchTerms)) {
+        score += 100
+      }
+      if (contentLower.includes(searchTerms)) {
+        score += 50
+      }
+
+      // Keyword matching - each matching keyword adds to score
+      keywords.forEach((keyword) => {
+        if (titleLower.includes(keyword)) {
+          score += 10
+        }
+        if (contentLower.includes(keyword)) {
+          score += 5
+        }
+      })
+
+      // Boost score for lesson learned if user asks about it
+      if (searchTerms.includes('lesson') && doc.category === 'LESSON_LEARNED') {
+        score += 20
+      }
+
+      return { doc, score }
+    })
+
+    // Sort by relevance and get best matches
+    const relevantDocs = scoredDocs
+      .filter((item) => item.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .map((item) => item.doc)
+
+    // If found relevant documents, return the most relevant one
+    if (relevantDocs.length > 0) {
+      const bestMatch = relevantDocs[0]
+      // Replace literal \n with actual newlines
+      const cleanContent = bestMatch.content.replace(/\\n/g, '\n')
+      const preview = cleanContent.substring(0, 300)
+
+      return `✅ Saya menemukan dokumen terkait: **${bestMatch.title}**\n\n${preview}...\n\n💡 Lihat dokumen lengkap di list untuk detail selengkapnya!`
+    }
+
+    // Fallback to keyword-based responses
     // HR keywords
     if (input.includes('gaji') || input.includes('payroll')) {
       return 'Payroll dibayarkan setiap tanggal 28. Cek tab Payroll di menu Data Karyawan untuk generate slip gaji.'
@@ -199,9 +253,9 @@ export default function KnowledgePage() {
       return 'Standar Term of Payment (TOP) kita adalah 30 hari setelah invoice diterima. Untuk supplier baru, bisa nego TOP saat proses seleksi.'
     }
 
-    // QC keywords
+    // QC & Production keywords
     if (input.includes('asin') || input.includes('garam')) {
-      return 'Berdasarkan Lesson Learned #2, masalah rasa asin biasanya disebabkan sensor timbangan error. Solusinya: Kalibrasi ulang timbangan setiap pagi sebelum shift dimulai.'
+      return 'Berdasarkan Lesson Learned, masalah rasa asin biasanya disebabkan sensor timbangan error. Solusinya: Kalibrasi ulang timbangan setiap pagi sebelum shift dimulai.'
     }
     if (input.includes('sop') || input.includes('prosedur')) {
       return 'Berikut SOP yang tersedia: Penerimaan Bahan Baku, Kebersihan Mesin, dan Suhu Gudang. Mana yang ingin Anda baca?'
@@ -216,12 +270,22 @@ export default function KnowledgePage() {
       return 'Standar suhu penyimpanan gudang: Bahan kering 20-25°C, Bahan segar 10-15°C (cold storage). Lihat SOP #4 untuk detail.'
     }
 
-    return 'Maaf, saya hanya bot prototype. Coba kata kunci: "SOP", "Asin", "Bocor", "Mesin", atau "Gudang".'
+    return `Maaf, saya tidak menemukan dokumen terkait "${input}". Coba kata kunci seperti: "SOP", "Lesson Learned", "Jam Kerja", "Peraturan", "Warna Sambal", atau topik spesifik lainnya.`
   }
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, isTyping])
+
+  // Format markdown in bot responses
+  const formatBotMessage = (text: string) => {
+    return text.split('\n').map((line, i) => (
+      <span key={i}>
+        {line.split(/\*\*(.*?)\*\*/).map((part, j) => (j % 2 === 1 ? <strong key={j}>{part}</strong> : part))}
+        {i < text.split('\n').length - 1 && <br />}
+      </span>
+    ))
+  }
 
   const getCategoryBadge = (category: DocumentCategory) => {
     switch (category) {
@@ -387,11 +451,11 @@ export default function KnowledgePage() {
               >
                 <div
                   className={cn(
-                    'max-w-[80%] rounded-2xl px-4 py-2.5 text-sm',
+                    'max-w-[80%] rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap',
                     msg.role === 'user' ? 'bg-primary text-white' : 'bg-gray-100 text-slate-800'
                   )}
                 >
-                  {msg.text}
+                  {msg.role === 'bot' ? formatBotMessage(msg.text) : msg.text}
                 </div>
               </motion.div>
             ))}

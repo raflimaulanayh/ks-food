@@ -1184,7 +1184,141 @@ const HRView = () => {
 }
 
 // ==========================================
-// 6. MAIN DASHBOARD PAGE
+// 6. PRODUCTION VIEW (Production Dashboard)
+// ==========================================
+const ProductionView = () => {
+  const [selectedPeriod, setSelectedPeriod] = useState('Minggu Ini')
+
+  const productionData = [
+    { day: 'Sen', target: 500, actual: 520 },
+    { day: 'Sel', target: 500, actual: 480 },
+    { day: 'Rab', target: 500, actual: 510 },
+    { day: 'Kam', target: 500, actual: 495 },
+    { day: 'Jum', target: 500, actual: 530 }
+  ]
+
+  return (
+    <div className="space-y-6 pt-2 pb-10">
+      <DashboardHeader
+        title="Dashboard Produksi"
+        subtitle="Monitoring output produksi, efisiensi, dan kualitas harian."
+        onFilterChange={(filters) => {
+          console.info('Filter changed:', filters)
+        }}
+      />
+
+      {/* KPI CARDS */}
+      <div className="grid animate-in gap-6 duration-500 fade-in slide-in-from-bottom-4 md:grid-cols-4">
+        <Card className="group relative overflow-hidden border-l-[6px] border-primary bg-white p-6 shadow-sm transition-transform hover:-translate-y-1">
+          <div className="relative z-10">
+            <p className="text-xs font-bold tracking-wider text-slate-500 uppercase">Output Hari Ini</p>
+            <h3 className="mt-1 text-2xl font-bold text-slate-800">
+              530 <span className="text-sm font-normal text-slate-500">Box</span>
+            </h3>
+            <div className="mt-3 flex items-center gap-2">
+              <span className="inline-flex items-center gap-1 rounded-full border border-emerald-100 bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
+                <TrendUp size={10} /> +6% vs Target
+              </span>
+            </div>
+          </div>
+          <div className="absolute -right-4 -bottom-4 rotate-12 text-red-50 opacity-20 transition-transform duration-500 group-hover:scale-110">
+            <Package size={90} weight="duotone" />
+          </div>
+        </Card>
+
+        <Card className="group relative overflow-hidden border-l-[6px] border-emerald-500 bg-white p-6 shadow-sm transition-transform hover:-translate-y-1">
+          <div className="relative z-10">
+            <p className="text-xs font-bold tracking-wider text-slate-500 uppercase">Efisiensi Produksi</p>
+            <h3 className="mt-1 text-2xl font-bold text-slate-800">94.2%</h3>
+            <div className="mt-3 flex items-center gap-2">
+              <span className="inline-flex items-center gap-1 rounded-full border border-emerald-100 bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
+                <CheckCircle size={10} /> Excellent
+              </span>
+            </div>
+          </div>
+          <div className="absolute -right-4 -bottom-2 text-emerald-50 opacity-20 transition-transform duration-500 group-hover:scale-110">
+            <Gauge size={90} weight="duotone" />
+          </div>
+        </Card>
+
+        <Card className="group relative overflow-hidden border-l-[6px] border-blue-500 bg-white p-6 shadow-sm transition-transform hover:-translate-y-1">
+          <div className="relative z-10">
+            <p className="text-xs font-bold tracking-wider text-slate-500 uppercase">Pass Rate QC</p>
+            <h3 className="mt-1 text-2xl font-bold text-slate-800">98.5%</h3>
+            <div className="mt-3 flex items-center gap-2">
+              <span className="inline-flex items-center gap-1 rounded-full border border-blue-100 bg-blue-50 px-2 py-0.5 text-[10px] font-bold text-blue-700">
+                <Flask size={10} /> High Quality
+              </span>
+            </div>
+          </div>
+          <div className="absolute -right-4 -bottom-2 text-blue-50 opacity-20 transition-transform duration-500 group-hover:scale-110">
+            <CheckCircle size={90} weight="duotone" />
+          </div>
+        </Card>
+
+        <Card className="group relative overflow-hidden border-l-[6px] border-amber-500 bg-white p-6 shadow-sm transition-transform hover:-translate-y-1">
+          <div className="relative z-10">
+            <p className="text-xs font-bold tracking-wider text-slate-500 uppercase">Downtime</p>
+            <h3 className="mt-1 text-2xl font-bold text-slate-800">
+              45 <span className="text-sm font-normal text-slate-500">Menit</span>
+            </h3>
+            <div className="mt-3 flex items-center gap-2">
+              <span className="inline-flex items-center gap-1 rounded-full border border-amber-100 bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-700">
+                <Clock size={10} /> Normal
+              </span>
+            </div>
+          </div>
+          <div className="absolute -right-4 -bottom-4 rotate-12 text-amber-50 opacity-20 transition-transform duration-500 group-hover:scale-110">
+            <Clock size={90} weight="duotone" />
+          </div>
+        </Card>
+      </div>
+
+      {/* PRODUCTION CHART */}
+      <Card className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        <div className="border-b bg-white p-4">
+          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+            <div>
+              <h3 className="font-bold text-slate-800">Output Produksi: Target vs Aktual</h3>
+              <p className="text-xs text-slate-500">Monitoring pencapaian target produksi harian</p>
+            </div>
+            <select
+              value={selectedPeriod}
+              onChange={(e) => setSelectedPeriod(e.target.value)}
+              className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none"
+            >
+              <option value="Minggu Ini">Minggu Ini</option>
+              <option value="Bulan Ini">Bulan Ini</option>
+              <option value="Custom">Custom Range</option>
+            </select>
+          </div>
+        </div>
+        <div className="p-6">
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart data={productionData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+              <XAxis dataKey="day" tick={{ fill: '#64748b', fontSize: 12 }} />
+              <YAxis tick={{ fill: '#64748b', fontSize: 12 }} />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: '#fff',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '8px',
+                  fontSize: '12px'
+                }}
+              />
+              <Bar dataKey="target" name="Target" fill="#94a3b8" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="actual" name="Aktual" fill="#dc2626" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </Card>
+    </div>
+  )
+}
+
+// ==========================================
+// 7. MAIN DASHBOARD PAGE
 // ==========================================
 export default function DashboardPage() {
   const { user } = useAuthStore()
@@ -1199,10 +1333,11 @@ export default function DashboardPage() {
   if (!user) return null
 
   // STRICT ROLE SWITCHING
-  if (user.role === 'QC_LAB') return <QCView />
+  if (user.role === 'QC') return <QCView />
   if (user.role === 'WAREHOUSE') return <ProcurementView />
   if (user.role === 'FINANCE') return <FinanceView />
   if (user.role === 'HR') return <HRView />
+  if (user.role === 'PRODUCTION') return <ProductionView />
   if (user.role === 'PIMPINAN') return <DirectorView />
   if (user.role === 'ADMIN') return <AdminView />
 

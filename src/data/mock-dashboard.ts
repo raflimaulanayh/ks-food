@@ -77,7 +77,7 @@ export const MOCK_DATA = {
       { id: '3', message: 'Warning: High CPU Usage detected on Server-1', time: '1 jam lalu', type: 'alert' }
     ] as ActivityLog[]
   },
-  QC_LAB: {
+  QC: {
     stats: [
       { title: 'Batch Diperiksa', value: '24 Batch', trend: 'up', trendValue: 'Hari ini', color: 'blue' },
       { title: 'Tingkat Lulus', value: '98,2%', trend: 'up', trendValue: '+1,2%', color: 'green' },
