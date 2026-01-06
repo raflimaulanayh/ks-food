@@ -46,18 +46,22 @@ interface ProductDetail {
 const PRODUCTS_DB: Record<string, ProductDetail> = {
   default: {
     id: 'prod-001',
-    name: 'Saus Sambal Premium KS Food - Pedas Alami 300g',
+    name: 'Saus Sambal - Pedas Alami 1KG',
     price: 25000,
     originalPrice: 35000,
     description:
       'Saus sambal dengan perpaduan cabai segar pilihan dan rempah-rempah berkualitas. Memberikan rasa pedas yang pas dan aroma yang menggugah selera. Cocok untuk berbagai hidangan, mulai dari gorengan hingga makanan berkuah.\n\nKomposisi:\nCabai Segar, Bawang Putih, Gula, Garam, Cuka, Penguat Rasa, Pengawet Makanan.\n\nSaran Penyajian:\nDapat digunakan sebagai cocolan atau bumbu masak.',
-    images: ['/static/images/hero/hero1.png', '/static/images/hero/hero1.png', '/static/images/hero/hero1.png'],
+    images: [
+      '/static/images/products/sambal-bawang.png',
+      '/static/images/products/sambal-bawang.png',
+      '/static/images/products/sambal-bawang.png'
+    ],
     rating: 4.8,
     reviewsCount: 128,
     sold: '4RB+',
     category: 'Saus & Sambal',
-    sku: 'KS-SAMBAL-ORIGINAL-300',
-    weight: '300g',
+    sku: 'KS-SAMBAL-ORIGINAL-1KG',
+    weight: '1KG',
     stock: 500,
     specifications: [
       { label: 'Kategori', value: 'Saus & Sambal' },

@@ -11,6 +11,12 @@ export interface OrderProduct {
   unit: string
 }
 
+export interface OrderReview {
+  rating: number // 1-5
+  comment: string
+  date: Date
+}
+
 export interface Order {
   id: string
   orderNumber: string
@@ -31,6 +37,7 @@ export interface Order {
   date: Date
   notes?: string
   contractNumber?: string // For B2B
+  review?: OrderReview // Customer review
 }
 
 interface OrderState {
@@ -38,6 +45,16 @@ interface OrderState {
   updateOrderStatus: (orderId: string, status: OrderStatus) => void
   getOrdersBySource: (source: OrderSource | 'ALL') => Order[]
   searchOrders: (query: string) => Order[]
+  addReview: (orderId: string, rating: number, comment: string) => void
+  addOrder: (order: {
+    id: string
+    date: string
+    items: { id: string; name: string; price: number; quantity: number; image: string }[]
+    total: number
+    status: string
+    paymentMethod: string
+    address: string
+  }) => void
 }
 
 // Mock Data
@@ -476,5 +493,52 @@ export const useOrderStore = create<OrderState>((set, get) => ({
         order.customer.name.toLowerCase().includes(lowerQuery) ||
         order.products.some((p) => p.name.toLowerCase().includes(lowerQuery))
     )
+  },
+
+  addReview: (orderId: string, rating: number, comment: string) => {
+    set((state) => ({
+      orders: state.orders.map((order) =>
+        order.id === orderId
+          ? {
+              ...order,
+              review: {
+                rating,
+                comment,
+                date: new Date()
+              }
+            }
+          : order
+      )
+    }))
+  },
+
+  addOrder: (order) => {
+    // Convert from checkout format to internal Order format
+    const newOrder: Order = {
+      id: order.id,
+      orderNumber: order.id,
+      source: 'INTERNAL', // Orders from checkout are from internal website
+      customer: {
+        name: 'Customer', // Will be filled from auth if available
+        email: 'customer@email.com',
+        phone: '081234567890'
+      },
+      products: order.items.map((item) => ({
+        name: item.name,
+        qty: item.quantity,
+        price: item.price,
+        unit: 'pcs'
+      })),
+      totalAmount: order.total,
+      status: order.status.toUpperCase() as OrderStatus,
+      paymentStatus: 'UNPAID',
+      paymentMethod: order.paymentMethod,
+      shippingAddress: order.address,
+      date: new Date(order.date)
+    }
+
+    set((state) => ({
+      orders: [newOrder, ...state.orders]
+    }))
   }
 }))

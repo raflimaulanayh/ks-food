@@ -56,7 +56,7 @@ export const LatestArticles = () => {
             Artikel Terbaru
           </motion.h2>
           <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-            <Button variant="link" className="md:text-lg" url="/articles">
+            <Button variant="link" className="md:text-lg" url="/article">
               Lihat Semua
             </Button>
           </motion.div>

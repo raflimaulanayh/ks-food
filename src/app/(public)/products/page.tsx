@@ -7,75 +7,119 @@ import { ProductCard } from '@/components/molecules/product-card'
 import { SectionHeader } from '@/components/molecules/section-header'
 import { Container } from '@/components/templates/container'
 
-// Expanded dummy data
+// Real Products with actual images
 const allProducts = [
   {
     id: '1',
-    title: 'Saus Sambal Ekstra Pedas',
+    title: 'Sambal Bawang Original',
     price: 25000,
-    imageUrl: 'https://images.unsplash.com/photo-1585325701165-351af916e581?q=80&w=800&auto=format&fit=crop',
+    imageUrl: '/static/images/products/sambal-bawang.png',
     badges: ['Best Seller', 'Halal'],
-    category: 'Saus'
+    category: 'Sambal',
+    slug: 'sambal-bawang'
   },
   {
     id: '2',
-    title: 'Saus Tomat Premium',
-    price: 22000,
-    imageUrl: 'https://images.unsplash.com/photo-1577106263724-2c8e03bfe9cf?q=80&w=2070&auto=format&fit=crop',
+    title: 'Sambal Bawang Botol 340ml',
+    price: 28000,
+    imageUrl: '/static/images/products/sambal-bawang-botol.png',
     badges: ['BPOM', 'Halal'],
-    category: 'Saus'
+    category: 'Sambal',
+    slug: 'sambal-bawang-botol'
   },
   {
     id: '3',
-    title: 'Mayonnaise Serbaguna',
-    price: 35000,
-    imageUrl: 'https://images.unsplash.com/photo-1585238342024-78d387f4a707?q=80&w=800&auto=format&fit=crop',
-    badges: ['Creamy'],
-    category: 'Mayonnaise'
+    title: 'Sambal Dadak Pedas',
+    price: 22000,
+    imageUrl: '/static/images/products/sambal-dadak.png',
+    badges: ['Pedas', 'Halal'],
+    category: 'Sambal',
+    slug: 'sambal-dadak'
   },
   {
     id: '4',
-    title: 'Saus Barbeque Special',
-    price: 45000,
-    imageUrl: 'https://images.unsplash.com/photo-1627245084931-e40263f350c3?q=80&w=800&auto=format&fit=crop',
-    badges: ['New'],
-    category: 'Saus'
+    title: 'Sambal Geprek Extra Hot',
+    price: 26000,
+    imageUrl: '/static/images/products/sambal-geprek.png',
+    badges: ['Extra Pedas', 'New'],
+    category: 'Sambal',
+    slug: 'sambal-geprek'
   },
   {
     id: '5',
-    title: 'Sambal Terasi Instan',
-    price: 18000,
-    imageUrl: 'https://images.unsplash.com/photo-1574484284008-59d7305d0126?auto=format&fit=crop&w=800&q=80',
-    badges: ['Pedas'],
-    category: 'Bumbu'
+    title: 'Chili Oil Premium',
+    price: 35000,
+    imageUrl: '/static/images/products/chili-oil.png',
+    badges: ['Premium', 'Aromatis'],
+    category: 'Sambal',
+    slug: 'chili-oil'
   },
   {
     id: '6',
-    title: 'Kecap Manis Legit',
-    price: 20000,
-    imageUrl: 'https://images.unsplash.com/photo-1625937985794-6b952b95b863?auto=format&fit=crop&w=800&q=80',
-    badges: ['Asli'],
-    category: 'Kecap'
+    title: 'Saus Tomat Premium 1L',
+    price: 45000,
+    imageUrl: '/static/images/products/saus-tomat.png',
+    badges: ['Best Seller', 'BPOM'],
+    category: 'Saus',
+    slug: 'saus-tomat'
   },
   {
     id: '7',
-    title: 'Bumbu Nasi Goreng',
-    price: 12000,
-    imageUrl: 'https://images.unsplash.com/photo-1604152135912-04a022e23696?auto=format&fit=crop&w=800&q=80',
-    badges: ['Praktis'],
-    category: 'Bumbu'
+    title: 'Saus Tomat Botol 340ml',
+    price: 22000,
+    imageUrl: '/static/images/products/saus-tomat-botol.png',
+    badges: ['Halal', 'Favorit'],
+    category: 'Saus',
+    slug: 'saus-tomat-botol'
   },
   {
     id: '8',
-    title: 'Saus Keju Creamy',
+    title: 'Saus BBQ Spesial',
     price: 38000,
-    imageUrl: 'https://images.unsplash.com/photo-1610427956890-48e02d449339?auto=format&fit=crop&w=800&q=80',
-    badges: ['Favorit'],
-    category: 'Saus'
+    imageUrl: '/static/images/products/saus-bbq.png',
+    badges: ['New', 'Premium'],
+    category: 'Saus',
+    slug: 'saus-bbq'
+  },
+  {
+    id: '9',
+    title: 'Saus Black Pepper',
+    price: 42000,
+    imageUrl: '/static/images/products/saus-blackpepper.png',
+    badges: ['Premium', 'Favorit'],
+    category: 'Saus',
+    slug: 'saus-blackpepper'
+  },
+  {
+    id: '10',
+    title: 'Mayonaise Creamy',
+    price: 35000,
+    imageUrl: '/static/images/products/mayonaise.png',
+    badges: ['Creamy', 'Best Seller'],
+    category: 'Mayonnaise',
+    slug: 'mayonaise'
+  },
+  {
+    id: '11',
+    title: 'Selai Nastar Homemade',
+    price: 32000,
+    imageUrl: '/static/images/products/selai-nastar.png',
+    badges: ['Homemade', 'Manis'],
+    category: 'Selai',
+    slug: 'selai-nastar'
+  },
+  {
+    id: '12',
+    title: 'Sambal Tomat Spesial',
+    price: 24000,
+    imageUrl: '/static/images/category/sambal-tomat.png',
+    badges: ['Halal', 'BPOM'],
+    category: 'Sambal',
+    slug: 'sambal-tomat'
   }
 ]
 
-const categories = ['Semua', 'Saus', 'Bumbu', 'Mayonnaise', 'Kecap']
+const categories = ['Semua', 'Sambal', 'Saus', 'Mayonnaise', 'Selai']
 
 export default function ProductsPage() {
   const [activeCategory, setActiveCategory] = useState('Semua')
@@ -115,6 +159,7 @@ export default function ProductsPage() {
               price={product.price}
               imageUrl={product.imageUrl}
               badges={product.badges}
+              slug={product.slug}
             />
           ))}
         </div>

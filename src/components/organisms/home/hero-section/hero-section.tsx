@@ -38,10 +38,10 @@ export const HeroSection = () => {
             <p className="mb-8 max-w-2xl text-lg text-white/90 md:text-xl">{slide.subtitle}</p>
 
             <div className="flex flex-wrap gap-4">
-              <Button size="lg" variant="secondary" className="max-sm:w-full">
+              <Button size="lg" url="/products" variant="secondary" className="max-sm:w-full">
                 Jelajahi Produk Kami
               </Button>
-              <Button size="lg" variant="outline" className="max-sm:w-full">
+              <Button size="lg" url="/contact" variant="outline" className="max-sm:w-full">
                 Hubungi Sales
               </Button>
             </div>
