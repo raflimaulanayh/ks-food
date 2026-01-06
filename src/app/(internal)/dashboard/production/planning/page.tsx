@@ -1,7 +1,7 @@
 'use client'
 
 import { useAuthStore } from '@/stores/use-auth-store'
-import { Plus, Trash } from '@phosphor-icons/react'
+import { CalendarBlank, Plus, Trash } from '@phosphor-icons/react'
 import { format } from 'date-fns'
 import { id } from 'date-fns/locale'
 import { useState } from 'react'
@@ -12,40 +12,88 @@ import { Button } from '@/components/atoms/ui/button'
 import { Card, CardContent } from '@/components/atoms/ui/card'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/atoms/ui/dialog'
 import { Input } from '@/components/atoms/ui/input'
-import { Textarea } from '@/components/atoms/ui/textarea'
-import { Container } from '@/components/templates/container'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/atoms/ui/select'
+
+// Master data produk
+const PRODUCTS = [
+  { id: 'prod-001', name: 'Sambal Bawang Original 250ml' },
+  { id: 'prod-002', name: 'Sambal Bawang Pedas 250ml' },
+  { id: 'prod-003', name: 'Saus Tomat Premium 1L' },
+  { id: 'prod-004', name: 'Saus Tomat Premium 500ml' },
+  { id: 'prod-005', name: 'Sambal Ijo Pedas 250ml' },
+  { id: 'prod-006', name: 'Kecap Manis 600ml' }
+]
+
+interface WeeklyScheduleEntry {
+  day: 'Senin' | 'Selasa' | 'Rabu' | 'Kamis' | 'Jumat' | 'Sabtu'
+  divisi1Product: string
+  divisi1Batch: number
+  divisi2Product: string
+  divisi2Batch: number
+}
 
 interface ProductionPlan {
   id: string
-  productId: string
-  productName: string
-  quantity: number
-  productionDate: Date
-  status: 'draft' | 'approved' | 'in-production' | 'completed'
+  weekNumber: number
+  startDate: Date
+  revision: number
   createdBy: string
-  notes?: string
+  schedule: WeeklyScheduleEntry[]
+  status: 'draft' | 'approved' | 'in-production' | 'completed'
 }
 
 const mockPlans: ProductionPlan[] = [
   {
     id: 'plan-001',
-    productId: 'prod-001',
-    productName: 'Sambal Bawang Original',
-    quantity: 500,
-    productionDate: new Date(),
-    status: 'in-production',
+    weekNumber: 1,
+    startDate: new Date('2026-01-06'),
+    revision: 0,
     createdBy: 'Supervisor A',
-    notes: 'Order reguler mingguan'
-  },
-  {
-    id: 'plan-002',
-    productId: 'prod-006',
-    productName: 'Saus Tomat Premium 1L',
-    quantity: 800,
-    productionDate: new Date(Date.now() + 86400000),
-    status: 'approved',
-    createdBy: 'Supervisor B',
-    notes: 'Order besar client PT ABC'
+    status: 'in-production',
+    schedule: [
+      {
+        day: 'Senin',
+        divisi1Product: 'Sambal Bawang Original 250ml',
+        divisi1Batch: 10,
+        divisi2Product: 'Saus Tomat Premium 1L',
+        divisi2Batch: 8
+      },
+      {
+        day: 'Selasa',
+        divisi1Product: 'Sambal Bawang Original 250ml',
+        divisi1Batch: 12,
+        divisi2Product: 'Saus Tomat Premium 500ml',
+        divisi2Batch: 10
+      },
+      {
+        day: 'Rabu',
+        divisi1Product: 'Sambal Ijo Pedas 250ml',
+        divisi1Batch: 8,
+        divisi2Product: 'Kecap Manis 600ml',
+        divisi2Batch: 6
+      },
+      {
+        day: 'Kamis',
+        divisi1Product: 'Sambal Bawang Pedas 250ml',
+        divisi1Batch: 10,
+        divisi2Product: 'Saus Tomat Premium 1L',
+        divisi2Batch: 8
+      },
+      {
+        day: 'Jumat',
+        divisi1Product: 'Sambal Bawang Original 250ml',
+        divisi1Batch: 15,
+        divisi2Product: 'Saus Tomat Premium 500ml',
+        divisi2Batch: 12
+      },
+      {
+        day: 'Sabtu',
+        divisi1Product: 'Kecap Manis 600ml',
+        divisi1Batch: 5,
+        divisi2Product: 'Sambal Ijo Pedas 250ml',
+        divisi2Batch: 6
+      }
+    ]
   }
 ]
 
@@ -61,50 +109,77 @@ export default function ProductionPlanningPage() {
   const [plans, setPlans] = useState(mockPlans)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [formData, setFormData] = useState({
-    productName: '',
-    quantity: '',
-    productionDate: '',
-    notes: ''
+    startDate: '',
+    weekNumber: '1',
+    revision: '0'
   })
 
+  const [schedule, setSchedule] = useState<WeeklyScheduleEntry[]>([
+    { day: 'Senin', divisi1Product: '', divisi1Batch: 0, divisi2Product: '', divisi2Batch: 0 },
+    { day: 'Selasa', divisi1Product: '', divisi1Batch: 0, divisi2Product: '', divisi2Batch: 0 },
+    { day: 'Rabu', divisi1Product: '', divisi1Batch: 0, divisi2Product: '', divisi2Batch: 0 },
+    { day: 'Kamis', divisi1Product: '', divisi1Batch: 0, divisi2Product: '', divisi2Batch: 0 },
+    { day: 'Jumat', divisi1Product: '', divisi1Batch: 0, divisi2Product: '', divisi2Batch: 0 },
+    { day: 'Sabtu', divisi1Product: '', divisi1Batch: 0, divisi2Product: '', divisi2Batch: 0 }
+  ])
+
+  const updateSchedule = (index: number, field: keyof WeeklyScheduleEntry, value: string | number) => {
+    const newSchedule = [...schedule]
+    newSchedule[index] = { ...newSchedule[index], [field]: value }
+    setSchedule(newSchedule)
+  }
+
   const handleCreatePlan = () => {
-    if (!formData.productName || !formData.quantity || !formData.productionDate) {
-      toast.error('Mohon lengkapi data plan')
+    if (!formData.startDate) {
+      toast.error('Mohon pilih tanggal mulai jadwal')
+
+      return
+    }
+
+    // Validate at least one entry
+    const hasData = schedule.some((s) => s.divisi1Product || s.divisi2Product)
+    if (!hasData) {
+      toast.error('Mohon isi minimal satu produk di jadwal')
 
       return
     }
 
     const newPlan: ProductionPlan = {
       id: `plan-${Date.now()}`,
-      productId: `prod-${Date.now()}`,
-      productName: formData.productName,
-      quantity: parseInt(formData.quantity),
-      productionDate: new Date(formData.productionDate),
-      status: 'draft',
+      weekNumber: parseInt(formData.weekNumber),
+      startDate: new Date(formData.startDate),
+      revision: parseInt(formData.revision),
       createdBy: user?.name || 'User',
-      notes: formData.notes
+      schedule: schedule.filter((s) => s.divisi1Product || s.divisi2Product),
+      status: 'draft'
     }
 
     setPlans([newPlan, ...plans])
     setIsDialogOpen(false)
-    setFormData({ productName: '', quantity: '', productionDate: '', notes: '' })
-    toast.success('Plan produksi berhasil dibuat!')
+    setFormData({ startDate: '', weekNumber: '1', revision: '0' })
+    setSchedule([
+      { day: 'Senin', divisi1Product: '', divisi1Batch: 0, divisi2Product: '', divisi2Batch: 0 },
+      { day: 'Selasa', divisi1Product: '', divisi1Batch: 0, divisi2Product: '', divisi2Batch: 0 },
+      { day: 'Rabu', divisi1Product: '', divisi1Batch: 0, divisi2Product: '', divisi2Batch: 0 },
+      { day: 'Kamis', divisi1Product: '', divisi1Batch: 0, divisi2Product: '', divisi2Batch: 0 },
+      { day: 'Jumat', divisi1Product: '', divisi1Batch: 0, divisi2Product: '', divisi2Batch: 0 },
+      { day: 'Sabtu', divisi1Product: '', divisi1Batch: 0, divisi2Product: '', divisi2Batch: 0 }
+    ])
+    toast.success('Rencana produksi berhasil dibuat!')
   }
 
   const handleDeletePlan = (id: string) => {
     setPlans(plans.filter((p) => p.id !== id))
-    toast.success('Plan produksi dihapus')
+    toast.success('Rencana produksi dihapus')
   }
 
   if (!user) return null
   const isAuthorized = user.role === 'PRODUCTION' || user.role === 'ADMIN'
   if (!isAuthorized) {
     return (
-      <Container>
-        <div className="py-20 text-center">
-          <p className="text-slate-500">Anda tidak memiliki akses ke halaman ini.</p>
-        </div>
-      </Container>
+      <div className="py-20 text-center">
+        <p className="text-slate-500">Anda tidak memiliki akses ke halaman ini.</p>
+      </div>
     )
   }
 
@@ -112,12 +187,12 @@ export default function ProductionPlanningPage() {
     <div className="min-h-screen bg-slate-50">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Plan Produksi</h1>
-          <p className="text-sm text-slate-500">Kelola rencana produksi dan target</p>
+          <h1 className="text-2xl font-bold text-slate-900">Rencana Produksi Mingguan</h1>
+          <p className="text-sm text-slate-500">Form perencanaan produksi per divisi per hari</p>
         </div>
         <Button variant="default" onClick={() => setIsDialogOpen(true)} className="gap-2">
           <Plus size={16} weight="bold" />
-          Buat Plan Baru
+          Buat Rencana Baru
         </Button>
       </div>
 
@@ -125,31 +200,21 @@ export default function ProductionPlanningPage() {
       <div className="space-y-4">
         {plans.map((plan) => (
           <Card key={plan.id}>
-            <CardContent className="p-4">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                <div className="flex-1">
-                  <div className="mb-2 flex flex-wrap items-center gap-2">
-                    <h3 className="font-semibold text-slate-900">{plan.productName}</h3>
+            <CardContent className="p-6">
+              <div className="mb-4 flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <div className="mb-2 flex items-center gap-3">
+                    <h3 className="text-lg font-bold text-slate-900">
+                      Minggu {plan.weekNumber} - {format(plan.startDate, 'dd MMM yyyy', { locale: id })}
+                    </h3>
                     <Badge variant="outline" className={statusConfig[plan.status].color}>
                       {statusConfig[plan.status].label}
                     </Badge>
                   </div>
-                  <div className="grid gap-2 text-sm text-slate-600 sm:grid-cols-2">
-                    <div>
-                      <span className="text-slate-500">Target Qty:</span> {plan.quantity} unit
-                    </div>
-                    <div>
-                      <span className="text-slate-500">Tanggal:</span>{' '}
-                      {format(plan.productionDate, 'dd MMM yyyy', { locale: id })}
-                    </div>
-                    <div>
-                      <span className="text-slate-500">Dibuat oleh:</span> {plan.createdBy}
-                    </div>
-                    {plan.notes && (
-                      <div className="sm:col-span-2">
-                        <span className="text-slate-500">Catatan:</span> {plan.notes}
-                      </div>
-                    )}
+                  <div className="flex gap-4 text-sm text-slate-600">
+                    <span>Revisi: {plan.revision}</span>
+                    <span>•</span>
+                    <span>Dibuat: {plan.createdBy}</span>
                   </div>
                 </div>
                 <div className="flex gap-2">
@@ -161,6 +226,41 @@ export default function ProductionPlanningPage() {
                   </Button>
                 </div>
               </div>
+
+              {/* Schedule Table */}
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse text-sm">
+                  <thead>
+                    <tr className="border-b-2 border-slate-300 bg-slate-50">
+                      <th className="border border-slate-300 px-3 py-2 text-left font-semibold">Hari</th>
+                      <th className="border border-slate-300 px-3 py-2 text-center font-semibold" colSpan={2}>
+                        Divisi I
+                      </th>
+                      <th className="border border-slate-300 px-3 py-2 text-center font-semibold" colSpan={2}>
+                        Divisi II
+                      </th>
+                    </tr>
+                    <tr className="border-b border-slate-300 bg-slate-50">
+                      <th className="border border-slate-300 px-3 py-2"></th>
+                      <th className="border border-slate-300 px-3 py-2 text-center text-xs font-medium">Produk</th>
+                      <th className="border border-slate-300 px-3 py-2 text-center text-xs font-medium">Jml Batch</th>
+                      <th className="border border-slate-300 px-3 py-2 text-center text-xs font-medium">Produk</th>
+                      <th className="border border-slate-300 px-3 py-2 text-center text-xs font-medium">Jml Batch</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {plan.schedule.map((entry, idx) => (
+                      <tr key={idx} className="hover:bg-slate-50">
+                        <td className="border border-slate-300 px-3 py-2 font-medium">{entry.day}</td>
+                        <td className="border border-slate-300 px-3 py-2">{entry.divisi1Product}</td>
+                        <td className="border border-slate-300 px-3 py-2 text-center">{entry.divisi1Batch}</td>
+                        <td className="border border-slate-300 px-3 py-2">{entry.divisi2Product}</td>
+                        <td className="border border-slate-300 px-3 py-2 text-center">{entry.divisi2Batch}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </CardContent>
           </Card>
         ))}
@@ -168,44 +268,133 @@ export default function ProductionPlanningPage() {
 
       {/* Create Plan Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-h-[90vh] max-w-5xl overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Buat Plan Produksi Baru</DialogTitle>
+            <DialogTitle>Buat Rencana Produksi Mingguan</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">Nama Produk</label>
-              <Input
-                value={formData.productName}
-                onChange={(e) => setFormData({ ...formData, productName: e.target.value })}
-                placeholder="Contoh: Sambal Bawang Original"
-              />
+          <div className="space-y-6 py-4">
+            {/* Header Info */}
+            <div className="grid grid-cols-3 gap-4 rounded-lg border border-slate-200 bg-slate-50 p-4">
+              <div>
+                <label className="mb-2 block text-sm font-medium text-slate-700">Tanggal Mulai Jadwal</label>
+                <Input
+                  type="date"
+                  value={formData.startDate}
+                  onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                />
+              </div>
+              <div>
+                <label className="mb-2 block text-sm font-medium text-slate-700">Minggu Ke</label>
+                <Input
+                  type="number"
+                  value={formData.weekNumber}
+                  onChange={(e) => setFormData({ ...formData, weekNumber: e.target.value })}
+                  min="1"
+                />
+              </div>
+              <div>
+                <label className="mb-2 block text-sm font-medium text-slate-700">Revisi</label>
+                <Input
+                  type="number"
+                  value={formData.revision}
+                  onChange={(e) => setFormData({ ...formData, revision: e.target.value })}
+                  min="0"
+                />
+              </div>
             </div>
+
+            {/* Weekly Schedule Table */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">Target Quantity</label>
-              <Input
-                type="number"
-                value={formData.quantity}
-                onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
-                placeholder="Contoh: 500"
-              />
-            </div>
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">Tanggal Produksi</label>
-              <Input
-                type="date"
-                value={formData.productionDate}
-                onChange={(e) => setFormData({ ...formData, productionDate: e.target.value })}
-              />
-            </div>
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">Catatan (Opsional)</label>
-              <Textarea
-                value={formData.notes}
-                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                placeholder="Catatan tambahan..."
-                className="min-h-[80px]"
-              />
+              <h4 className="mb-3 flex items-center gap-2 font-semibold text-slate-900">
+                <CalendarBlank size={18} weight="duotone" />
+                Jadwal Produksi Per Hari
+              </h4>
+              <div className="overflow-x-auto rounded-lg border border-slate-200">
+                <table className="w-full border-collapse text-sm">
+                  <thead>
+                    <tr className="border-b-2 border-slate-300 bg-slate-100">
+                      <th className="border-r border-slate-300 px-3 py-2 text-left font-semibold">Hari</th>
+                      <th className="border-r border-slate-300 px-3 py-2 text-center font-semibold" colSpan={2}>
+                        Divisi I
+                      </th>
+                      <th className="px-3 py-2 text-center font-semibold" colSpan={2}>
+                        Divisi II
+                      </th>
+                    </tr>
+                    <tr className="border-b border-slate-300 bg-slate-50">
+                      <th className="border-r border-slate-300 px-3 py-2"></th>
+                      <th className="border-r border-slate-300 px-3 py-2 text-center text-xs font-medium">Produk</th>
+                      <th className="border-r border-slate-300 px-3 py-2 text-center text-xs font-medium">Jml Batch</th>
+                      <th className="border-r border-slate-300 px-3 py-2 text-center text-xs font-medium">Produk</th>
+                      <th className="px-3 py-2 text-center text-xs font-medium">Jml Batch</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {schedule.map((entry, idx) => (
+                      <tr key={idx} className="hover:bg-slate-50">
+                        <td className="border-t border-r border-slate-300 px-3 py-2 font-medium">{entry.day}</td>
+                        <td className="border-t border-r border-slate-300 px-2 py-2">
+                          <Select
+                            value={entry.divisi1Product}
+                            onValueChange={(val) => updateSchedule(idx, 'divisi1Product', val)}
+                          >
+                            <SelectTrigger className="h-9 text-xs">
+                              <SelectValue placeholder="Pilih produk..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {PRODUCTS.map((prod) => (
+                                <SelectItem key={prod.id} value={prod.name} className="text-xs">
+                                  {prod.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </td>
+                        <td className="border-t border-r border-slate-300 px-2 py-2">
+                          <Input
+                            type="number"
+                            value={entry.divisi1Batch || ''}
+                            onChange={(e) => updateSchedule(idx, 'divisi1Batch', parseInt(e.target.value) || 0)}
+                            className="h-9 text-center text-xs"
+                            min="0"
+                            placeholder="0"
+                          />
+                        </td>
+                        <td className="border-t border-r border-slate-300 px-2 py-2">
+                          <Select
+                            value={entry.divisi2Product}
+                            onValueChange={(val) => updateSchedule(idx, 'divisi2Product', val)}
+                          >
+                            <SelectTrigger className="h-9 text-xs">
+                              <SelectValue placeholder="Pilih produk..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {PRODUCTS.map((prod) => (
+                                <SelectItem key={prod.id} value={prod.name} className="text-xs">
+                                  {prod.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </td>
+                        <td className="border-t border-slate-300 px-2 py-2">
+                          <Input
+                            type="number"
+                            value={entry.divisi2Batch || ''}
+                            onChange={(e) => updateSchedule(idx, 'divisi2Batch', parseInt(e.target.value) || 0)}
+                            className="h-9 text-center text-xs"
+                            min="0"
+                            placeholder="0"
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <p className="mt-2 text-xs text-slate-500">
+                * Pilih produk dari dropdown dan isi jumlah batch untuk setiap divisi per hari
+              </p>
             </div>
           </div>
           <DialogFooter className="gap-2">
@@ -213,7 +402,7 @@ export default function ProductionPlanningPage() {
               Batal
             </Button>
             <Button variant="default" onClick={handleCreatePlan}>
-              Buat Plan
+              Simpan Rencana
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -1,5 +1,6 @@
 'use client'
 
+import { useB2BStore } from '@/stores/use-b2b-store'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Handshake, Factory, Truck, Notebook, CheckCircle } from '@phosphor-icons/react'
 import { motion } from 'framer-motion'
@@ -16,6 +17,7 @@ import { Container } from '@/components/templates/container'
 
 export default function B2BPage() {
   const [isSuccessOpen, setIsSuccessOpen] = useState(false)
+  const { addInquiry } = useB2BStore()
 
   const formSchema = z.object({
     companyName: z.string().min(2, 'Nama perusahaan wajib diisi'),
@@ -37,12 +39,12 @@ export default function B2BPage() {
   })
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.info(values)
-    // Simulate API call
-    setTimeout(() => {
-      setIsSuccessOpen(true)
-      form.reset()
-    }, 500)
+    // Save to store
+    addInquiry(values)
+
+    // Show success dialog
+    setIsSuccessOpen(true)
+    form.reset()
   }
 
   const benefits = [

@@ -172,7 +172,7 @@ export default function StockSyncPage() {
         </div>
         <div className="flex gap-2">
           {isAdmin && (
-            <Button onClick={() => setShowConfirmDialog(true)} disabled={isLoading} className="gap-2">
+            <Button variant="default" onClick={() => setShowConfirmDialog(true)} disabled={isLoading} className="gap-2">
               {isLoading ? <Spinner size={16} className="animate-spin" /> : <ArrowsClockwise size={16} />}
               Sync All
             </Button>

@@ -68,9 +68,9 @@ const MENU_ITEMS: MenuItem[] = [
   { label: 'Laporan & Analisa', href: '/dashboard/qc-lab/reports', icon: ChartBar, roles: ['QC'] },
 
   // PRODUCTION
-  { label: 'Jadwal Produksi', href: '/dashboard/production/schedule', icon: CalendarBlank, roles: ['PRODUCTION', 'ADMIN'] },
-  { label: 'Plan Produksi', href: '/dashboard/production/planning', icon: ClipboardText, roles: ['PRODUCTION', 'ADMIN'] },
-  { label: 'SOP & Resep', href: '/dashboard/production/sop', icon: BookOpen, roles: ['PRODUCTION', 'ADMIN'] },
+  { label: 'Jadwal Produksi', href: '/dashboard/production/schedule', icon: CalendarBlank, roles: ['PRODUCTION'] },
+  { label: 'Plan Produksi', href: '/dashboard/production/planning', icon: ClipboardText, roles: ['PRODUCTION'] },
+  { label: 'SOP & Resep', href: '/dashboard/production/sop', icon: BookOpen, roles: ['PRODUCTION'] },
 
   // KNOWLEDGE (ALL)
   { label: 'Pustaka Ilmu', href: '/dashboard/knowledge', icon: BookOpen, roles: ['ALL'] }
