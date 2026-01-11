@@ -3,6 +3,13 @@ import { persist } from 'zustand/middleware'
 
 export type DocumentCategory = 'SOP' | 'LESSON_LEARNED' | 'GENERAL' | 'CONFIDENTIAL' | 'POLICY' | 'TECHNICAL'
 
+export interface LessonLearnedStructure {
+  problem: string
+  rootCause: string
+  solution: string
+  prevention: string
+}
+
 export interface KnowledgeDocument {
   id: string
   title: string
@@ -11,6 +18,9 @@ export interface KnowledgeDocument {
   author: string
   date: string
   allowedRoles: string[]
+  images?: string[]
+  tags?: string[]
+  structuredContent?: LessonLearnedStructure
 }
 
 interface KnowledgeStore {

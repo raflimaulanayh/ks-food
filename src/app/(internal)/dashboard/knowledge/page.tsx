@@ -16,6 +16,9 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/atoms/ui/dialog'
+import { ImageUpload } from '@/components/molecules/image-upload'
+import { RichTextEditor } from '@/components/molecules/rich-text-editor'
+import { TagInput } from '@/components/molecules/tag-input'
 
 import { cn } from '@/utils/cn'
 
@@ -41,6 +44,14 @@ export default function KnowledgePage() {
   const [formCategory, setFormCategory] = useState<DocumentCategory>('SOP')
   const [formContent, setFormContent] = useState('')
   const [formAuthor, setFormAuthor] = useState('')
+  const [formImages, setFormImages] = useState<string[]>([])
+  const [formTags, setFormTags] = useState<string[]>([])
+
+  // Structured content for Lesson Learned
+  const [formProblem, setFormProblem] = useState('')
+  const [formRootCause, setFormRootCause] = useState('')
+  const [formSolution, setFormSolution] = useState('')
+  const [formPrevention, setFormPrevention] = useState('')
 
   // Chat state
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -76,6 +87,21 @@ export default function KnowledgePage() {
         setFormCategory(doc.category)
         setFormContent(doc.content)
         setFormAuthor(doc.author)
+        setFormImages(doc.images || [])
+        setFormTags(doc.tags || [])
+
+        // Populate structured content if it's a Lesson Learned
+        if (doc.structuredContent) {
+          setFormProblem(doc.structuredContent.problem)
+          setFormRootCause(doc.structuredContent.rootCause)
+          setFormSolution(doc.structuredContent.solution)
+          setFormPrevention(doc.structuredContent.prevention)
+        } else {
+          setFormProblem('')
+          setFormRootCause('')
+          setFormSolution('')
+          setFormPrevention('')
+        }
       }
     } else {
       setEditingDocId(null)
@@ -83,34 +109,62 @@ export default function KnowledgePage() {
       setFormCategory('SOP')
       setFormContent('')
       setFormAuthor('')
+      setFormImages([])
+      setFormTags([])
+      setFormProblem('')
+      setFormRootCause('')
+      setFormSolution('')
+      setFormPrevention('')
     }
     setShowFormDialog(true)
   }
 
   const handleSaveDocument = () => {
-    if (!formTitle.trim() || !formContent.trim() || !formAuthor.trim()) {
-      toast.error('Mohon lengkapi semua field')
+    if (!formTitle.trim() || !formAuthor.trim()) {
+      toast.error('Mohon lengkapi Judul dan Penulis')
 
       return
     }
 
+    // Validate based on category
+    if (formCategory === 'LESSON_LEARNED') {
+      if (!formProblem.trim() || !formSolution.trim()) {
+        toast.error('Untuk Lesson Learned, mohon isi minimal Problem dan Solution')
+
+        return
+      }
+    } else {
+      if (!formContent.trim()) {
+        toast.error('Mohon isi konten dokumen')
+
+        return
+      }
+    }
+
+    const documentData = {
+      title: formTitle,
+      category: formCategory,
+      content: formContent,
+      author: formAuthor,
+      allowedRoles: formCategory === 'CONFIDENTIAL' ? ['PIMPINAN'] : ['ALL'],
+      images: formImages.length > 0 ? formImages : undefined,
+      tags: formTags.length > 0 ? formTags : undefined,
+      structuredContent:
+        formCategory === 'LESSON_LEARNED'
+          ? {
+              problem: formProblem,
+              rootCause: formRootCause,
+              solution: formSolution,
+              prevention: formPrevention
+            }
+          : undefined
+    }
+
     if (editingDocId) {
-      updateDocument(editingDocId, {
-        title: formTitle,
-        category: formCategory,
-        content: formContent,
-        author: formAuthor,
-        allowedRoles: formCategory === 'CONFIDENTIAL' ? ['PIMPINAN'] : ['ALL']
-      })
+      updateDocument(editingDocId, documentData)
       toast.success('Dokumen berhasil diperbarui')
     } else {
-      addDocument({
-        title: formTitle,
-        category: formCategory,
-        content: formContent,
-        author: formAuthor,
-        allowedRoles: formCategory === 'CONFIDENTIAL' ? ['PIMPINAN'] : ['ALL']
-      })
+      addDocument(documentData)
       toast.success('Dokumen berhasil ditambahkan')
     }
 
@@ -185,6 +239,20 @@ export default function KnowledgePage() {
         if (contentLower.includes(keyword)) {
           score += 5
         }
+
+        // Search in tags
+        if (doc.tags && doc.tags.some((tag) => tag.includes(keyword))) {
+          score += 30
+        }
+
+        // Search in structured content
+        if (doc.structuredContent) {
+          const structuredText =
+            `${doc.structuredContent.problem} ${doc.structuredContent.rootCause} ${doc.structuredContent.solution} ${doc.structuredContent.prevention}`.toLowerCase()
+          if (structuredText.includes(keyword)) {
+            score += 15
+          }
+        }
       })
 
       // Boost score for lesson learned if user asks about it
@@ -204,11 +272,18 @@ export default function KnowledgePage() {
     // If found relevant documents, return the most relevant one
     if (relevantDocs.length > 0) {
       const bestMatch = relevantDocs[0]
-      // Replace literal \n with actual newlines
-      const cleanContent = bestMatch.content.replace(/\\n/g, '\n')
-      const preview = cleanContent.substring(0, 300)
 
-      return `✅ Saya menemukan dokumen terkait: **${bestMatch.title}**\n\n${preview}...\n\n💡 Lihat dokumen lengkap di list untuk detail selengkapnya!`
+      // Format response based on document type
+      if (bestMatch.structuredContent) {
+        // Structured format for Lesson Learned
+        return `✅ **${bestMatch.title}**\n\n❌ **Problem:**\n${bestMatch.structuredContent.problem}\n\n💡 **Solution:**\n${bestMatch.structuredContent.solution}\n\n🔍 **Root Cause:**\n${bestMatch.structuredContent.rootCause || 'Tidak disebutkan'}\n\n🛡️ **Prevention:**\n${bestMatch.structuredContent.prevention || 'Tidak disebutkan'}\n\n📌 Lihat dokumen lengkap di list untuk detail selengkapnya!`
+      } else {
+        // Regular format for other documents
+        const cleanContent = bestMatch.content.replace(/\\n/g, '\n').replace(/<[^>]*>/g, '')
+        const preview = cleanContent.substring(0, 300)
+
+        return `✅ Saya menemukan dokumen terkait: **${bestMatch.title}**\n\n${preview}...\n\n💡 Lihat dokumen lengkap di list untuk detail selengkapnya!`
+      }
     }
 
     // Fallback to keyword-based responses
@@ -418,7 +493,44 @@ export default function KnowledgePage() {
                     </button>
                   </div>
                 </div>
+
+                {/* Document Content Preview */}
                 <p className="line-clamp-2 text-xs text-slate-600">{doc.content}</p>
+
+                {/* Tags Display */}
+                {doc.tags && doc.tags.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-1">
+                    {doc.tags.slice(0, 3).map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                    {doc.tags.length > 3 && (
+                      <span className="rounded-full bg-slate-200 px-2 py-0.5 text-[10px] font-medium text-slate-600">
+                        +{doc.tags.length - 3}
+                      </span>
+                    )}
+                  </div>
+                )}
+
+                {/* Image Thumbnails */}
+                {doc.images && doc.images.length > 0 && (
+                  <div className="mt-2 flex gap-1">
+                    {doc.images.slice(0, 3).map((img, idx) => (
+                      <div key={idx} className="h-12 w-12 overflow-hidden rounded border border-slate-200">
+                        <img src={img} alt={`${doc.title} ${idx + 1}`} className="h-full w-full object-cover" />
+                      </div>
+                    ))}
+                    {doc.images.length > 3 && (
+                      <div className="flex h-12 w-12 items-center justify-center rounded border border-slate-200 bg-slate-100 text-[10px] font-semibold text-slate-600">
+                        +{doc.images.length - 3}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             ))
           )}
@@ -499,7 +611,7 @@ export default function KnowledgePage() {
 
       {/* Form Dialog */}
       <Dialog open={showFormDialog} onOpenChange={setShowFormDialog}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editingDocId ? 'Edit Dokumen' : 'Tambah Dokumen Baru'}</DialogTitle>
             <DialogDescription>
@@ -537,19 +649,87 @@ export default function KnowledgePage() {
               </select>
             </div>
 
+            {/* Conditional Form Based on Category */}
+            {formCategory === 'LESSON_LEARNED' ? (
+              <>
+                {/* Structured Form for Lesson Learned */}
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
+                    Problem/Masalah <span className="text-secondary">*</span>
+                  </label>
+                  <textarea
+                    value={formProblem}
+                    onChange={(e) => setFormProblem(e.target.value)}
+                    placeholder="Apa masalah yang terjadi?"
+                    rows={3}
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-700">Root Cause/Penyebab</label>
+                  <textarea
+                    value={formRootCause}
+                    onChange={(e) => setFormRootCause(e.target.value)}
+                    placeholder="Apa penyebab utama masalah ini?"
+                    rows={3}
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
+                    Solution/Solusi <span className="text-secondary">*</span>
+                  </label>
+                  <textarea
+                    value={formSolution}
+                    onChange={(e) => setFormSolution(e.target.value)}
+                    placeholder="Bagaimana solusi yang diterapkan?"
+                    rows={3}
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-700">Prevention/Pencegahan</label>
+                  <textarea
+                    value={formPrevention}
+                    onChange={(e) => setFormPrevention(e.target.value)}
+                    placeholder="Bagaimana mencegah masalah ini terulang?"
+                    rows={3}
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
+                  />
+                </div>
+              </>
+            ) : (
+              <>
+                {/* Rich Text Editor for Other Categories */}
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
+                    Konten <span className="text-secondary">*</span>
+                  </label>
+                  <RichTextEditor
+                    value={formContent}
+                    onChange={setFormContent}
+                    placeholder="Tulis konten dokumen di sini..."
+                  />
+                </div>
+              </>
+            )}
+
+            {/* Image Upload - Available for All Categories */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                Konten <span className="text-secondary">*</span>
-              </label>
-              <textarea
-                value={formContent}
-                onChange={(e) => setFormContent(e.target.value)}
-                placeholder="Tulis konten dokumen di sini..."
-                rows={8}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
-              />
+              <label className="mb-2 block text-sm font-medium text-slate-700">Gambar Pendukung (Opsional)</label>
+              <ImageUpload images={formImages} onImagesChange={setFormImages} maxImages={5} />
             </div>
 
+            {/* Tags Input - Available for All Categories */}
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-700">Tags/Kata Kunci (Opsional)</label>
+              <TagInput tags={formTags} onTagsChange={setFormTags} placeholder="Tambah tag untuk memudahkan pencarian..." />
+            </div>
+
+            {/* Author Field */}
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-700">
                 Penulis/Author <span className="text-secondary">*</span>

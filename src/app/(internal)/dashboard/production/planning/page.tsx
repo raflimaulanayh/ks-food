@@ -1,10 +1,12 @@
 'use client'
 
 import { useAuthStore } from '@/stores/use-auth-store'
-import { CalendarBlank, Plus, Trash } from '@phosphor-icons/react'
+import { useBOMStore, type MaterialRequirement } from '@/stores/use-bom-store'
+import { useStockStore } from '@/stores/use-stock-store'
+import { CalendarBlank, Plus, Trash, Package } from '@phosphor-icons/react'
 import { format } from 'date-fns'
 import { id } from 'date-fns/locale'
-import { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 
 import { Badge } from '@/components/atoms/ui/badge'
@@ -13,6 +15,8 @@ import { Card, CardContent } from '@/components/atoms/ui/card'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/atoms/ui/dialog'
 import { Input } from '@/components/atoms/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/atoms/ui/select'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/atoms/ui/tabs'
+import { MaterialRequirementCard } from '@/components/molecules/material-requirement-card'
 
 // Master data produk
 const PRODUCTS = [
@@ -24,12 +28,15 @@ const PRODUCTS = [
   { id: 'prod-006', name: 'Kecap Manis 600ml' }
 ]
 
-interface WeeklyScheduleEntry {
-  day: 'Senin' | 'Selasa' | 'Rabu' | 'Kamis' | 'Jumat' | 'Sabtu'
-  divisi1Product: string
-  divisi1Batch: number
-  divisi2Product: string
-  divisi2Batch: number
+const DIVISIONS = ['Divisi I', 'Divisi II', 'Divisi III'] as const
+const DAYS = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'] as const
+
+interface ProductionEntry {
+  id: string
+  day: (typeof DAYS)[number]
+  division: (typeof DIVISIONS)[number]
+  product: string
+  batch: number
 }
 
 interface ProductionPlan {
@@ -38,7 +45,7 @@ interface ProductionPlan {
   startDate: Date
   revision: number
   createdBy: string
-  schedule: WeeklyScheduleEntry[]
+  entries: ProductionEntry[]
   status: 'draft' | 'approved' | 'in-production' | 'completed'
 }
 
@@ -50,48 +57,90 @@ const mockPlans: ProductionPlan[] = [
     revision: 0,
     createdBy: 'Supervisor A',
     status: 'in-production',
-    schedule: [
+    entries: [
       {
+        id: 'entry-1',
         day: 'Senin',
-        divisi1Product: 'Sambal Bawang Original 250ml',
-        divisi1Batch: 10,
-        divisi2Product: 'Saus Tomat Premium 1L',
-        divisi2Batch: 8
+        division: 'Divisi I',
+        product: 'Sambal Bawang Original 250ml',
+        batch: 10
       },
       {
+        id: 'entry-2',
+        day: 'Senin',
+        division: 'Divisi II',
+        product: 'Saus Tomat Premium 1L',
+        batch: 8
+      },
+      {
+        id: 'entry-3',
         day: 'Selasa',
-        divisi1Product: 'Sambal Bawang Original 250ml',
-        divisi1Batch: 12,
-        divisi2Product: 'Saus Tomat Premium 500ml',
-        divisi2Batch: 10
+        division: 'Divisi I',
+        product: 'Sambal Bawang Original 250ml',
+        batch: 12
       },
       {
+        id: 'entry-4',
+        day: 'Selasa',
+        division: 'Divisi II',
+        product: 'Saus Tomat Premium 500ml',
+        batch: 10
+      },
+      {
+        id: 'entry-5',
         day: 'Rabu',
-        divisi1Product: 'Sambal Ijo Pedas 250ml',
-        divisi1Batch: 8,
-        divisi2Product: 'Kecap Manis 600ml',
-        divisi2Batch: 6
+        division: 'Divisi I',
+        product: 'Sambal Ijo Pedas 250ml',
+        batch: 8
       },
       {
+        id: 'entry-6',
+        day: 'Rabu',
+        division: 'Divisi II',
+        product: 'Kecap Manis 600ml',
+        batch: 6
+      },
+      {
+        id: 'entry-7',
         day: 'Kamis',
-        divisi1Product: 'Sambal Bawang Pedas 250ml',
-        divisi1Batch: 10,
-        divisi2Product: 'Saus Tomat Premium 1L',
-        divisi2Batch: 8
+        division: 'Divisi I',
+        product: 'Sambal Bawang Pedas 250ml',
+        batch: 10
       },
       {
+        id: 'entry-8',
+        day: 'Kamis',
+        division: 'Divisi II',
+        product: 'Saus Tomat Premium 1L',
+        batch: 8
+      },
+      {
+        id: 'entry-9',
         day: 'Jumat',
-        divisi1Product: 'Sambal Bawang Original 250ml',
-        divisi1Batch: 15,
-        divisi2Product: 'Saus Tomat Premium 500ml',
-        divisi2Batch: 12
+        division: 'Divisi I',
+        product: 'Sambal Bawang Original 250ml',
+        batch: 15
       },
       {
+        id: 'entry-10',
+        day: 'Jumat',
+        division: 'Divisi II',
+        product: 'Saus Tomat Premium 500ml',
+        batch: 12
+      },
+      {
+        id: 'entry-11',
         day: 'Sabtu',
-        divisi1Product: 'Kecap Manis 600ml',
-        divisi1Batch: 5,
-        divisi2Product: 'Sambal Ijo Pedas 250ml',
-        divisi2Batch: 6
+        division: 'Divisi I',
+        product: 'Kecap Manis 600ml',
+        batch: 5
+      },
+      {
+        id: 'entry-12',
+        day: 'Sabtu',
+        division: 'Divisi II',
+        product: 'Sambal Ijo Pedas 250ml',
+        batch: 6
       }
     ]
   }
@@ -106,27 +155,58 @@ const statusConfig = {
 
 export default function ProductionPlanningPage() {
   const { user } = useAuthStore()
+  const { calculateMaterialRequirements } = useBOMStore()
+  const { items: stockItems } = useStockStore()
   const [plans, setPlans] = useState(mockPlans)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [editingPlanId, setEditingPlanId] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     startDate: '',
     weekNumber: '1',
     revision: '0'
   })
 
-  const [schedule, setSchedule] = useState<WeeklyScheduleEntry[]>([
-    { day: 'Senin', divisi1Product: '', divisi1Batch: 0, divisi2Product: '', divisi2Batch: 0 },
-    { day: 'Selasa', divisi1Product: '', divisi1Batch: 0, divisi2Product: '', divisi2Batch: 0 },
-    { day: 'Rabu', divisi1Product: '', divisi1Batch: 0, divisi2Product: '', divisi2Batch: 0 },
-    { day: 'Kamis', divisi1Product: '', divisi1Batch: 0, divisi2Product: '', divisi2Batch: 0 },
-    { day: 'Jumat', divisi1Product: '', divisi1Batch: 0, divisi2Product: '', divisi2Batch: 0 },
-    { day: 'Sabtu', divisi1Product: '', divisi1Batch: 0, divisi2Product: '', divisi2Batch: 0 }
+  const [entries, setEntries] = useState<ProductionEntry[]>([
+    {
+      id: `entry-${Date.now()}`,
+      day: 'Senin',
+      division: 'Divisi I',
+      product: '',
+      batch: 0
+    }
   ])
 
-  const updateSchedule = (index: number, field: keyof WeeklyScheduleEntry, value: string | number) => {
-    const newSchedule = [...schedule]
-    newSchedule[index] = { ...newSchedule[index], [field]: value }
-    setSchedule(newSchedule)
+  // Material requirements for preview
+  const [materialRequirements, setMaterialRequirements] = useState<MaterialRequirement[]>([])
+
+  // Calculate total material requirements from entries
+  useEffect(() => {
+    const totalRequirements: { [key: string]: MaterialRequirement } = {}
+
+    entries.forEach((entry) => {
+      if (entry.product && entry.batch > 0) {
+        const reqs = calculateMaterialRequirements(entry.product, entry.batch)
+        reqs.forEach((req) => {
+          if (totalRequirements[req.materialId]) {
+            totalRequirements[req.materialId].required += req.required
+          } else {
+            totalRequirements[req.materialId] = { ...req }
+          }
+        })
+      }
+    })
+
+    setMaterialRequirements(Object.values(totalRequirements))
+  }, [entries, calculateMaterialRequirements])
+
+  // Remove entry
+  const removeEntry = (id: string) => {
+    setEntries(entries.filter((e) => e.id !== id))
+  }
+
+  // Update entry
+  const updateEntry = (id: string, field: keyof ProductionEntry, value: string | number) => {
+    setEntries(entries.map((e) => (e.id === id ? { ...e, [field]: value } : e)))
   }
 
   const handleCreatePlan = () => {
@@ -136,36 +216,90 @@ export default function ProductionPlanningPage() {
       return
     }
 
-    // Validate at least one entry
-    const hasData = schedule.some((s) => s.divisi1Product || s.divisi2Product)
+    // Validate at least one entry with product
+    const hasData = entries.some((e) => e.product && e.batch > 0)
     if (!hasData) {
-      toast.error('Mohon isi minimal satu produk di jadwal')
+      toast.error('Mohon isi minimal satu produksi')
 
       return
     }
 
-    const newPlan: ProductionPlan = {
-      id: `plan-${Date.now()}`,
-      weekNumber: parseInt(formData.weekNumber),
-      startDate: new Date(formData.startDate),
-      revision: parseInt(formData.revision),
-      createdBy: user?.name || 'User',
-      schedule: schedule.filter((s) => s.divisi1Product || s.divisi2Product),
-      status: 'draft'
+    const validEntries = entries.filter((e) => e.product && e.batch > 0)
+
+    if (editingPlanId) {
+      // Update existing plan
+      setPlans(
+        plans.map((p) =>
+          p.id === editingPlanId
+            ? {
+                ...p,
+                weekNumber: parseInt(formData.weekNumber),
+                startDate: new Date(formData.startDate),
+                revision: parseInt(formData.revision),
+                entries: validEntries
+              }
+            : p
+        )
+      )
+      toast.success('Rencana produksi berhasil diupdate!')
+    } else {
+      // Create new plan
+      const newPlan: ProductionPlan = {
+        id: `plan-${Date.now()}`,
+        weekNumber: parseInt(formData.weekNumber),
+        startDate: new Date(formData.startDate),
+        revision: parseInt(formData.revision),
+        createdBy: user?.name || 'User',
+        entries: validEntries,
+        status: 'draft'
+      }
+
+      setPlans([newPlan, ...plans])
+      toast.success('Rencana produksi berhasil dibuat!')
     }
 
-    setPlans([newPlan, ...plans])
+    // Reset form
     setIsDialogOpen(false)
+    setEditingPlanId(null)
     setFormData({ startDate: '', weekNumber: '1', revision: '0' })
-    setSchedule([
-      { day: 'Senin', divisi1Product: '', divisi1Batch: 0, divisi2Product: '', divisi2Batch: 0 },
-      { day: 'Selasa', divisi1Product: '', divisi1Batch: 0, divisi2Product: '', divisi2Batch: 0 },
-      { day: 'Rabu', divisi1Product: '', divisi1Batch: 0, divisi2Product: '', divisi2Batch: 0 },
-      { day: 'Kamis', divisi1Product: '', divisi1Batch: 0, divisi2Product: '', divisi2Batch: 0 },
-      { day: 'Jumat', divisi1Product: '', divisi1Batch: 0, divisi2Product: '', divisi2Batch: 0 },
-      { day: 'Sabtu', divisi1Product: '', divisi1Batch: 0, divisi2Product: '', divisi2Batch: 0 }
+    setEntries([
+      {
+        id: `entry-${Date.now()}`,
+        day: 'Senin',
+        division: 'Divisi I',
+        product: '',
+        batch: 0
+      }
     ])
-    toast.success('Rencana produksi berhasil dibuat!')
+  }
+
+  const handleEditPlan = (planId: string) => {
+    const plan = plans.find((p) => p.id === planId)
+    if (!plan) return
+
+    setEditingPlanId(planId)
+    setFormData({
+      startDate: format(plan.startDate, 'yyyy-MM-dd'),
+      weekNumber: plan.weekNumber.toString(),
+      revision: plan.revision.toString()
+    })
+
+    // Populate entries with existing data
+    setEntries(
+      plan.entries.length > 0
+        ? plan.entries
+        : [
+            {
+              id: `entry-${Date.now()}`,
+              day: 'Senin',
+              division: 'Divisi I',
+              product: '',
+              batch: 0
+            }
+          ]
+    )
+
+    setIsDialogOpen(true)
   }
 
   const handleDeletePlan = (id: string) => {
@@ -218,7 +352,7 @@ export default function ProductionPlanningPage() {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Button size="sm" variant="outline-red">
+                  <Button size="sm" variant="outline-red" onClick={() => handleEditPlan(plan.id)}>
                     Edit
                   </Button>
                   <Button size="sm" variant="outline-red" onClick={() => handleDeletePlan(plan.id)}>
@@ -227,39 +361,95 @@ export default function ProductionPlanningPage() {
                 </div>
               </div>
 
-              {/* Schedule Table */}
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse text-sm">
-                  <thead>
-                    <tr className="border-b-2 border-slate-300 bg-slate-50">
-                      <th className="border border-slate-300 px-3 py-2 text-left font-semibold">Hari</th>
-                      <th className="border border-slate-300 px-3 py-2 text-center font-semibold" colSpan={2}>
-                        Divisi I
-                      </th>
-                      <th className="border border-slate-300 px-3 py-2 text-center font-semibold" colSpan={2}>
-                        Divisi II
-                      </th>
-                    </tr>
-                    <tr className="border-b border-slate-300 bg-slate-50">
-                      <th className="border border-slate-300 px-3 py-2"></th>
-                      <th className="border border-slate-300 px-3 py-2 text-center text-xs font-medium">Produk</th>
-                      <th className="border border-slate-300 px-3 py-2 text-center text-xs font-medium">Jml Batch</th>
-                      <th className="border border-slate-300 px-3 py-2 text-center text-xs font-medium">Produk</th>
-                      <th className="border border-slate-300 px-3 py-2 text-center text-xs font-medium">Jml Batch</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {plan.schedule.map((entry, idx) => (
-                      <tr key={idx} className="hover:bg-slate-50">
-                        <td className="border border-slate-300 px-3 py-2 font-medium">{entry.day}</td>
-                        <td className="border border-slate-300 px-3 py-2">{entry.divisi1Product}</td>
-                        <td className="border border-slate-300 px-3 py-2 text-center">{entry.divisi1Batch}</td>
-                        <td className="border border-slate-300 px-3 py-2">{entry.divisi2Product}</td>
-                        <td className="border border-slate-300 px-3 py-2 text-center">{entry.divisi2Batch}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              {/* Entries Tables - Split by Division */}
+              <div className="grid grid-cols-2 gap-4">
+                {/* Divisi I Table */}
+                <div>
+                  <h5 className="mb-2 font-semibold text-slate-700">Divisi I</h5>
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse text-sm">
+                      <thead>
+                        <tr className="border-b-2 border-slate-300 bg-slate-50">
+                          <th className="border border-slate-300 px-3 py-2 text-left font-semibold">Hari</th>
+                          <th className="border border-slate-300 px-3 py-2 text-left font-semibold">Produk</th>
+                          <th className="border border-slate-300 px-3 py-2 text-center font-semibold">Batch</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {DAYS.map((day) => {
+                          const dayEntries = plan.entries.filter((e) => e.day === day && e.division === 'Divisi I')
+
+                          if (dayEntries.length === 0) {
+                            return (
+                              <tr key={day} className="hover:bg-slate-50">
+                                <td className="border border-slate-300 px-3 py-2 font-medium">{day}</td>
+                                <td className="border border-slate-300 px-3 py-2 text-center text-slate-400" colSpan={2}>
+                                  -
+                                </td>
+                              </tr>
+                            )
+                          }
+
+                          return dayEntries.map((entry, idx) => (
+                            <tr key={entry.id} className="hover:bg-slate-50">
+                              {idx === 0 && (
+                                <td className="border border-slate-300 px-3 py-2 font-medium" rowSpan={dayEntries.length}>
+                                  {day}
+                                </td>
+                              )}
+                              <td className="border border-slate-300 px-3 py-2">{entry.product}</td>
+                              <td className="border border-slate-300 px-3 py-2 text-center">{entry.batch}</td>
+                            </tr>
+                          ))
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Divisi II Table */}
+                <div>
+                  <h5 className="mb-2 font-semibold text-slate-700">Divisi II</h5>
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse text-sm">
+                      <thead>
+                        <tr className="border-b-2 border-slate-300 bg-slate-50">
+                          <th className="border border-slate-300 px-3 py-2 text-left font-semibold">Hari</th>
+                          <th className="border border-slate-300 px-3 py-2 text-left font-semibold">Produk</th>
+                          <th className="border border-slate-300 px-3 py-2 text-center font-semibold">Batch</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {DAYS.map((day) => {
+                          const dayEntries = plan.entries.filter((e) => e.day === day && e.division === 'Divisi II')
+
+                          if (dayEntries.length === 0) {
+                            return (
+                              <tr key={day} className="hover:bg-slate-50">
+                                <td className="border border-slate-300 px-3 py-2 font-medium">{day}</td>
+                                <td className="border border-slate-300 px-3 py-2 text-center text-slate-400" colSpan={2}>
+                                  -
+                                </td>
+                              </tr>
+                            )
+                          }
+
+                          return dayEntries.map((entry, idx) => (
+                            <tr key={entry.id} className="hover:bg-slate-50">
+                              {idx === 0 && (
+                                <td className="border border-slate-300 px-3 py-2 font-medium" rowSpan={dayEntries.length}>
+                                  {day}
+                                </td>
+                              )}
+                              <td className="border border-slate-300 px-3 py-2">{entry.product}</td>
+                              <td className="border border-slate-300 px-3 py-2 text-center">{entry.batch}</td>
+                            </tr>
+                          ))
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -270,7 +460,7 @@ export default function ProductionPlanningPage() {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-h-[90vh] max-w-5xl overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Buat Rencana Produksi Mingguan</DialogTitle>
+            <DialogTitle>{editingPlanId ? 'Edit Rencana Produksi Mingguan' : 'Buat Rencana Produksi Mingguan'}</DialogTitle>
           </DialogHeader>
           <div className="space-y-6 py-4">
             {/* Header Info */}
@@ -303,106 +493,262 @@ export default function ProductionPlanningPage() {
               </div>
             </div>
 
-            {/* Weekly Schedule Table */}
+            {/* Production Entries - Split by Division */}
+            <div className="grid grid-cols-2 gap-4">
+              {/* Divisi I */}
+              <div>
+                <h4 className="mb-3 flex items-center gap-2 font-semibold text-slate-900">
+                  <CalendarBlank size={18} weight="duotone" />
+                  Divisi I
+                </h4>
+                <div className="space-y-4">
+                  {DAYS.map((day) => {
+                    const dayEntries = entries.filter((e) => e.day === day && e.division === 'Divisi I')
+
+                    return (
+                      <div key={day} className="rounded-lg border border-slate-200">
+                        <div className="bg-slate-100 px-4 py-2">
+                          <h5 className="font-semibold text-slate-900">{day}</h5>
+                        </div>
+                        <div className="p-3">
+                          {dayEntries.length > 0 ? (
+                            <div className="space-y-2">
+                              {dayEntries.map((entry) => (
+                                <div key={entry.id} className="grid grid-cols-12 gap-2 rounded border border-slate-200 p-2">
+                                  <div className="col-span-8">
+                                    <label className="mb-1 block text-xs font-medium text-slate-600">Produk</label>
+                                    <Select
+                                      value={entry.product}
+                                      onValueChange={(val) => updateEntry(entry.id, 'product', val)}
+                                    >
+                                      <SelectTrigger className="h-9 text-xs">
+                                        <SelectValue placeholder="Pilih produk..." />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {PRODUCTS.map((prod) => (
+                                          <SelectItem key={prod.id} value={prod.name} className="text-xs">
+                                            {prod.name}
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                  <div className="col-span-3">
+                                    <label className="mb-1 block text-xs font-medium text-slate-600">Batch</label>
+                                    <Input
+                                      type="number"
+                                      value={entry.batch || ''}
+                                      onChange={(e) => updateEntry(entry.id, 'batch', parseInt(e.target.value) || 0)}
+                                      className="h-9 text-center text-xs"
+                                      min="0"
+                                      placeholder="0"
+                                    />
+                                  </div>
+                                  <div className="col-span-1 flex items-end">
+                                    <Button
+                                      size="sm"
+                                      variant="outline-red"
+                                      onClick={() => removeEntry(entry.id)}
+                                      className="h-9 w-full"
+                                    >
+                                      <Trash size={14} />
+                                    </Button>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-center text-sm text-slate-500">Belum ada produksi</p>
+                          )}
+                          <Button
+                            onClick={() => {
+                              setEntries([
+                                ...entries,
+                                {
+                                  id: `entry-${Date.now()}-${Math.random()}`,
+                                  day: day,
+                                  division: 'Divisi I',
+                                  product: '',
+                                  batch: 0
+                                }
+                              ])
+                            }}
+                            variant="outline-red"
+                            size="sm"
+                            className="mt-2 w-full"
+                          >
+                            <Plus size={14} weight="bold" />
+                            Tambah
+                          </Button>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Divisi II */}
+              <div>
+                <h4 className="mb-3 flex items-center gap-2 font-semibold text-slate-900">
+                  <CalendarBlank size={18} weight="duotone" />
+                  Divisi II
+                </h4>
+                <div className="space-y-4">
+                  {DAYS.map((day) => {
+                    const dayEntries = entries.filter((e) => e.day === day && e.division === 'Divisi II')
+
+                    return (
+                      <div key={day} className="rounded-lg border border-slate-200">
+                        <div className="bg-slate-100 px-4 py-2">
+                          <h5 className="font-semibold text-slate-900">{day}</h5>
+                        </div>
+                        <div className="p-3">
+                          {dayEntries.length > 0 ? (
+                            <div className="space-y-2">
+                              {dayEntries.map((entry) => (
+                                <div key={entry.id} className="grid grid-cols-12 gap-2 rounded border border-slate-200 p-2">
+                                  <div className="col-span-8">
+                                    <label className="mb-1 block text-xs font-medium text-slate-600">Produk</label>
+                                    <Select
+                                      value={entry.product}
+                                      onValueChange={(val) => updateEntry(entry.id, 'product', val)}
+                                    >
+                                      <SelectTrigger className="h-9 text-xs">
+                                        <SelectValue placeholder="Pilih produk..." />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {PRODUCTS.map((prod) => (
+                                          <SelectItem key={prod.id} value={prod.name} className="text-xs">
+                                            {prod.name}
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                  <div className="col-span-3">
+                                    <label className="mb-1 block text-xs font-medium text-slate-600">Batch</label>
+                                    <Input
+                                      type="number"
+                                      value={entry.batch || ''}
+                                      onChange={(e) => updateEntry(entry.id, 'batch', parseInt(e.target.value) || 0)}
+                                      className="h-9 text-center text-xs"
+                                      min="0"
+                                      placeholder="0"
+                                    />
+                                  </div>
+                                  <div className="col-span-1 flex items-end">
+                                    <Button
+                                      size="sm"
+                                      variant="outline-red"
+                                      onClick={() => removeEntry(entry.id)}
+                                      className="h-9 w-full"
+                                    >
+                                      <Trash size={14} />
+                                    </Button>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-center text-sm text-slate-500">Belum ada produksi</p>
+                          )}
+                          <Button
+                            onClick={() => {
+                              setEntries([
+                                ...entries,
+                                {
+                                  id: `entry-${Date.now()}-${Math.random()}`,
+                                  day: day,
+                                  division: 'Divisi II',
+                                  product: '',
+                                  batch: 0
+                                }
+                              ])
+                            }}
+                            variant="outline-red"
+                            size="sm"
+                            className="mt-2 w-full"
+                          >
+                            <Plus size={14} weight="bold" />
+                            Tambah
+                          </Button>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* Material Requirements Summary */}
             <div>
               <h4 className="mb-3 flex items-center gap-2 font-semibold text-slate-900">
-                <CalendarBlank size={18} weight="duotone" />
-                Jadwal Produksi Per Hari
+                <Package size={18} weight="duotone" />
+                Kebutuhan Bahan Baku
               </h4>
-              <div className="overflow-x-auto rounded-lg border border-slate-200">
-                <table className="w-full border-collapse text-sm">
-                  <thead>
-                    <tr className="border-b-2 border-slate-300 bg-slate-100">
-                      <th className="border-r border-slate-300 px-3 py-2 text-left font-semibold">Hari</th>
-                      <th className="border-r border-slate-300 px-3 py-2 text-center font-semibold" colSpan={2}>
-                        Divisi I
-                      </th>
-                      <th className="px-3 py-2 text-center font-semibold" colSpan={2}>
-                        Divisi II
-                      </th>
-                    </tr>
-                    <tr className="border-b border-slate-300 bg-slate-50">
-                      <th className="border-r border-slate-300 px-3 py-2"></th>
-                      <th className="border-r border-slate-300 px-3 py-2 text-center text-xs font-medium">Produk</th>
-                      <th className="border-r border-slate-300 px-3 py-2 text-center text-xs font-medium">Jml Batch</th>
-                      <th className="border-r border-slate-300 px-3 py-2 text-center text-xs font-medium">Produk</th>
-                      <th className="px-3 py-2 text-center text-xs font-medium">Jml Batch</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {schedule.map((entry, idx) => (
-                      <tr key={idx} className="hover:bg-slate-50">
-                        <td className="border-t border-r border-slate-300 px-3 py-2 font-medium">{entry.day}</td>
-                        <td className="border-t border-r border-slate-300 px-2 py-2">
-                          <Select
-                            value={entry.divisi1Product}
-                            onValueChange={(val) => updateSchedule(idx, 'divisi1Product', val)}
-                          >
-                            <SelectTrigger className="h-9 text-xs">
-                              <SelectValue placeholder="Pilih produk..." />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {PRODUCTS.map((prod) => (
-                                <SelectItem key={prod.id} value={prod.name} className="text-xs">
-                                  {prod.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </td>
-                        <td className="border-t border-r border-slate-300 px-2 py-2">
-                          <Input
-                            type="number"
-                            value={entry.divisi1Batch || ''}
-                            onChange={(e) => updateSchedule(idx, 'divisi1Batch', parseInt(e.target.value) || 0)}
-                            className="h-9 text-center text-xs"
-                            min="0"
-                            placeholder="0"
-                          />
-                        </td>
-                        <td className="border-t border-r border-slate-300 px-2 py-2">
-                          <Select
-                            value={entry.divisi2Product}
-                            onValueChange={(val) => updateSchedule(idx, 'divisi2Product', val)}
-                          >
-                            <SelectTrigger className="h-9 text-xs">
-                              <SelectValue placeholder="Pilih produk..." />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {PRODUCTS.map((prod) => (
-                                <SelectItem key={prod.id} value={prod.name} className="text-xs">
-                                  {prod.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </td>
-                        <td className="border-t border-slate-300 px-2 py-2">
-                          <Input
-                            type="number"
-                            value={entry.divisi2Batch || ''}
-                            onChange={(e) => updateSchedule(idx, 'divisi2Batch', parseInt(e.target.value) || 0)}
-                            className="h-9 text-center text-xs"
-                            min="0"
-                            placeholder="0"
-                          />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <p className="mt-2 text-xs text-slate-500">
-                * Pilih produk dari dropdown dan isi jumlah batch untuk setiap divisi per hari
-              </p>
+
+              {/* View Mode Tabs */}
+              <Tabs defaultValue="weekly" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="weekly">Total Mingguan</TabsTrigger>
+                  <TabsTrigger value="daily">Per Hari</TabsTrigger>
+                </TabsList>
+
+                {/* Weekly View */}
+                <TabsContent value="weekly" className="mt-3">
+                  <MaterialRequirementCard requirements={materialRequirements} stockItems={stockItems} />
+                </TabsContent>
+
+                {/* Daily View */}
+                <TabsContent value="daily" className="mt-3">
+                  <div className="space-y-3">
+                    {DAYS.map((day) => {
+                      const dayEntries = entries.filter((e) => e.day === day)
+                      if (dayEntries.length === 0) return null
+
+                      // Calculate material requirements for this day only
+                      const dayMaterialMap = new Map<string, MaterialRequirement>()
+
+                      dayEntries.forEach((entry) => {
+                        if (entry.product && entry.batch > 0) {
+                          const materials = calculateMaterialRequirements(entry.product, entry.batch)
+                          materials.forEach((material) => {
+                            const existing = dayMaterialMap.get(material.materialId)
+                            if (existing) {
+                              existing.required += material.required
+                            } else {
+                              dayMaterialMap.set(material.materialId, { ...material })
+                            }
+                          })
+                        }
+                      })
+
+                      const dayRequirementsArray = Array.from(dayMaterialMap.values())
+
+                      return (
+                        <div key={day} className="rounded-lg border border-slate-200 p-3">
+                          <h5 className="mb-2 font-semibold text-slate-700">{day}</h5>
+                          <MaterialRequirementCard requirements={dayRequirementsArray} stockItems={stockItems} />
+                        </div>
+                      )
+                    })}
+                  </div>
+                </TabsContent>
+              </Tabs>
             </div>
           </div>
           <DialogFooter className="gap-2">
-            <Button variant="outline-red" onClick={() => setIsDialogOpen(false)}>
+            <Button
+              variant="outline-red"
+              onClick={() => {
+                setIsDialogOpen(false)
+                setEditingPlanId(null)
+              }}
+            >
               Batal
             </Button>
             <Button variant="default" onClick={handleCreatePlan}>
-              Simpan Rencana
+              {editingPlanId ? 'Update Rencana' : 'Simpan Rencana'}
             </Button>
           </DialogFooter>
         </DialogContent>

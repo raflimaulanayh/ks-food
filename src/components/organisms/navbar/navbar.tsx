@@ -148,7 +148,7 @@ export const Navbar = () => {
             <Link href="/cart" className="relative ml-4 hover:text-white/80" aria-label="Cart">
               <ShoppingCart className="size-5" />
               {mounted && cartItemsCount > 0 && (
-                <span className="absolute -top-2 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-slate-900">
+                <span className="absolute -top-2 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-white text-[10px] font-bold text-primary">
                   {cartItemsCount}
                 </span>
               )}

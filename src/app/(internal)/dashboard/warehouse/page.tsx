@@ -1,6 +1,8 @@
 'use client'
 
-import { useStockStore } from '@/stores/use-stock-store'
+import { useAuthStore } from '@/stores/use-auth-store'
+import { useOpnameStore } from '@/stores/use-opname-store'
+import { StockItem, useStockStore } from '@/stores/use-stock-store'
 import {
   Package,
   MagnifyingGlass,
@@ -13,7 +15,9 @@ import {
   ArrowUpRight,
   Truck,
   ClipboardText,
-  Cube
+  Cube,
+  Barcode,
+  Printer
 } from '@phosphor-icons/react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -31,6 +35,9 @@ import {
   DialogDescription
 } from '@/components/atoms/ui/dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/atoms/ui/tabs'
+import { BarcodeScanner } from '@/components/molecules/barcode-scanner'
+import { ImageUpload } from '@/components/molecules/image-upload'
+import { QRCodePrintModal } from '@/components/molecules/qrcode-print-modal'
 
 // Mock Inbound Data
 const mockInboundShipments = [
@@ -58,14 +65,25 @@ const mockInboundShipments = [
 
 export default function WarehousePage() {
   const router = useRouter()
-  const { items, updateStock } = useStockStore()
+  const user = useAuthStore((s) => s.user)
+  const { items, updateStockWithAudit } = useStockStore()
+  const { createOpnameRequest, approveOpname, rejectOpname, getPendingRequests, getMyRequests } = useOpnameStore()
   const [activeTab, setActiveTab] = useState('inbound')
   const [searchTerm, setSearchTerm] = useState('')
 
-  // Opname State
+  // Opname Request State
   const [isOpnameOpen, setIsOpnameOpen] = useState(false)
   const [opnameId, setOpnameId] = useState('')
   const [opnameQty, setOpnameQty] = useState('')
+  const [opnameReason, setOpnameReason] = useState('')
+  const [opnamePhotos, setOpnamePhotos] = useState<string[]>([])
+  const [showScanner, setShowScanner] = useState(false)
+  const [opnameCategory, setOpnameCategory] = useState<string>('ALL')
+
+  // QR Print State
+  const [showQRCategoryDialog, setShowQRCategoryDialog] = useState(false)
+  const [showQRPrint, setShowQRPrint] = useState(false)
+  const [qrPrintItems, setQRPrintItems] = useState<StockItem[]>([])
 
   // Inbound State
   const [inboundList, setInboundList] = useState(mockInboundShipments)
@@ -94,19 +112,104 @@ export default function WarehousePage() {
 
   const criticalCount = items.filter((i) => getStatus(i.current, i.min) === 'CRITICAL').length
 
-  // LOGIC: Handle Opname Submit
-  const handleOpnameSubmit = () => {
+  // LOGIC: Handle Opname Request Submit
+  const handleOpnameRequestSubmit = () => {
     if (!opnameId || !opnameQty) {
       toast.error('Mohon pilih material dan isi stok fisik')
 
       return
     }
+    if (!opnameReason.trim()) {
+      toast.error('Mohon isi alasan selisih stok')
+
+      return
+    }
+    if (opnamePhotos.length === 0) {
+      toast.error('Mohon upload minimal 1 foto bukti')
+
+      return
+    }
+
     const selectedItem = items.find((i) => i.id === opnameId)
-    updateStock(opnameId, Number(opnameQty))
+    if (!selectedItem) return
+
+    const difference = Number(opnameQty) - selectedItem.current
+
+    createOpnameRequest({
+      itemId: opnameId,
+      itemName: selectedItem.name,
+      itemSku: selectedItem.sku,
+      systemQty: selectedItem.current,
+      physicalQty: Number(opnameQty),
+      difference,
+      reason: opnameReason,
+      photos: opnamePhotos,
+      requestedBy: user?.id || 'unknown',
+      requestedByName: user?.name || 'Unknown User'
+    })
+
     setIsOpnameOpen(false)
-    toast.success(`Stok ${selectedItem?.name} berhasil dikoreksi menjadi ${opnameQty}`)
+    toast.success('Permintaan opname berhasil diajukan. Menunggu persetujuan supervisor.')
     setOpnameId('')
     setOpnameQty('')
+    setOpnameReason('')
+    setOpnamePhotos([])
+  }
+
+  // LOGIC: Handle Opname Approval
+  const handleApproveOpname = (requestId: string, itemId: string, newQty: number, opnameRequestId: string) => {
+    approveOpname(requestId, user?.id || 'unknown', user?.name || 'Unknown')
+    updateStockWithAudit(
+      itemId,
+      newQty,
+      user?.id || 'unknown',
+      user?.name || 'Unknown',
+      'OPNAME_APPROVED',
+      opnameRequestId,
+      'Approved via opname request'
+    )
+    toast.success('Permintaan opname disetujui. Stok telah diperbarui.')
+  }
+
+  // LOGIC: Handle Opname Rejection
+  const handleRejectOpname = (requestId: string, notes: string) => {
+    if (!notes.trim()) {
+      toast.error('Mohon isi alasan penolakan')
+
+      return
+    }
+    rejectOpname(requestId, user?.id || 'unknown', user?.name || 'Unknown', notes)
+    toast.success('Permintaan opname ditolak.')
+  }
+
+  // LOGIC: Handle Barcode Scan
+  const handleBarcodeScan = (sku: string) => {
+    const item = items.find((i) => i.sku.toLowerCase() === sku.toLowerCase())
+    if (item) {
+      setOpnameId(item.id)
+      setOpnameQty('')
+      toast.success(`Item ditemukan: ${item.name}`)
+    } else {
+      toast.error(`SKU "${sku}" tidak ditemukan`)
+    }
+  }
+
+  // LOGIC: Handle Print QR for Single Item
+  const handlePrintQR = (item: StockItem) => {
+    setQRPrintItems([item])
+    setShowQRPrint(true)
+  }
+
+  // LOGIC: Handle Bulk Print QR
+  const handleBulkPrintQR = () => {
+    if (filteredItems.length === 0) {
+      toast.error('Tidak ada item untuk di-print')
+
+      return
+    }
+    setQRPrintItems(filteredItems)
+    setShowQRPrint(true)
+    toast.success(`Siap print ${filteredItems.length} label QR code`)
   }
 
   // LOGIC: Handle Restock Click
@@ -141,6 +244,83 @@ export default function WarehousePage() {
             <DownloadSimple size={16} /> Report
           </Button>
 
+          {/* QR PRINT CATEGORY DIALOG */}
+          <Dialog open={showQRCategoryDialog} onOpenChange={setShowQRCategoryDialog}>
+            <DialogTrigger asChild>
+              <Button variant="outline-red">
+                <Printer size={16} weight="bold" /> Print QR Labels
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Pilih Kategori untuk Print QR</DialogTitle>
+                <DialogDescription>Pilih kategori barang yang ingin di-print label QR code-nya</DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-3 py-4">
+                <Button
+                  onClick={() => {
+                    setQRPrintItems(items)
+                    setShowQRCategoryDialog(false)
+                    setShowQRPrint(true)
+                  }}
+                  variant="outline-red"
+                  className="h-auto justify-start py-3 text-left"
+                >
+                  <div className="flex items-center gap-2">
+                    <Package size={18} />
+                    <span>Semua Item ({items.length} items)</span>
+                  </div>
+                </Button>
+                <Button
+                  onClick={() => {
+                    const rawMaterials = items.filter((i) => i.category === 'Raw Material')
+                    setQRPrintItems(rawMaterials)
+                    setShowQRCategoryDialog(false)
+                    setShowQRPrint(true)
+                  }}
+                  variant="outline-red"
+                  className="h-auto justify-start py-3 text-left"
+                >
+                  <div className="flex items-center gap-2">
+                    <Cube size={18} />
+                    <span>Raw Material ({items.filter((i) => i.category === 'Raw Material').length} items)</span>
+                  </div>
+                </Button>
+                <Button
+                  onClick={() => {
+                    const packaging = items.filter((i) => i.category === 'Packaging')
+                    setQRPrintItems(packaging)
+                    setShowQRCategoryDialog(false)
+                    setShowQRPrint(true)
+                  }}
+                  variant="outline-red"
+                  className="h-auto justify-start py-3 text-left"
+                >
+                  <div className="flex items-center gap-2">
+                    <Package size={18} />
+                    <span>Packaging ({items.filter((i) => i.category === 'Packaging').length} items)</span>
+                  </div>
+                </Button>
+                <Button
+                  onClick={() => {
+                    const finished = items.filter((i) => i.category === 'Finished Goods')
+                    setQRPrintItems(finished)
+                    setShowQRCategoryDialog(false)
+                    setShowQRPrint(true)
+                  }}
+                  variant="outline-red"
+                  className="h-auto justify-start py-3 text-left"
+                  disabled={items.filter((i) => i.category === 'Finished Goods').length === 0}
+                >
+                  <div className="flex items-center gap-2">
+                    <ClipboardText size={18} />
+                    <span>Finished Goods ({items.filter((i) => i.category === 'Finished Goods').length} items)</span>
+                  </div>
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+
           {/* OPNAME DIALOG */}
           <Dialog open={isOpnameOpen} onOpenChange={setIsOpnameOpen}>
             <DialogTrigger asChild>
@@ -148,47 +328,148 @@ export default function WarehousePage() {
                 <ArrowsClockwise size={16} weight="bold" /> Opname Stok
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
+            <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]">
               <DialogHeader>
-                <DialogTitle>Koreksi Stok (Stock Opname)</DialogTitle>
-                <DialogDescription>Sesuaikan jumlah stok di sistem dengan fisik aktual di gudang</DialogDescription>
+                <DialogTitle>Ajukan Permintaan Opname Stok</DialogTitle>
+                <DialogDescription>
+                  Permintaan akan direview oleh supervisor. Wajib isi alasan dan upload foto bukti.
+                </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
+                {/* Category Filter for Cycle Counting */}
+                <div className="rounded-lg border border-blue-200 bg-blue-50 p-3">
+                  <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-blue-900">
+                    <Package size={16} weight="fill" />
+                    Cycle Counting - Pilih Kategori
+                  </div>
+                  <select
+                    value={opnameCategory}
+                    onChange={(e) => {
+                      setOpnameCategory(e.target.value)
+                      setOpnameId('')
+                      setOpnameQty('')
+                    }}
+                    className="h-9 w-full rounded-lg border border-blue-200 bg-white px-3 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none"
+                  >
+                    <option value="ALL">Semua Kategori</option>
+                    <option value="Raw Material">Raw Material</option>
+                    <option value="Packaging">Packaging</option>
+                    <option value="Finished Goods">Finished Goods</option>
+                  </select>
+                  <p className="mt-1 text-xs text-blue-700">
+                    💡 Hitung per kategori untuk efisiensi, tidak perlu semua item sekaligus
+                  </p>
+                </div>
+
                 <div className="grid gap-2">
-                  <label className="text-sm font-medium text-slate-700">Pilih Material</label>
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium text-slate-700">
+                      Pilih Material <span className="text-primary">*</span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setShowScanner(true)}
+                      className="flex items-center gap-1 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700"
+                    >
+                      <Barcode size={14} weight="bold" />
+                      Scan Barcode
+                    </button>
+                  </div>
                   <select
                     value={opnameId}
-                    onChange={(e) => setOpnameId(e.target.value)}
+                    onChange={(e) => {
+                      setOpnameId(e.target.value)
+                      setOpnameQty('')
+                    }}
                     className="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
                   >
                     <option value="">Pilih barang...</option>
-                    {items.map((i) => (
-                      <option key={i.id} value={i.id}>
-                        {i.name} (Sistem: {i.current} {i.unit})
-                      </option>
-                    ))}
+                    {items
+                      .filter((i) => opnameCategory === 'ALL' || i.category === opnameCategory)
+                      .map((i) => (
+                        <option key={i.id} value={i.id}>
+                          {i.sku} - {i.name} - Stok: {i.current} {i.unit}
+                        </option>
+                      ))}
                   </select>
+                  {opnameCategory !== 'ALL' && (
+                    <p className="text-xs text-slate-500">
+                      Menampilkan {items.filter((i) => i.category === opnameCategory).length} item dari kategori{' '}
+                      {opnameCategory}
+                    </p>
+                  )}
                 </div>
-                <div className="grid gap-2">
-                  <label className="text-sm font-medium text-slate-700">Stok Fisik Aktual</label>
-                  <input
-                    type="number"
-                    placeholder="0"
-                    value={opnameQty}
-                    onChange={(e) => setOpnameQty(e.target.value)}
-                    className="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
-                  />
-                </div>
+
+                {opnameId && (
+                  <>
+                    <div className="grid gap-2">
+                      <label className="text-sm font-medium text-slate-700">
+                        Stok Fisik Aktual <span className="text-primary">*</span>
+                      </label>
+                      <input
+                        type="number"
+                        placeholder="0"
+                        value={opnameQty}
+                        onChange={(e) => setOpnameQty(e.target.value)}
+                        className="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
+                      />
+                    </div>
+
+                    {opnameQty && (
+                      <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                        <div className="text-xs font-medium text-slate-600">Selisih:</div>
+                        <div
+                          className={`mt-1 text-lg font-bold ${
+                            Number(opnameQty) - items.find((i) => i.id === opnameId)!.current < 0
+                              ? 'text-primary'
+                              : 'text-emerald-600'
+                          }`}
+                        >
+                          {Number(opnameQty) - items.find((i) => i.id === opnameId)!.current > 0 ? '+' : ''}
+                          {Number(opnameQty) - items.find((i) => i.id === opnameId)!.current}{' '}
+                          {items.find((i) => i.id === opnameId)!.unit}
+                          {Number(opnameQty) - items.find((i) => i.id === opnameId)!.current < 0 ? ' (Kurang)' : ' (Lebih)'}
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="grid gap-2">
+                      <label className="text-sm font-medium text-slate-700">
+                        Alasan Selisih <span className="text-primary">*</span>
+                      </label>
+                      <textarea
+                        value={opnameReason}
+                        onChange={(e) => setOpnameReason(e.target.value)}
+                        placeholder="Jelaskan mengapa terjadi selisih stok (contoh: ditemukan barang rusak, tumpah, dll)"
+                        rows={3}
+                        className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none"
+                      />
+                    </div>
+
+                    <div className="grid gap-2">
+                      <label className="text-sm font-medium text-slate-700">
+                        Foto Bukti <span className="text-primary">*</span> (Min 1)
+                      </label>
+                      <ImageUpload images={opnamePhotos} onImagesChange={setOpnamePhotos} maxImages={3} />
+                    </div>
+                  </>
+                )}
               </div>
               <DialogFooter>
                 <Button
-                  onClick={() => setIsOpnameOpen(false)}
+                  onClick={() => {
+                    setIsOpnameOpen(false)
+                    setOpnameId('')
+                    setOpnameQty('')
+                    setOpnameReason('')
+                    setOpnamePhotos([])
+                  }}
                   className="border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
                 >
                   Batal
                 </Button>
-                <Button onClick={handleOpnameSubmit} className="bg-primary font-bold text-white hover:bg-red-700">
-                  Simpan Perubahan
+                <Button onClick={handleOpnameRequestSubmit} className="bg-primary font-bold text-white hover:bg-red-700">
+                  Ajukan Permintaan
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -375,15 +656,20 @@ export default function WarehousePage() {
                           </span>
                         </td>
                         <td className="px-6 py-4 text-right">
-                          {status === 'CRITICAL' || status === 'WARNING' ? (
-                            <Button onClick={() => handleRestock(item.name)} variant="default" className="h-8">
-                              <ArrowUpRight size={14} /> Restock
+                          <div className="flex justify-end gap-2">
+                            {status === 'CRITICAL' || status === 'WARNING' ? (
+                              <Button onClick={() => handleRestock(item.name)} variant="default" className="h-8">
+                                <ArrowUpRight size={14} /> Restock
+                              </Button>
+                            ) : (
+                              <Button disabled className="h-8 gap-1 bg-emerald-600 text-xs text-white">
+                                Aman
+                              </Button>
+                            )}
+                            <Button onClick={() => handlePrintQR(item)} variant="outline-red" className="h-8">
+                              <Printer size={14} weight="bold" />
                             </Button>
-                          ) : (
-                            <Button disabled className="h-8 gap-1 bg-emerald-600 text-xs text-white">
-                              Aman
-                            </Button>
-                          )}
+                          </div>
                         </td>
                       </tr>
                     )
@@ -480,15 +766,20 @@ export default function WarehousePage() {
                           </span>
                         </td>
                         <td className="px-6 py-4 text-right">
-                          {status === 'CRITICAL' || status === 'WARNING' ? (
-                            <Button onClick={() => handleRestock(item.name)} variant="default" className="h-8">
-                              <ArrowUpRight size={14} /> Restock
+                          <div className="flex justify-end gap-2">
+                            {status === 'CRITICAL' || status === 'WARNING' ? (
+                              <Button onClick={() => handleRestock(item.name)} variant="default" className="h-8">
+                                <ArrowUpRight size={14} /> Restock
+                              </Button>
+                            ) : (
+                              <Button disabled className="h-8 gap-1 bg-emerald-600 text-xs text-white">
+                                Aman
+                              </Button>
+                            )}
+                            <Button onClick={() => handlePrintQR(item)} variant="outline-red" className="h-8">
+                              <Printer size={14} weight="bold" />
                             </Button>
-                          ) : (
-                            <Button disabled className="h-8 gap-1 bg-emerald-600 text-xs text-white">
-                              Aman
-                            </Button>
-                          )}
+                          </div>
                         </td>
                       </tr>
                     )
@@ -583,15 +874,20 @@ export default function WarehousePage() {
                           </span>
                         </td>
                         <td className="px-6 py-4 text-right">
-                          {status === 'CRITICAL' || status === 'WARNING' ? (
-                            <Button onClick={() => handleRestock(item.name)} variant="default" className="h-8">
-                              <ArrowUpRight size={14} /> Restock
+                          <div className="flex justify-end gap-2">
+                            {status === 'CRITICAL' || status === 'WARNING' ? (
+                              <Button onClick={() => handleRestock(item.name)} variant="default" className="h-8">
+                                <ArrowUpRight size={14} /> Restock
+                              </Button>
+                            ) : (
+                              <Button disabled className="h-8 gap-1 bg-emerald-600 text-xs text-white">
+                                Aman
+                              </Button>
+                            )}
+                            <Button onClick={() => handlePrintQR(item)} variant="outline-red" className="h-8">
+                              <Printer size={14} weight="bold" />
                             </Button>
-                          ) : (
-                            <Button disabled className="h-8 gap-1 bg-emerald-600 text-xs text-white">
-                              Aman
-                            </Button>
-                          )}
+                          </div>
                         </td>
                       </tr>
                     )
@@ -618,6 +914,12 @@ export default function WarehousePage() {
           </TabsContent>
         </Card>
       </Tabs>
+
+      {/* Barcode Scanner Modal */}
+      {showScanner && <BarcodeScanner onScan={handleBarcodeScan} onClose={() => setShowScanner(false)} />}
+
+      {/* QR Code Print Modal */}
+      {showQRPrint && <QRCodePrintModal items={qrPrintItems} onClose={() => setShowQRPrint(false)} />}
     </div>
   )
 }

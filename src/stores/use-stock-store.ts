@@ -11,12 +11,38 @@ export type StockItem = {
   lastUpdate: string
 }
 
-interface StockStore {
-  items: StockItem[]
-  updateStock: (id: string, val: number) => void
+export interface StockAuditLog {
+  id: string
+  itemId: string
+  itemName: string
+  action: 'OPNAME_APPROVED' | 'INBOUND' | 'OUTBOUND' | 'MANUAL_ADJUSTMENT'
+  previousQty: number
+  newQty: number
+  difference: number
+  performedBy: string
+  performedByName: string
+  timestamp: string
+  opnameRequestId?: string
+  notes?: string
 }
 
-export const useStockStore = create<StockStore>((set) => ({
+interface StockStore {
+  items: StockItem[]
+  auditLogs: StockAuditLog[]
+  updateStock: (id: string, val: number) => void
+  updateStockWithAudit: (
+    id: string,
+    newQty: number,
+    performedBy: string,
+    performedByName: string,
+    action: StockAuditLog['action'],
+    opnameRequestId?: string,
+    notes?: string
+  ) => void
+  getAuditLogs: (itemId?: string) => StockAuditLog[]
+}
+
+export const useStockStore = create<StockStore>((set, get) => ({
   items: [
     {
       id: '1',
@@ -69,8 +95,51 @@ export const useStockStore = create<StockStore>((set) => ({
       lastUpdate: '2025-12-30'
     }
   ],
+  auditLogs: [],
+
   updateStock: (id, val) =>
     set((state) => ({
-      items: state.items.map((i) => (i.id === id ? { ...i, current: val } : i))
+      items: state.items.map((i) =>
+        i.id === id ? { ...i, current: val, lastUpdate: new Date().toISOString().split('T')[0] } : i
+      )
+    })),
+
+  updateStockWithAudit: (id, newQty, performedBy, performedByName, action, opnameRequestId, notes) => {
+    const state = get()
+    const item = state.items.find((i) => i.id === id)
+    if (!item) return
+
+    const auditLog: StockAuditLog = {
+      id: `AUDIT-${Date.now()}`,
+      itemId: id,
+      itemName: item.name,
+      action,
+      previousQty: item.current,
+      newQty,
+      difference: newQty - item.current,
+      performedBy,
+      performedByName,
+      timestamp: new Date().toISOString(),
+      opnameRequestId,
+      notes
+    }
+
+    set((state) => ({
+      items: state.items.map((i) =>
+        i.id === id ? { ...i, current: newQty, lastUpdate: new Date().toISOString().split('T')[0] } : i
+      ),
+      auditLogs: [...state.auditLogs, auditLog]
     }))
+  },
+
+  getAuditLogs: (itemId) => {
+    const logs = get().auditLogs
+    if (itemId) {
+      return logs
+        .filter((log) => log.itemId === itemId)
+        .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+    }
+
+    return logs.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+  }
 }))
