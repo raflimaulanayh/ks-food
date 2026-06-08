@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perancangan Database ERP KS FOOD</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        :root {
+            /* Antigravity Theme Colors */
+            --bg-base: #05050A;
+            --bg-surface: #0F101A;
+            --text-main: #E2E4F0;
+            --text-muted: #8F93A3;
+            --neon-blue: #00F0FF;
+            --neon-purple: #8A2BE2;
+            --neon-pink: #FF007F;
+            
+            /* Glassmorphism */
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-glow: 0 8px 32px 0 rgba(0, 240, 255, 0.1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(138, 43, 226, 0.08), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(0, 240, 255, 0.08), transparent 25%);
+        }
+
+        /* Slide Container Mechanism */
+        #presentation-wrapper {
+            position: relative;
+            width: 1280px;
+            height: 720px;
+            background-color: var(--bg-surface);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5), inset 0 0 0 1px var(--glass-border);
+            overflow: hidden;
+        }
+
+        .slide-container {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: scale(0.95);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide-container.active {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+
+        /* Typography */
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; margin-bottom: 0.5em; }
+        
+        h1 {
+            font-size: 3.5rem; font-weight: 900;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        h2 {
+            font-size: 2rem; color: var(--text-main);
+            border-left: 4px solid var(--neon-blue); padding-left: 15px; margin-bottom: 20px;
+        }
+
+        p, li { font-size: 1.15rem; line-height: 1.6; color: var(--text-muted); }
+        ul { list-style: none; padding-left: 0; }
+        li { margin-bottom: 10px; position: relative; padding-left: 25px; }
+        li::before {
+            content: "▹"; position: absolute; left: 0;
+            color: var(--neon-purple); font-size: 1.3rem; line-height: 1.2;
+        }
+
+        /* Structural Classes */
+        .chapter-badge {
+            position: absolute; top: 30px; right: 40px;
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            padding: 8px 16px; border-radius: 20px;
+            font-size: 0.85rem; font-weight: 600; color: var(--neon-blue);
+            letter-spacing: 1px; text-transform: uppercase;
+            backdrop-filter: blur(4px); z-index: 10;
+        }
+
+        .content-area {
+            padding: 80px 60px 40px 60px;
+            flex: 1; display: flex; flex-direction: column; justify-content: center;
+        }
+
+        .two-column { display: flex; gap: 40px; height: 100%; align-items: center; }
+        .two-column > div { flex: 1; }
+
+        .three-column { display: flex; gap: 30px; }
+        .three-column > div { flex: 1; }
+
+        .tiled-content {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px; margin-top: 20px;
+        }
+
+        .card {
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            border-radius: 16px; padding: 25px;
+            backdrop-filter: blur(12px); transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative; overflow: hidden;
+        }
+        .card:hover { transform: translateY(-5px); box-shadow: var(--glass-glow); }
+        .card i { font-size: 2.2rem; color: var(--neon-blue); margin-bottom: 15px; display: inline-block; }
+        .card h3 { font-size: 1.3rem; color: var(--text-main); margin-bottom: 10px;}
+        .card p { font-size: 1rem; }
+
+        .bleed-image-layout { display: flex; height: 100%; }
+        .bleed-text { flex: 1; padding: 80px 60px; display: flex; flex-direction: column; justify-content: center; }
+        .bleed-image { flex: 1.2; background-color: #1A1C29; position: relative; }
+        .bleed-image img { width: 100%; height: 100%; object-fit: cover; opacity: 0.85; }
+        .bleed-image::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to right, var(--bg-surface) 0%, transparent 15%);
+        }
+
+        .img-container {
+            width: 100%; height: 100%; border-radius: 16px; overflow: hidden;
+            border: 1px solid var(--glass-border); box-shadow: var(--glass-glow);
+            background: #1A1C29; display: flex; justify-content: center; align-items: center;
+        }
+        .img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+        /* Specific Elements */
+        .highlight { color: var(--text-main); font-weight: 600; }
+        .accent-text { color: var(--neon-pink); font-weight: 600; }
+        
+        .code-block {
+            background: #0D0E15; border: 1px solid var(--glass-border);
+            border-radius: 12px; padding: 15px; font-family: monospace;
+            color: #A9B2C3; font-size: 0.85rem; overflow-x: auto;
+        }
+
+        /* Lightbox Modal & Zoom */
+        .lightbox-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); z-index: 1000;
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; visibility: hidden; transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        .lightbox-modal.active { opacity: 1; visibility: visible; }
+        .lightbox-modal img {
+            max-width: 90%; max-height: 90%; border-radius: 12px;
+            box-shadow: 0 0 50px rgba(0, 240, 255, 0.2); border: 1px solid var(--glass-border);
+        }
+        .lightbox-close {
+            position: absolute; top: 30px; right: 40px; font-size: 2.5rem;
+            color: white; cursor: pointer; transition: color 0.2s;
+        }
+        .lightbox-close:hover { color: var(--neon-pink); }
+        
+        .zoom-img-container {
+            position: relative; overflow: hidden; cursor: pointer;
+            border-radius: 12px; border: 1px solid var(--glass-border); flex: 1;
+            background: var(--bg-surface); display: flex; align-items: center; justify-content: center;
+        }
+        .zoom-img-container img {
+            max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.3s;
+            display: block;
+        }
+        .zoom-img-container:hover img { transform: scale(1.05); }
+        .zoom-img-overlay {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.6); display: flex; flex-direction: column;
+            justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s ease;
+            z-index: 10; pointer-events: none;
+        }
+        .zoom-img-container:hover .zoom-img-overlay { opacity: 1; }
+        .zoom-btn {
+            background: var(--neon-blue); color: #000; padding: 10px 20px;
+            border-radius: 20px; font-weight: 600; display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+        }
+
+        /* Navigation Controls */
+        .nav-controls {
+            position: absolute; bottom: 30px; right: 40px;
+            display: flex; gap: 15px; z-index: 100;
+        }
+        .nav-btn {
+            background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-main);
+            width: 44px; height: 44px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            cursor: pointer; transition: all 0.2s ease; backdrop-filter: blur(4px);
+        }
+        .nav-btn:hover { background: rgba(0, 240, 255, 0.1); border-color: var(--neon-blue); color: var(--neon-blue); }
+
+        .progress-bar {
+            position: absolute; bottom: 0; left: 0; height: 4px;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            width: 0%; transition: width 0.3s ease; z-index: 100;
+        }
+        .slide-counter {
+            position: absolute; bottom: 40px; left: 40px;
+            font-family: 'Outfit', sans-serif; color: var(--text-muted); font-size: 1.2rem; font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="presentation-wrapper">
+        
+        <!-- Slide 1: Cover -->
+        <div class="slide-container active">
+            <div class="content-area" style="align-items: center; text-align: center;">
+                <i class="ph ph-database" style="font-size: 5rem; color: var(--neon-blue); margin-bottom: 20px;"></i>
+                <h1 style="font-size: 4rem;">Perancangan Database<br>ERP KS FOOD</h1>
+                <p style="font-size: 1.5rem; color: var(--text-main); margin-bottom: 40px;">Studi Kasus: CV Kertasari Sejahtera (FMCG)</p>
+                <div class="card" style="display: inline-block; text-align: left; border-color: var(--neon-purple);">
+                    <p style="margin-bottom: 10px; color: var(--text-main); font-weight: 600;">Tim Pengembang:</p>
+                    <ul style="margin: 0; display: flex; gap: 30px;">
+                        <li>Russell Reece</li>
+                        <li>Rafli Maulana</li>
+                        <li>Dave Evander</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: BAB 1 - Company Profile -->
+        <div class="slide-container">
+            <div class="chapter-badge">BAB 1: Company Profile & Business Process</div>
+            <div class="content-area" style="align-items: center; justify-content: flex-start; padding-top: 60px;">
+                <h2 style="align-self: flex-start; margin-bottom: 30px;">Profil CV Kertasari Sejahtera (KS FOOD)</h2>
+                
+                <div style="display: flex; gap: 30px; width: 100%;">
+                    <!-- Company Profile Card -->
+                    <div class="card" style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                            <i class="ph ph-buildings" style="margin: 0; font-size: 2.5rem;"></i>
+                            <h3 style="margin: 0;">Company Profile</h3>
+                        </div>
+                        <ul style="font-size: 1rem;">
+                            <li><strong>Industri:</strong> Manufaktur Fast-Moving Consumer Goods (FMCG)</li>
+                            <li><strong>Produk:</strong> Saos Sambal, Saos Tomat, Mayones, dan aneka bumbu.</li>
+                            <li><strong>Pimpinan:</strong> Grace Indriani</li>
+                            <li><strong>Model Bisnis:</strong> Melayani B2B (Business-to-Business) dan B2C.</li>
+                            <li><strong>Klien Utama:</strong> Mayora Superbubur, Gokana, Kingfood, Dellifood.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Visi Misi Card -->
+                    <div class="card" style="flex: 1; border-color: var(--neon-purple);">
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                            <i class="ph ph-target" style="margin: 0; font-size: 2.5rem; color: var(--neon-purple);"></i>
+                            <h3 style="margin: 0;">Visi & Misi</h3>
+                        </div>
+                        <p style="font-style: italic; color: var(--neon-blue); font-weight: 600; text-align: center; margin-bottom: 15px;">"GOOD TASTE, GOOD QUALITY"</p>
+                        <ul style="font-size: 0.95rem;">
+                            <li>Menghasilkan produk berkualitas unggulan & berinovasi.</li>
+                            <li>Menjadi mitra kerja terbaik untuk memenuhi kepuasan pelanggan.</li>
+                            <li>Memberkati seluruh karyawan, lingkungan sekitar, kota, dan bangsa.</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Logo Area -->
+                    <div style="flex: 0.8; display: flex; justify-content: center; align-items: center; background: rgba(0, 240, 255, 0.05); border-radius: 16px; border: 1px dashed var(--neon-blue);">
+                        <div style="text-align: center; width: 100%; height: 100%; padding: 20px;">
+                            <img src="../public/logo.png" alt="Logo KS FOOD" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: BAB 1 - Sejarah Perusahaan -->
+        <div class="slide-container">
+            <div class="chapter-badge">BAB 1: Company Profile & Business Process</div>
+            <div class="content-area" style="justify-content: flex-start; padding-top: 60px;">
+                <h2 style="margin-bottom: 30px;">Sejarah KS FOOD</h2>
+                
+                <div style="display: flex; flex-direction: column; gap: 15px; width: 100%; position: relative;">
+                    <!-- Vertical Line -->
+                    <div style="position: absolute; left: 38px; top: 20px; bottom: 20px; width: 2px; background: var(--glass-border);"></div>
+                    
+                    <div style="display: flex; gap: 20px; align-items: center; z-index: 1;">
+                        <div style="background: var(--bg-surface); padding: 10px; border-radius: 50%; border: 2px solid var(--neon-blue);">
+                            <i class="ph ph-flag-banner" style="font-size: 1.5rem; color: var(--neon-blue);"></i>
+                        </div>
+                        <div class="card" style="flex: 1; padding: 15px 25px; margin: 0;">
+                            <h3 style="color: var(--neon-blue); margin-bottom: 5px; font-size: 1.2rem;">1943: Berdiri</h3>
+                            <p style="font-size: 1rem; margin: 0;">Didirikan oleh Ibu Hana Witjahja. Awalnya memproduksi Kecap Cap Noni dengan alat tradisional.</p>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 20px; align-items: center; z-index: 1;">
+                        <div style="background: var(--bg-surface); padding: 10px; border-radius: 50%; border: 2px solid var(--neon-purple);">
+                            <i class="ph ph-factory" style="font-size: 1.5rem; color: var(--neon-purple);"></i>
+                        </div>
+                        <div class="card" style="flex: 1; padding: 15px 25px; margin: 0; border-color: var(--neon-purple);">
+                            <h3 style="color: var(--neon-purple); margin-bottom: 5px; font-size: 1.2rem;">1949: Ekspansi Pabrik</h3>
+                            <p style="font-size: 1rem; margin: 0;">Membeli tanah dan bangunan pabrik permanen. Produksi terus berkembang bertahap.</p>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 20px; align-items: center; z-index: 1;">
+                        <div style="background: var(--bg-surface); padding: 10px; border-radius: 50%; border: 2px solid var(--neon-blue);">
+                            <i class="ph ph-users-three" style="font-size: 1.5rem; color: var(--neon-blue);"></i>
+                        </div>
+                        <div class="card" style="flex: 1; padding: 15px 25px; margin: 0;">
+                            <h3 style="color: var(--neon-blue); margin-bottom: 5px; font-size: 1.2rem;">Transisi Manajemen</h3>
+                            <p style="font-size: 1rem; margin: 0;">Dikelola oleh generasi kedua, Bapak Herman Witjahja. Produksi meningkat pesat (1.000 - 1.500 botol/hari).</p>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 20px; align-items: center; z-index: 1;">
+                        <div style="background: var(--bg-surface); padding: 10px; border-radius: 50%; border: 2px solid var(--neon-pink);">
+                            <i class="ph ph-flask" style="font-size: 1.5rem; color: var(--neon-pink);"></i>
+                        </div>
+                        <div class="card" style="flex: 1; padding: 15px 25px; margin: 0; border-color: var(--neon-pink);">
+                            <h3 style="color: var(--neon-pink); margin-bottom: 5px; font-size: 1.2rem;">1993: Varian Baru & Sertifikasi</h3>
+                            <p style="font-size: 1rem; margin: 0;">Ekspansi produk dengan varian sambal pedas & saus tomat. Memiliki Sertifikat Halal MUI & izin Dep.Kes RI.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: BAB 1 - Struktur Organisasi -->
+        <div class="slide-container">
+            <div class="chapter-badge">BAB 1: Company Profile & Business Process</div>
+            <div class="content-area" style="align-items: center; justify-content: flex-start; padding-top: 50px;">
+                <h2 style="align-self: flex-start; margin-bottom: 20px;">Struktur Organisasi</h2>
+                
+                <div style="display: flex; flex-direction: column; align-items: center; width: 100%; gap: 20px;">
+                    <!-- Level 1 -->
+                    <div class="card" style="padding: 15px 40px; text-align: center; border-color: var(--neon-blue); background: rgba(0, 240, 255, 0.1);">
+                        <h3 style="margin: 0; font-size: 1.5rem;">Kepala Pabrik</h3>
+                    </div>
+                    
+                    <!-- Connector Line -->
+                    <div style="width: 2px; height: 20px; background: var(--neon-blue);"></div>
+                    <div style="width: 80%; height: 2px; background: var(--neon-blue);"></div>
+                    
+                    <!-- Level 2 container -->
+                    <div style="display: flex; width: 90%; justify-content: space-between; position: relative;">
+                        <!-- Connector drops -->
+                        <div style="position: absolute; top: -2px; left: 0%; width: 2px; height: 20px; background: var(--neon-blue);"></div>
+                        <div style="position: absolute; top: -2px; left: 33%; width: 2px; height: 20px; background: var(--neon-blue);"></div>
+                        <div style="position: absolute; top: -2px; left: 66%; width: 2px; height: 20px; background: var(--neon-blue);"></div>
+                        <div style="position: absolute; top: -2px; right: 0%; width: 2px; height: 20px; background: var(--neon-blue);"></div>
+                        
+                        <!-- Box 1 -->
+                        <div style="flex: 1; margin-top: 18px; padding: 0 10px;">
+                            <div class="card" style="padding: 15px; text-align: center; height: 100%;">
+                                <h3 style="font-size: 1.1rem; color: var(--neon-blue); margin-bottom: 15px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;">1. Produksi</h3>
+                                <ul style="text-align: left; font-size: 0.9rem; margin: 0; padding-left: 15px;">
+                                    <li>Asisten Produksi</li>
+                                    <li>Pembelian</li>
+                                    <li>R&D</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Box 2 -->
+                        <div style="flex: 1; margin-top: 18px; padding: 0 10px;">
+                            <div class="card" style="padding: 15px; text-align: center; height: 100%;">
+                                <h3 style="font-size: 1.1rem; color: var(--neon-blue); margin-bottom: 15px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;">2. Quality Control</h3>
+                                <ul style="text-align: left; font-size: 0.9rem; margin: 0; padding-left: 15px;">
+                                    <li>Gudang Bahan Baku
+                                        <ul style="padding-left: 15px; font-size: 0.8rem; color: var(--text-muted);">
+                                            <li>Divisi Tepung</li>
+                                            <li>Divisi Bumbu</li>
+                                        </ul>
+                                    </li>
+                                    <li>Lab QC</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Box 3 -->
+                        <div style="flex: 1; margin-top: 18px; padding: 0 10px;">
+                            <div class="card" style="padding: 15px; text-align: center; height: 100%;">
+                                <h3 style="font-size: 1.1rem; color: var(--neon-blue); margin-bottom: 15px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;">3. Umum + Personalia</h3>
+                                <ul style="text-align: left; font-size: 0.9rem; margin: 0; padding-left: 15px;">
+                                    <li>Pengolahan Limbah</li>
+                                    <li>Umum</li>
+                                    <li>Utilitas</li>
+                                    <li>HRD & Kemasan</li>
+                                    <li>Security</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- Box 4 -->
+                        <div style="flex: 1; margin-top: 18px; padding: 0 10px;">
+                            <div class="card" style="padding: 15px; text-align: center; height: 100%;">
+                                <h3 style="font-size: 1.1rem; color: var(--neon-blue); margin-bottom: 15px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;">4. Administrasi</h3>
+                                <ul style="text-align: left; font-size: 0.9rem; margin: 0; padding-left: 15px;">
+                                    <li>Adm & Administrasi</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: BAB 1 - End to End Diagram -->
+        <div class="slide-container">
+            <div class="chapter-badge">BAB 1: Company Profile & Business Process</div>
+            <div class="bleed-image-layout">
+                <div class="bleed-text" style="padding: 40px 60px;">
+                    <h2>End-to-End Business Process</h2>
+                    <ul style="font-size: 0.95rem;">
+                        <li><strong>1. Kontrak & Pemesanan:</strong> Klien B2B (Mayora, Gokana) negosiasi langsung/email. Pelanggan B2C via e-commerce (Tokopedia, Shopee).</li>
+                        <li><strong>2. Pengadaan (Inbound):</strong> Mencari supplier, menerima pasokan, sortir kualitas, lalu disimpan di gudang.</li>
+                        <li><strong>3. Operasional Produksi:</strong> Persiapan (cuci, kukus, giling), pemasakan sesuai resep rahasia, dan pengisian botol (packaging).</li>
+                        <li><strong>4. Testing / QC:</strong> Pengujian sampel berkala untuk konsistensi (uji mikrobiologi, viskositas, brix, salt, pH).</li>
+                        <li><strong>5. Logistik Keluar (Outbound):</strong> Proses pesanan distributor, packing, pengiriman via armada internal/ekspedisi.</li>
+                        <li><strong>6. Layanan (Service):</strong> Penanganan keluhan, umpan balik pelanggan, dan pembuatan invoice otomatis via software Accurate.</li>
+                    </ul>
+                </div>
+                <div class="bleed-image" style="display: flex; flex-direction: column; gap: 15px; padding: 20px; background: #0F101A; overflow-y: auto;">
+                    <div class="zoom-img-container" onclick="openLightbox('assets/end-to-end.png')">
+                        <img src="assets/end-to-end.png" alt="End-to-End Diagram">
+                        <div class="zoom-img-overlay">
+                            <div class="zoom-btn"><i class="ph ph-magnifying-glass-plus"></i> Perbesar Diagram</div>
+                        </div>
+                    </div>
+                    <div class="zoom-img-container" onclick="openLightbox('assets/e-t-e-explained.jpeg')">
+                        <img src="assets/e-t-e-explained.jpeg" alt="End-to-End Diagram Explained">
+                        <div class="zoom-img-overlay">
+                            <div class="zoom-btn"><i class="ph ph-magnifying-glass-plus"></i> Perbesar Penjelasan</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: BAB 1 - Current Application -->
+        <div class="slide-container">
+            <div class="chapter-badge">BAB 1: Company Profile & Business Process</div>
+            <div class="content-area">
+                <h2>Current Application / Information System</h2>
+                <p style="margin-bottom: 30px;">Kombinasi alat terpisah yang saat ini digunakan KS FOOD:</p>
+                <div class="tiled-content" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+                    <div class="card" style="text-align: center; padding: 20px;">
+                        <i class="ph ph-link" style="font-size: 3rem; color: #107c41;"></i>
+                        <h3 style="font-size: 1.1rem;">Linktree</h3>
+                        <p style="font-size: 0.9rem;">Mengarahkan pelanggan B2C ke platform e-commerce.</p>
+                    </div>
+                    <div class="card" style="text-align: center; padding: 20px;">
+                        <i class="ph ph-browser" style="font-size: 3rem; color: var(--neon-blue);"></i>
+                        <h3 style="font-size: 1.1rem;">Software Accurate</h3>
+                        <p style="font-size: 0.9rem;">Khusus pembuatan invoice, PO, pajak. <strong>Kendala:</strong> Kesulitan sinkronisasi stok.</p>
+                    </div>
+                    <div class="card" style="text-align: center; padding: 20px;">
+                        <i class="ph ph-file-xls" style="font-size: 3rem; color: #107c41;"></i>
+                        <h3 style="font-size: 1.1rem;">Excel / Sheets</h3>
+                        <p style="font-size: 0.9rem;">Digunakan admin pabrik untuk beberapa rekapitulasi digital terpisah.</p>
+                    </div>
+                    <div class="card" style="text-align: center; padding: 20px;">
+                        <i class="ph ph-fingerprint" style="font-size: 3rem; color: var(--neon-purple);"></i>
+                        <h3 style="font-size: 1.1rem;">Sistem Absensi</h3>
+                        <p style="font-size: 0.9rem;">Digunakan terpisah untuk deteksi kehadiran karyawan.</p>
+                    </div>
+                    <div class="card" style="text-align: center; padding: 20px;">
+                        <i class="ph ph-files" style="font-size: 3rem; color: var(--text-muted);"></i>
+                        <h3 style="font-size: 1.1rem;">Catatan Kertas</h3>
+                        <p style="font-size: 0.9rem;">Alat dominan untuk pencatatan stok dan hasil produksi di lapangan.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: BAB 2 - Problem Statement 1 -->
+        <div class="slide-container">
+            <div class="chapter-badge">BAB 2: Problem Statements & Database Planning</div>
+            <div class="content-area">
+                <h2>Problem Statements</h2>
+                <div class="two-column">
+                    <div class="card" style="border-left: 4px solid var(--neon-pink);">
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
+                            <i class="ph ph-ghost" style="font-size: 2.5rem; color: var(--neon-pink);"></i>
+                            <h3 style="margin: 0; color: var(--neon-pink);">Inventory Record Inaccuracy & Ghost Stock</h3>
+                        </div>
+                        <ul style="font-size: 0.95rem;">
+                            <li><strong>Jeda Data:</strong> Stok yang dipesan di e-commerce (Tokopedia/Shopee) belum terpotong otomatis di "Accurate".</li>
+                            <li><strong>Ghost Stock:</strong> Sistem menampilkan stok tersedia, padahal fisik sudah habis/di-booking.</li>
+                            <li><strong>Dampak:</strong> Pembatalan pesanan dan hilangnya kepercayaan konsumen.</li>
+                        </ul>
+                    </div>
+                    <div class="card" style="border-left: 4px solid var(--neon-blue);">
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
+                            <i class="ph ph-warning" style="font-size: 2.5rem; color: var(--neon-blue);"></i>
+                            <h3 style="margin: 0; color: var(--neon-blue);">Human Error & Kertas Manual</h3>
+                        </div>
+                        <ul style="font-size: 0.95rem;">
+                            <li><strong>Pencatatan Ganda:</strong> Stok gudang, Quality Control, dan resep produksi masih menggunakan kertas.</li>
+                            <li><strong>Batch Tracking:</strong> Sangat rentan kesalahan karena staff harus menyalin data batch manual dari botol ke form.</li>
+                            <li><strong>Dampak:</strong> Kesulitan validasi kualitas jika terjadi retur.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: BAB 2 - Problem Statement 2 -->
+        <div class="slide-container">
+            <div class="chapter-badge">BAB 2: Problem Statements & Database Planning</div>
+            <div class="content-area">
+                <h2>Data Isolation & Mission Objectives</h2>
+                <div class="two-column">
+                    <div class="card" style="border-left: 4px solid var(--neon-purple);">
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
+                            <i class="ph ph-wall" style="font-size: 2.5rem; color: var(--neon-purple);"></i>
+                            <h3 style="margin: 0; color: var(--neon-purple);">Data Isolation & Manajemen Reaktif</h3>
+                        </div>
+                        <ul style="font-size: 0.95rem;">
+                            <li>Tidak ada <em>real-time dashboard</em> untuk manajemen (Silo data antar Excel).</li>
+                            <li>Persetujuan kredit B2B berjalan lambat.</li>
+                            <li>Ketergantungan data produksi pihak ketiga yang menghambat visibilitas operasi.</li>
+                        </ul>
+                    </div>
+                    <div class="card" style="background: rgba(0, 240, 255, 0.1); border-color: var(--neon-blue);">
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
+                            <i class="ph ph-rocket-launch" style="font-size: 2.5rem; color: var(--neon-blue);"></i>
+                            <h3 style="margin: 0; color: var(--neon-blue);">Mission Statement & Objectives</h3>
+                        </div>
+                        <p style="font-weight: 600; font-style: italic; font-size: 0.9rem; margin-bottom: 10px;">"Merancang database terintegrasi dari pengadaan bahan baku hingga distribusi untuk akurasi real-time."</p>
+                        <ul style="font-size: 0.9rem;">
+                            <li><strong>Target 1:</strong> Otomatisasi pelacakan batch (FEFO).</li>
+                            <li><strong>Target 2:</strong> Sinkronisasi pemotongan stok dengan platform e-commerce.</li>
+                            <li><strong>Target 3:</strong> Menghasilkan laporan <em>daily ghost stock</em> untuk mitigasi dini.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: BAB 2 - Database Planning -->
+        <div class="slide-container">
+            <div class="chapter-badge">BAB 2: Problem Statements & Database Planning</div>
+            <div class="content-area">
+                <h2>Metode Pengumpulan Data & Format Standar</h2>
+                <div class="two-column">
+                    <div class="card">
+                        <h3 style="color: var(--neon-blue);">Teknik Pengumpulan Fakta</h3>
+                        <p>Mengumpulkan data dari dokumen kertas (Surat Jalan, QC), aplikasi "Accurate", dan observasi lapangan melalui tiga tahap:</p>
+                        <ul style="font-size: 0.95rem; margin-top: 10px;">
+                            <li><i class="ph ph-magnifying-glass"></i> <strong>Examining Documentation:</strong> Menganalisa format laporan, invoice, dan kartu stok.</li>
+                            <li><i class="ph ph-users"></i> <strong>Interviewing:</strong> Tanya jawab dengan user di berbagai divisi (Gudang, Produksi, dll).</li>
+                            <li><i class="ph ph-eye"></i> <strong>Observing:</strong> Mengamati langsung proses operasional di pabrik KS FOOD.</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3 style="color: var(--neon-purple);">Standar Format Database</h3>
+                        <p>Untuk menjaga konsistensi, ERP ini dirancang dengan aturan baku:</p>
+                        <ul style="font-size: 0.95rem; margin-top: 10px;">
+                            <li><strong>Naming Convention:</strong> Menggunakan format <em>ERDish</em> (camelCase) untuk atribut (misal: <code>kodeBarang</code>, <code>tanggalMasuk</code>).</li>
+                            <li><strong>Date/Time FEFO:</strong> Format tanggal & waktu ketat untuk mengelola masa kadaluwarsa (<em>First Expired, First Out</em>).</li>
+                            <li><strong>Tipe Data Numerik:</strong> Penggunaan <code>Decimal</code>/<code>Integer</code> akurat untuk konversi satuan resep rahasia (gram, ml).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: BAB 2 - DBSDLC -->
+        <div class="slide-container">
+            <div class="chapter-badge">BAB 2: Problem Statements & Database Planning</div>
+            <div class="content-area">
+                <h2 style="margin-bottom: 20px;">Tahapan Implementasi (DBSDLC)</h2>
+                <p style="margin-bottom: 20px;">Solusi dieksekusi melalui pendekatan siklus hidup sistem database (DBSDLC):</p>
+                <div style="display: flex; gap: 15px; align-items: stretch;">
+                    <div class="card" style="flex: 1; text-align: center; display: flex; flex-direction: column; justify-content: center;">
+                        <i class="ph ph-clipboard-text" style="font-size: 2.5rem; color: var(--text-main);"></i>
+                        <h3 style="font-size: 1.1rem; margin: 10px 0;">1. Database Planning</h3>
+                        <p style="font-size: 0.85rem;">Mendefinisikan misi sistem dan membatasi ruang lingkup (System Definition).</p>
+                    </div>
+                    <i class="ph ph-arrow-right" style="font-size: 2rem; color: var(--glass-border); align-self: center;"></i>
+                    <div class="card" style="flex: 1; text-align: center; display: flex; flex-direction: column; justify-content: center;">
+                        <i class="ph ph-list-magnifying-glass" style="font-size: 2.5rem; color: var(--neon-blue);"></i>
+                        <h3 style="font-size: 1.1rem; margin: 10px 0;">2. Requirements</h3>
+                        <p style="font-size: 0.85rem;">Analisis kebutuhan data tiap departemen melalui pengumpulan fakta.</p>
+                    </div>
+                    <i class="ph ph-arrow-right" style="font-size: 2rem; color: var(--glass-border); align-self: center;"></i>
+                    <div class="card" style="flex: 1; text-align: center; display: flex; flex-direction: column; justify-content: center;">
+                        <i class="ph ph-database" style="font-size: 2.5rem; color: var(--neon-purple);"></i>
+                        <h3 style="font-size: 1.1rem; margin: 10px 0;">3. Database Design</h3>
+                        <p style="font-size: 0.85rem;">Merancang <em>Conceptual</em> (ERD awal), <em>Logical</em>, hingga <em>Physical Design</em> (SQL).</p>
+                    </div>
+                    <i class="ph ph-arrow-right" style="font-size: 2rem; color: var(--glass-border); align-self: center;"></i>
+                    <div class="card" style="flex: 1; text-align: center; display: flex; flex-direction: column; justify-content: center;">
+                        <i class="ph ph-desktop" style="font-size: 2.5rem; color: var(--neon-pink);"></i>
+                        <h3 style="font-size: 1.1rem; margin: 10px 0;">4. App Design</h3>
+                        <p style="font-size: 0.85rem;">Membangun antarmuka User (B2B, Admin) yang terhubung dengan database.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Slide 11: BAB 3 - System Objectives & Boundaries -->
+        <div class="slide-container">
+            <div class="chapter-badge">BAB 3: System Definition & Requirement</div>
+            <div class="content-area">
+                <h2>System Objectives & Boundaries</h2>
+                <div class="two-column">
+                    <div>
+                        <h3 style="color: var(--neon-blue); margin-bottom: 15px;"><i class="ph ph-target"></i> Tujuan Sistem (Objectives)</h3>
+                        <ul style="font-size: 0.95rem; margin-bottom: 25px;">
+                            <li><strong>Proprietary E-Commerce & Omnichannel:</strong> Platform mandiri tersinkronisasi dengan marketplace eksternal.</li>
+                            <li><strong>Single Source of Truth (SSOT):</strong> Satu database terpusat untuk rekaman pergerakan persediaan.</li>
+                            <li><strong>Mencegah Ghost Stock:</strong> Stok fisik terkunci (reserved) secara otomatis saat ada pesanan masuk.</li>
+                            <li><strong>Otomatisasi Invoicing:</strong> Penerbitan Surat Jalan dan Invoice otomatis dari data transaksi.</li>
+                        </ul>
+                    </div>
+                    <div class="card" style="border-color: var(--neon-purple);">
+                        <h3 style="color: var(--neon-purple); margin-bottom: 15px;"><i class="ph ph-bounding-box"></i> Cakupan Sistem (Boundaries)</h3>
+                        <p style="font-size: 0.9rem; margin-bottom: 10px;">Sistem mencakup manajemen dari hulu ke hilir:</p>
+                        <ul style="font-size: 0.9rem;">
+                            <li><strong>E-Commerce Mandiri & Omnichannel:</strong> B2B, B2C, integrasi API eksternal.</li>
+                            <li><strong>Gudang (Warehouse Management):</strong> Perekaman stok berbasis Batch dan Expired Date (FEFO).</li>
+                            <li><strong>Produksi:</strong> Pencatatan Job Order dan pemotongan alokasi bahan baku otomatis berdasarkan resep.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: BAB 3 - System Limitations -->
+        <div class="slide-container">
+            <div class="chapter-badge">BAB 3: System Definition & Requirement</div>
+            <div class="content-area" style="align-items: center; justify-content: flex-start; padding-top: 60px;">
+                <h2 style="align-self: flex-start; margin-bottom: 30px;">System Limitations (Di Luar Cakupan)</h2>
+                <div style="display: flex; gap: 20px; width: 100%; flex-wrap: wrap; justify-content: center;">
+                    <div class="card" style="flex: 1; min-width: 200px; text-align: center; border-top: 4px solid var(--neon-pink);">
+                        <i class="ph ph-truck" style="font-size: 3rem; color: var(--neon-pink);"></i>
+                        <h3 style="font-size: 1.1rem; margin: 10px 0;">Outbound Logistics</h3>
+                        <p style="font-size: 0.85rem;">Tidak membuat cetak fisik Surat Jalan manual/Airway Bill ekspedisi pihak ketiga.</p>
+                    </div>
+                    <div class="card" style="flex: 1; min-width: 200px; text-align: center; border-top: 4px solid var(--neon-blue);">
+                        <i class="ph ph-flask" style="font-size: 3rem; color: var(--neon-blue);"></i>
+                        <h3 style="font-size: 1.1rem; margin: 10px 0;">Modul Produksi Detail</h3>
+                        <p style="font-size: 0.85rem;">Tidak mencakup perhitungan Bill of Materials (BOM) presisi, parameter suhu/proses masak, dan form lab Quality Control.</p>
+                    </div>
+                    <div class="card" style="flex: 1; min-width: 200px; text-align: center; border-top: 4px solid var(--neon-purple);">
+                        <i class="ph ph-users" style="font-size: 3rem; color: var(--neon-purple);"></i>
+                        <h3 style="font-size: 1.1rem; margin: 10px 0;">Payroll / HRM</h3>
+                        <p style="font-size: 0.85rem;">Tidak mencakup modul penggajian atau manajemen sumber daya manusia yang kompleks.</p>
+                    </div>
+                    <div class="card" style="flex: 1; min-width: 200px; text-align: center; border-top: 4px solid var(--text-main);">
+                        <i class="ph ph-calculator" style="font-size: 3rem; color: var(--text-main);"></i>
+                        <h3 style="font-size: 1.1rem; margin: 10px 0;">Finance & Akuntansi</h3>
+                        <p style="font-size: 0.85rem;">Bukan sistem akuntansi <em>General Ledger</em> (Buku Besar) untuk jurnal debit/kredit, neraca, SPT Pajak, kalkulasi PPN/Invoicing rinci.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: BAB 3 - Users View & Roles -->
+        <div class="slide-container">
+            <div class="chapter-badge">BAB 3: System Definition & Requirement</div>
+            <div class="content-area">
+                <h2>Users View and Roles</h2>
+                <div class="tiled-content" style="grid-template-columns: repeat(2, 1fr);">
+                    <div class="card" style="display: flex; gap: 15px;">
+                        <i class="ph ph-users-three" style="font-size: 3rem; color: var(--neon-blue);"></i>
+                        <div>
+                            <h3 style="color: var(--neon-blue);">1. Pelanggan (B2B & B2C)</h3>
+                            <p style="font-size: 0.85rem; margin-top: 5px;">Melihat katalog, shopping cart, checkout, integrasi Payment Gateway. <strong>Khusus B2B:</strong> Portal harga grosir, unggah PO, dan riwayat invoice.</p>
+                        </div>
+                    </div>
+                    <div class="card" style="display: flex; gap: 15px;">
+                        <i class="ph ph-warehouse" style="font-size: 3rem; color: var(--neon-purple);"></i>
+                        <div>
+                            <h3 style="color: var(--neon-purple);">2. Staf Gudang (Warehouse)</h3>
+                            <p style="font-size: 0.85rem; margin-top: 5px;">Validasi pemindaian QR Code (Scan In/Out), peringatan jatuh tempo expired date (FEFO), pencetakan Surat Jalan B2B & input resi kurir.</p>
+                        </div>
+                    </div>
+                    <div class="card" style="display: flex; gap: 15px;">
+                        <i class="ph ph-factory" style="font-size: 3rem; color: var(--neon-pink);"></i>
+                        <div>
+                            <h3 style="color: var(--neon-pink);">3. Tim Produksi</h3>
+                            <p style="font-size: 0.85rem; margin-top: 5px;">Akses Job Order produksi, scan-out pengurangan bahan baku (FEFO), cetak QR Code/batch baru untuk barang jadi secara real-time.</p>
+                        </div>
+                    </div>
+                    <div class="card" style="display: flex; gap: 15px;">
+                        <i class="ph ph-chart-line-up" style="font-size: 3rem; color: var(--text-main);"></i>
+                        <div>
+                            <h3 style="color: var(--text-main);">4. Pimpinan / Manager</h3>
+                            <p style="font-size: 0.85rem; margin-top: 5px;">Dashboard laporan sirkulasi stok, fitur notifikasi persetujuan (approval digital), dan laporan perbandingan penjualan antar-kanal.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: BAB 3 - Requirements Collection & CRUD Analysis -->
+        <div class="slide-container">
+            <div class="chapter-badge">BAB 3: System Definition & Requirement</div>
+            <div class="content-area">
+                <h2>Aliran Data & CRUD Analysis</h2>
+                <div class="two-column">
+                    <div>
+                        <h3 style="color: var(--neon-blue); margin-bottom: 10px;">Aliran Data Bisnis</h3>
+                        <ul style="font-size: 0.9rem;">
+                            <li><strong>Pengadaan:</strong> Deteksi stok menipis -> Generate UID batch & expire date saat barang tiba.</li>
+                            <li><strong>Produksi:</strong> Job Order mengambil bahan baku -> Potong stok (FEFO) -> Hasil lolos QC mendapat QR Code barang jadi baru.</li>
+                            <li><strong>Penjualan (Omnichannel):</strong> Menarik data pesanan B2B/B2C beserta rincian biaya -> Kunci (reserve) stok tersedia.</li>
+                        </ul>
+                    </div>
+                    <div class="card" style="border-left: 4px solid var(--neon-purple); padding: 20px;">
+                        <h3 style="color: var(--neon-purple); margin-bottom: 10px;">CRUD Analysis</h3>
+                        <ul style="font-size: 0.85rem; line-height: 1.6;">
+                            <li><strong style="color: #00F0FF;">[C]reate:</strong> Merekam pesanan pelanggan, menambah rekam batch bahan baku baru.</li>
+                            <li><strong style="color: #8A2BE2;">[R]etrieve:</strong> Dashboard ketersediaan stok (<em>Available to Promise</em>), rekap performa penjualan.</li>
+                            <li><strong style="color: #FF007F;">[U]pdate:</strong> Memperbarui fisik stok (mutasi in/out), mengubah status pesanan (Pending -> Delivered).</li>
+                            <li><strong style="color: var(--text-muted);">[D]elete:</strong> Membatalkan pesanan (Void/Soft Delete), menghapus draf PO salah input.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: BAB 4 - Conceptual Domains -->
+        <div class="slide-container">
+            <div class="chapter-badge">BAB 4: Conceptual ER Modeling</div>
+            <div class="content-area">
+                <h2>Pemetaan Konseptual (26 Entitas)</h2>
+                <p style="margin-bottom: 20px;">Tahap awal memetakan objek bisnis inti ke dalam tiga domain utama yang saling terintegrasi:</p>
+                <div style="display: flex; gap: 20px; align-items: stretch; justify-content: center;">
+                    <div class="card" style="flex: 1; border-top: 4px solid var(--neon-blue);">
+                        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
+                            <i class="ph ph-shopping-cart" style="font-size: 2rem; color: var(--neon-blue);"></i>
+                            <h3 style="color: var(--neon-blue); margin: 0; font-size: 1.1rem;">E-Commerce & Transaksi</h3>
+                        </div>
+                        <div style="font-size: 0.85rem; font-weight: bold; margin-bottom: 5px; color: var(--text-muted);">16 Entitas</div>
+                        <ul style="font-size: 0.85rem; line-height: 1.5; padding-left: 20px;">
+                            <li><strong>Pelanggan:</strong> User, Customer, Corporate, Retail, Address, Purchase Agreement</li>
+                            <li><strong>Katalog:</strong> Category, Product, Promotion</li>
+                            <li><strong>Transaksi:</strong> Order, Order Item, Order Promo, Payment, Payment Method, Shipment, Expedition</li>
+                        </ul>
+                    </div>
+                    <div class="card" style="flex: 1; border-top: 4px solid var(--neon-purple);">
+                        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
+                            <i class="ph ph-warehouse" style="font-size: 2rem; color: var(--neon-purple);"></i>
+                            <h3 style="color: var(--neon-purple); margin: 0; font-size: 1.1rem;">Gudang (WMS) & Pengadaan</h3>
+                        </div>
+                        <div style="font-size: 0.85rem; font-weight: bold; margin-bottom: 5px; color: var(--text-muted);">7 Entitas</div>
+                        <ul style="font-size: 0.85rem; line-height: 1.5; padding-left: 20px;">
+                            <li><strong>Master Data:</strong> Warehouse, Material, Supplier</li>
+                            <li><strong>Stok Fisik:</strong> Material Batch, Product Batch</li>
+                            <li><strong>Pengadaan:</strong> Procurement, Procurement Item</li>
+                        </ul>
+                    </div>
+                    <div class="card" style="flex: 1; border-top: 4px solid var(--neon-pink);">
+                        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
+                            <i class="ph ph-factory" style="font-size: 2rem; color: var(--neon-pink);"></i>
+                            <h3 style="color: var(--neon-pink); margin: 0; font-size: 1.1rem;">Domain Produksi</h3>
+                        </div>
+                        <div style="font-size: 0.85rem; font-weight: bold; margin-bottom: 5px; color: var(--text-muted);">3 Entitas</div>
+                        <ul style="font-size: 0.85rem; line-height: 1.5; padding-left: 20px;">
+                            <li><strong>Surat Perintah:</strong> Production Order</li>
+                            <li><strong>Barang Keluar:</strong> Production Material Usage</li>
+                            <li><strong>Barang Masuk:</strong> Production Result</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 16: BAB 4 - Konsep Relasi & Diagram -->
+        <div class="slide-container">
+            <div class="chapter-badge">BAB 4: Conceptual ER Modeling</div>
+            <div class="bleed-image-layout">
+                <div class="bleed-text">
+                    <h2>Konsep Relasi Antar Entitas</h2>
+                    <p style="font-size: 0.95rem; margin-bottom: 15px;">Memastikan integritas data lintas modul dengan notasi <em>Crow's Foot</em>.</p>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div class="card" style="padding: 15px;">
+                            <h3 style="color: var(--neon-blue); font-size: 1rem; margin-bottom: 5px;"><i class="ph ph-git-branch"></i> Super-type ke Sub-type (1:1)</h3>
+                            <p style="font-size: 0.85rem; margin: 0;">Entitas profil <strong>MS_Customer</strong> diturunkan spesifik menjadi <strong>MS_Corporate</strong> (B2B) atau <strong>MS_Retail</strong> (B2C) untuk mengelola atribut yang berbeda secara rapi.</p>
+                        </div>
+                        <div class="card" style="padding: 15px;">
+                            <h3 style="color: var(--neon-purple); font-size: 1rem; margin-bottom: 5px;"><i class="ph ph-intersect"></i> Pemecahan Many-to-Many</h3>
+                            <p style="font-size: 0.85rem; margin: 0;">Satu pesanan dapat menggunakan banyak promo, dan sebaliknya. Relasi ini dijembatani entitas <em>pivot</em> <strong>TR_Order_Promo</strong> (1:M).</p>
+                        </div>
+                        <div class="card" style="padding: 15px;">
+                            <h3 style="color: var(--neon-pink); font-size: 1rem; margin-bottom: 5px;"><i class="ph ph-flow-arrow"></i> Integrasi Lintas Modul (1:M)</h3>
+                            <p style="font-size: 0.85rem; margin: 0;"><strong>TR_Production_Result</strong> diikat ke <strong>TR_Product_Batch</strong>. Setiap "panen" hasil masak yang lolos QC otomatis menciptakan satu batch barang jadi baru di Gudang.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bleed-image" style="background: #0F101A; display: flex; align-items: center; justify-content: center; padding: 20px;">
+                    <div class="zoom-img-container" onclick="openLightbox('assets/conceptual-erd.png')">
+                        <!-- Placeholder for Conceptual ERD image -->
+                        <img src="https://via.placeholder.com/1200x800/1A1C29/8A2BE2?text=Klik+untuk+Lihat+Conceptual+ERD+(26+Entitas)" alt="Conceptual ERD">
+                        <div class="zoom-img-overlay">
+                            <div class="zoom-btn"><i class="ph ph-magnifying-glass-plus"></i> Perbesar Conceptual ERD</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 17: BAB 5 & 6 - Top-Down Schema -->
+        <div class="slide-container">
+            <div class="chapter-badge">BAB 5 & 6: Logical ER Modeling & Normalization</div>
+            <div class="content-area">
+                <h2>Top-Down Logical Schema (44 Entitas)</h2>
+                <div class="two-column">
+                    <div>
+                        <p style="margin-bottom: 15px;">Melalui pendekatan <em>Top-Down</em> dan pengujian menggunakan <strong>Normalization Checklist (1NF - 4NF)</strong>, 26 entitas konseptual diekspansi menjadi 44 struktur tabel yang kokoh, dilengkapi <em>Primary Key (PK)</em> dan <em>Foreign Key (FK)</em>.</p>
+                        <div class="card" style="margin-top: 15px; border-left: 4px solid var(--neon-blue);">
+                            <h3 style="color: var(--neon-blue); font-size: 1.1rem; margin-bottom: 10px;">8 Modul Operasional:</h3>
+                            <ul style="font-size: 0.9rem; columns: 2; -webkit-columns: 2; gap: 20px;">
+                                <li>Pengguna & Karyawan</li>
+                                <li>Katalog & Promo</li>
+                                <li>Gudang (WMS)</li>
+                                <li>Pengadaan (Supplier)</li>
+                                <li>Pelanggan (B2B/B2C)</li>
+                                <li>Transaksi E-Commerce</li>
+                                <li>Retur (RMA)</li>
+                                <li>Produksi & QC</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="img-container">
+                        <i class="ph ph-database" style="font-size: 6rem; color: var(--neon-purple); margin-bottom: 15px;"></i>
+                        <h3 style="color: var(--text-main);">Role-Based Access Control</h3>
+                        <p style="font-size: 0.85rem; text-align: center; color: var(--text-muted); max-width: 80%;">Skema menangani hierarki tipe pengguna dengan relasi 1:1, di mana entitas turunan (Corporate, Retail, Employee) mewarisi PK dari entitas induk (User, Customer) untuk sentralisasi autentikasi.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 18: BAB 5 & 6 - Bottom-Up Normalization -->
+        <div class="slide-container">
+            <div class="chapter-badge">BAB 5 & 6: Logical ER Modeling & Normalization</div>
+            <div class="content-area">
+                <h2>Bottom-Up Validation: Normalisasi Dokumen Fisik</h2>
+                <p style="margin-bottom: 20px;">Untuk memvalidasi skema, dilakukan pengujian normalisasi dari bentuk <em>Unnormalized Form (UNF)</em> hingga <em>Third Normal Form (3NF)</em> pada 3 dokumen fisik operasional KS FOOD:</p>
+                <div class="tiled-content" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="card" style="text-align: center;">
+                        <i class="ph ph-receipt" style="font-size: 2.5rem; color: var(--neon-pink);"></i>
+                        <h3 style="margin: 10px 0; font-size: 1.05rem;">Pesanan Pembelian (PO)</h3>
+                        <p style="font-size: 0.85rem;">Memecah <em>repeating groups</em> item belanja, dan menghilangkan <em>transitive dependency</em> data alamat Supplier menjadi tabel master mandiri.</p>
+                    </div>
+                    <div class="card" style="text-align: center;">
+                        <i class="ph ph-clipboard-text" style="font-size: 2.5rem; color: var(--neon-blue);"></i>
+                        <h3 style="margin: 10px 0; font-size: 1.05rem;">Form Pengambilan Bahan</h3>
+                        <p style="font-size: 0.85rem;">Memisahkan atribut aktor (Parap Pengambil/Pemeriksa) menjadi referensi ke entitas <strong>MS_Employee</strong> untuk rekam jejak yang solid.</p>
+                    </div>
+                    <div class="card" style="text-align: center;">
+                        <i class="ph ph-files" style="font-size: 2.5rem; color: var(--neon-purple);"></i>
+                        <h3 style="margin: 10px 0; font-size: 1.05rem;">Laporan Hasil Produksi</h3>
+                        <p style="font-size: 0.85rem;">Menghilangkan ketergantungan parsial nama produk terhadap kode dokumen, sehingga produk menjadi master data tersendiri.</p>
+                    </div>
+                </div>
+                <div class="card" style="margin-top: 20px; background: rgba(0, 240, 255, 0.1); border: 1px solid var(--neon-blue); text-align: center; padding: 15px;">
+                    <p style="margin: 0; font-weight: bold; font-size: 0.95rem; color: var(--neon-blue);">Hasil Validasi: Struktur 3NF dari pendekatan Bottom-Up identik secara presisi dengan kerangka Logical Schema Top-Down, membuktikan sistem bebas dari anomali data (Redundansi).</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 19: BAB 5 & 6 - Logical ERD -->
+        <div class="slide-container">
+            <div class="chapter-badge">BAB 5 & 6: Logical ER Modeling & Normalization</div>
+            <div class="bleed-image-layout">
+                <div class="bleed-text">
+                    <h2>Logical Entity Relationship Diagram</h2>
+                    <p style="font-size: 0.95rem; margin-bottom: 15px;">Representasi final dari 44 tabel basis data yang siap diimplementasikan secara fisik (DDL).</p>
+                    <div class="card" style="padding: 15px; margin-bottom: 15px;">
+                        <h3 style="color: var(--neon-blue); font-size: 1rem; margin-bottom: 5px;"><i class="ph ph-key"></i> Key Constraints</h3>
+                        <p style="font-size: 0.85rem; margin: 0;">Diagram ini menampakkan Primary Key yang kuat serta relasi Foreign Key yang menghubungkan antar modul dengan ketat (<em>Referential Integrity</em>).</p>
+                    </div>
+                    <div class="card" style="padding: 15px;">
+                        <h3 style="color: var(--neon-purple); font-size: 1rem; margin-bottom: 5px;"><i class="ph ph-arrows-merge"></i> Relational Complexity</h3>
+                        <p style="font-size: 0.85rem; margin: 0;">Resolusi entitas perantara (seperti <em>TR_Order_Item</em> dan <em>TR_Product_Stock_Movement</em>) yang mampu menangkap data transaksional kompleks tanpa pengulangan.</p>
+                    </div>
+                </div>
+                <div class="bleed-image" style="background: #0F101A; display: flex; align-items: center; justify-content: center; padding: 20px;">
+                    <div class="zoom-img-container" onclick="openLightbox('assets/logical-erd.png')">
+                        <!-- Placeholder for Logical ERD image -->
+                        <img src="https://via.placeholder.com/1200x800/1A1C29/00F0FF?text=Klik+untuk+Lihat+Logical+ERD+(44+Tabel)" alt="Logical ERD">
+                        <div class="zoom-img-overlay">
+                            <div class="zoom-btn"><i class="ph ph-magnifying-glass-plus"></i> Perbesar Logical ERD</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: BAB 7 - Physical Database Design -->
+        <div class="slide-container">
+            <div class="chapter-badge">BAB 7: Physical Database Design</div>
+            <div class="bleed-image-layout">
+                <div class="bleed-image">
+                    <!-- Placeholder Physical ERD Diagram from KSFOOD Phisical Database.pdf -->
+                    <img src="https://via.placeholder.com/800x720/1A1C29/00F0FF?text=Physical+ERD+Diagram+(phpMyAdmin)" alt="Physical ERD">
+                </div>
+                <div class="bleed-text">
+                    <h2>Realisasi Database Fisik</h2>
+                    <p style="margin-bottom: 20px;">Implementasi langsung ke DBMS (MySQL/MariaDB) di <code>phpMyAdmin</code>.</p>
+                    
+                    <div class="code-block" style="margin-bottom: 15px;">
+<pre><code>-- DDL: Pembuatan Tabel & Constraint
+CREATE TABLE `tr_production_result` (
+  `productionResultId` varchar(25) PK,
+  `productionOrderId` varchar(25) FK,
+  `producedQuantity` int NOT NULL,
+  `rejectedQuantity` int DEFAULT 0
+) ENGINE=InnoDB;</code></pre>
+                    </div>
+                    <ul>
+                        <li><strong>DML:</strong> Pengujian Insert, Update, Select kompleks.</li>
+                        <li><strong>DCL & TCL:</strong> Implementasi Hak Akses dan kontrol transaksi.</li>
+                        <li><strong>Integritas:</strong> <em>Foreign Key</em> dengan aturan <code>RESTRICT</code> / <code>CASCADE</code>.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls UI -->
+        <div class="slide-counter">
+            <span id="current-slide">1</span> / <span id="total-slides">23</span>
+        </div>
+
+        <div class="nav-controls">
+            <button class="nav-btn" id="prev-btn" title="Previous Slide">
+                <i class="ph ph-caret-left" style="font-size: 1.5rem;"></i>
+            </button>
+            <button class="nav-btn" id="next-btn" title="Next Slide">
+                <i class="ph ph-caret-right" style="font-size: 1.5rem;"></i>
+            </button>
+        </div>
+        
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div class="lightbox-modal" id="lightbox">
+        <i class="ph ph-x lightbox-close" onclick="closeLightbox()"></i>
+        <img src="" id="lightbox-img" alt="Zoomed Image">
+    </div>
+
+    <script>
+        function openLightbox(src) {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            lightboxImg.src = src;
+            lightbox.classList.add('active');
+        }
+
+        function closeLightbox() {
+            const lightbox = document.getElementById('lightbox');
+            lightbox.classList.remove('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const slides = document.querySelectorAll('.slide-container');
+            const totalSlides = slides.length;
+            let currentSlideIndex = 0;
+
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const currentSlideEl = document.getElementById('current-slide');
+            const totalSlidesEl = document.getElementById('total-slides');
+            const progressBar = document.getElementById('progress-bar');
+
+            totalSlidesEl.textContent = totalSlides;
+
+            function updateSlideVisibility() {
+                slides.forEach((slide, index) => {
+                    if (index === currentSlideIndex) {
+                        slide.classList.add('active');
+                    } else {
+                        slide.classList.remove('active');
+                    }
+                });
+
+                currentSlideEl.textContent = currentSlideIndex + 1;
+                
+                const progress = ((currentSlideIndex + 1) / totalSlides) * 100;
+                progressBar.style.width = `${progress}%`;
+
+                prevBtn.style.opacity = currentSlideIndex === 0 ? '0.5' : '1';
+                prevBtn.style.cursor = currentSlideIndex === 0 ? 'not-allowed' : 'pointer';
+                
+                nextBtn.style.opacity = currentSlideIndex === totalSlides - 1 ? '0.5' : '1';
+                nextBtn.style.cursor = currentSlideIndex === totalSlides - 1 ? 'not-allowed' : 'pointer';
+            }
+
+            function goToNextSlide() {
+                if (currentSlideIndex < totalSlides - 1) {
+                    currentSlideIndex++;
+                    updateSlideVisibility();
+                }
+            }
+
+            function goToPrevSlide() {
+                if (currentSlideIndex > 0) {
+                    currentSlideIndex--;
+                    updateSlideVisibility();
+                }
+            }
+
+            nextBtn.addEventListener('click', goToNextSlide);
+            prevBtn.addEventListener('click', goToPrevSlide);
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight' || e.key === ' ') {
+                    goToNextSlide();
+                } else if (e.key === 'ArrowLeft') {
+                    goToPrevSlide();
+                } else if (e.key === 'Escape') {
+                    closeLightbox();
+                }
+            });
+
+            updateSlideVisibility();
+        });
+    </script>
+</body>
+</html>
