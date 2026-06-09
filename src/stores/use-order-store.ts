@@ -59,411 +59,505 @@ interface OrderState {
 
 // Mock Data
 const mockOrders: Order[] = [
-  // SHOPEE ORDERS
   {
     id: '1',
-    orderNumber: 'SHP-001',
-    source: 'SHOPEE',
+    orderNumber: 'ORDER-001',
+    source: 'B2B',
     customer: {
-      name: 'Ani Kusuma',
-      email: 'ani@gmail.com',
-      phone: '081234567890'
+      name: 'PT Gokana Resto Indonesia',
+      email: 'procurement@gokana.co.id',
+      phone: '081299998802'
     },
-    products: [
-      { name: 'Saos Sambal Bawang 500ml', qty: 2, price: 25000, unit: 'Botol' },
-      { name: 'Bumbu Rendang 100g', qty: 1, price: 15000, unit: 'Pack' }
-    ],
-    totalAmount: 65000,
-    status: 'PENDING',
+    products: [{ name: 'Saos Sambal Pedas Manis 135ml', qty: 1, price: 12000, unit: 'Botol' }],
+    totalAmount: 111000,
+    status: 'READY_TO_SHIP',
     paymentStatus: 'PAID',
-    paymentMethod: 'Shopee Pay',
-    shippingAddress: 'Jl. Sudirman No. 123, Jakarta Pusat',
-    shippingCourier: 'J&T Express',
-    date: new Date('2026-01-05T10:30:00'),
-    notes: 'Mohon packing rapi'
+    paymentMethod: 'Transfer Bank BCA',
+    shippingAddress: 'Gudang Pusat Gokana, Kawasan Industri Cikarang Blok C/2, Tangerang, Banten',
+    shippingCourier: 'Armada Internal Pabrik',
+    date: new Date('2026-06-01T10:00:00'),
+    contractNumber: 'AGR-CORP-002',
+    notes: 'Catatan item order #1'
   },
   {
     id: '2',
-    orderNumber: 'SHP-002',
+    orderNumber: 'ORDER-002',
     source: 'SHOPEE',
     customer: {
-      name: 'Budi Santoso',
-      email: 'budi@yahoo.com',
-      phone: '082345678901'
+      name: 'Candra Hartono',
+      email: 'candra_ret@gmail.com',
+      phone: '081333333003'
     },
-    products: [{ name: 'Saos Tomat Premium 1L', qty: 3, price: 45000, unit: 'Botol' }],
-    totalAmount: 135000,
-    status: 'PROCESSING',
-    paymentStatus: 'PAID',
-    paymentMethod: 'COD',
-    shippingAddress: 'Jl. Gatot Subroto No. 45, Bandung',
-    shippingCourier: 'SiCepat',
-    date: new Date('2026-01-05T11:15:00')
-  },
-  {
-    id: '3',
-    orderNumber: 'SHP-003',
-    source: 'SHOPEE',
-    customer: {
-      name: 'Citra Dewi',
-      email: 'citra@outlook.com',
-      phone: '083456789012'
-    },
-    products: [
-      { name: 'Saos Sambal Bawang 500ml', qty: 5, price: 25000, unit: 'Botol' },
-      { name: 'Saos ABC Pedas 340ml', qty: 3, price: 18000, unit: 'Botol' }
-    ],
-    totalAmount: 179000,
-    status: 'SHIPPED',
-    paymentStatus: 'PAID',
-    paymentMethod: 'Transfer Bank',
-    shippingAddress: 'Jl. Veteran No. 78, Surabaya',
-    shippingCourier: 'JNE',
-    trackingNumber: 'JNE1234567890',
-    date: new Date('2026-01-04T14:20:00')
-  },
-  {
-    id: '4',
-    orderNumber: 'SHP-004',
-    source: 'SHOPEE',
-    customer: {
-      name: 'Deni Pratama',
-      email: 'deni@gmail.com',
-      phone: '084567890123'
-    },
-    products: [{ name: 'Bumbu Kari Instan 75g', qty: 10, price: 12000, unit: 'Pack' }],
-    totalAmount: 120000,
+    products: [{ name: 'Saos Sambal Pedas Manis 135ml', qty: 2, price: 12000, unit: 'Botol' }],
+    totalAmount: 121000,
     status: 'DELIVERED',
     paymentStatus: 'PAID',
     paymentMethod: 'ShopeePay',
-    shippingAddress: 'Jl. Ahmad Yani No. 90, Semarang',
-    shippingCourier: 'Ninja Express',
-    trackingNumber: 'NINJA9876543210',
-    date: new Date('2026-01-03T09:00:00')
+    shippingAddress: 'Jl. Kebon Jeruk Indah No. 3, Jakarta Barat, DKI Jakarta',
+    shippingCourier: 'J&T Express',
+    trackingNumber: 'AWB-KSFOOD-0002',
+    date: new Date('2026-06-02T15:30:00'),
+    notes: 'Catatan item order #2'
+  },
+  {
+    id: '3',
+    orderNumber: 'ORDER-003',
+    source: 'B2B',
+    customer: {
+      name: 'PT Indofood CBP Sukses Makmur',
+      email: 'procurement@indofood.co.id',
+      phone: '081299998804'
+    },
+    products: [{ name: 'Saos Sambal Pedas Manis 135ml', qty: 3, price: 12000, unit: 'Botol' }],
+    totalAmount: 333000,
+    status: 'READY_TO_SHIP',
+    paymentStatus: 'PAID',
+    paymentMethod: 'Transfer Bank Mandiri',
+    shippingAddress: 'Gudang Pusat Indofood, Kawasan Industri Cikarang Blok C/4, Tangerang, Banten',
+    shippingCourier: 'Armada Internal Pabrik',
+    date: new Date('2026-06-03T10:00:00'),
+    contractNumber: 'AGR-CORP-004',
+    notes: 'Catatan item order #3'
+  },
+  {
+    id: '4',
+    orderNumber: 'ORDER-004',
+    source: 'TOKOPEDIA',
+    customer: {
+      name: 'Erik Hartono',
+      email: 'erik_ret@gmail.com',
+      phone: '081333333005'
+    },
+    products: [{ name: 'Saos Sambal Pedas Manis 135ml', qty: 4, price: 12000, unit: 'Botol' }],
+    totalAmount: 242000,
+    status: 'DELIVERED',
+    paymentStatus: 'PAID',
+    paymentMethod: 'GoPay',
+    shippingAddress: 'Jl. Kebon Jeruk Indah No. 5, Jakarta Barat, DKI Jakarta',
+    shippingCourier: 'J&T Express',
+    trackingNumber: 'AWB-KSFOOD-0004',
+    date: new Date('2026-06-04T15:30:00'),
+    notes: 'Catatan item order #4'
   },
   {
     id: '5',
-    orderNumber: 'SHP-005',
-    source: 'SHOPEE',
+    orderNumber: 'ORDER-005',
+    source: 'B2B',
     customer: {
-      name: 'Eka Putri',
-      email: 'eka@hotmail.com',
-      phone: '085678901234'
+      name: 'PT ABC President Indonesia',
+      email: 'procurement@abc.co.id',
+      phone: '081299998806'
     },
-    products: [{ name: 'Saos Sambal Original 250ml', qty: 4, price: 15000, unit: 'Botol' }],
-    totalAmount: 60000,
+    products: [{ name: 'Saos Sambal Pedas Manis 135ml', qty: 5, price: 12000, unit: 'Botol' }],
+    totalAmount: 555000,
     status: 'READY_TO_SHIP',
     paymentStatus: 'PAID',
-    paymentMethod: 'Indomaret',
-    shippingAddress: 'Jl. Diponegoro No. 56, Yogyakarta',
-    shippingCourier: 'Anteraja',
-    date: new Date('2026-01-05T13:45:00')
+    paymentMethod: 'Transfer Bank BCA',
+    shippingAddress: 'Gudang Pusat ABC, Kawasan Industri Cikarang Blok C/6, Tangerang, Banten',
+    shippingCourier: 'Armada Internal Pabrik',
+    date: new Date('2026-06-05T10:00:00'),
+    contractNumber: 'AGR-CORP-006',
+    notes: 'Catatan item order #5'
   },
-
-  // TOKOPEDIA ORDERS
   {
     id: '6',
-    orderNumber: 'TKP-001',
-    source: 'TOKOPEDIA',
+    orderNumber: 'ORDER-006',
+    source: 'BLIBLI',
     customer: {
-      name: 'Fitri Handayani',
-      email: 'fitri@gmail.com',
-      phone: '086789012345'
+      name: 'Gandi Hartono',
+      email: 'gandi_ret@gmail.com',
+      phone: '081333333007'
     },
-    products: [
-      { name: 'Saos Tomat Premium 1L', qty: 2, price: 45000, unit: 'Botol' },
-      { name: 'Bumbu Rendang 100g', qty: 2, price: 15000, unit: 'Pack' }
-    ],
-    totalAmount: 120000,
-    status: 'CONFIRMED',
+    products: [{ name: 'Saos Sambal Pedas Manis 135ml', qty: 6, price: 12000, unit: 'Botol' }],
+    totalAmount: 363000,
+    status: 'DELIVERED',
     paymentStatus: 'PAID',
-    paymentMethod: 'OVO',
-    shippingAddress: 'Jl. Malioboro No. 12, Yogyakarta',
-    shippingCourier: 'GoSend',
-    date: new Date('2026-01-05T15:30:00')
+    paymentMethod: 'BCA Klikpay',
+    shippingAddress: 'Jl. Kebon Jeruk Indah No. 7, Jakarta Barat, DKI Jakarta',
+    shippingCourier: 'J&T Express',
+    trackingNumber: 'AWB-KSFOOD-0006',
+    date: new Date('2026-06-06T15:30:00'),
+    notes: 'Catatan item order #6'
   },
   {
     id: '7',
-    orderNumber: 'TKP-002',
-    source: 'TOKOPEDIA',
+    orderNumber: 'ORDER-007',
+    source: 'B2B',
     customer: {
-      name: 'Gina Marlina',
-      email: 'gina@tokopedia.com',
-      phone: '087890123456'
+      name: 'PT Ajinomoto Indonesia',
+      email: 'procurement@ajinomoto.co.id',
+      phone: '081299998808'
     },
-    products: [{ name: 'Saos ABC Manis 340ml', qty: 6, price: 16000, unit: 'Botol' }],
-    totalAmount: 96000,
-    status: 'PROCESSING',
+    products: [{ name: 'Saos Sambal Pedas Manis 135ml', qty: 7, price: 12000, unit: 'Botol' }],
+    totalAmount: 777000,
+    status: 'READY_TO_SHIP',
     paymentStatus: 'PAID',
-    paymentMethod: 'GoPay',
-    shippingAddress: 'Jl. Thamrin No. 34, Jakarta Selatan',
-    shippingCourier: 'Grab Express',
-    date: new Date('2026-01-05T08:20:00')
+    paymentMethod: 'Transfer Bank Mandiri',
+    shippingAddress: 'Gudang Pusat Ajinomoto, Kawasan Industri Cikarang Blok C/8, Tangerang, Banten',
+    shippingCourier: 'Armada Internal Pabrik',
+    date: new Date('2026-06-07T10:00:00'),
+    contractNumber: 'AGR-CORP-008',
+    notes: 'Catatan item order #7'
   },
   {
     id: '8',
-    orderNumber: 'TKP-003',
-    source: 'TOKOPEDIA',
-    customer: {
-      name: 'Hadi Wijaya',
-      email: 'hadi@yahoo.com',
-      phone: '088901234567'
-    },
-    products: [{ name: 'Saos Sambal Bawang 500ml', qty: 8, price: 25000, unit: 'Botol' }],
-    totalAmount: 200000,
-    status: 'SHIPPED',
-    paymentStatus: 'PAID',
-    paymentMethod: 'Virtual Account BCA',
-    shippingAddress: 'Jl. Pahlawan No. 67, Medan',
-    shippingCourier: 'JNE',
-    trackingNumber: 'JNE0987654321',
-    date: new Date('2026-01-04T16:00:00')
-  },
-  {
-    id: '9',
-    orderNumber: 'TKP-004',
-    source: 'TOKOPEDIA',
-    customer: {
-      name: 'Indah Permata',
-      email: 'indah@gmail.com',
-      phone: '089012345678'
-    },
-    products: [{ name: 'Bumbu Soto Ayam 50g', qty: 15, price: 10000, unit: 'Pack' }],
-    totalAmount: 150000,
-    status: 'DELIVERED',
-    paymentStatus: 'PAID',
-    paymentMethod: 'Kredivo',
-    shippingAddress: 'Jl. Kemerdekaan No. 89, Bandung',
-    shippingCourier: 'SiCepat',
-    trackingNumber: 'SICEPAT1234567',
-    date: new Date('2026-01-02T10:15:00')
-  },
-
-  // BLIBLI ORDERS
-  {
-    id: '10',
-    orderNumber: 'BLI-001',
-    source: 'BLIBLI',
-    customer: {
-      name: 'Joko Susanto',
-      email: 'joko@blibli.com',
-      phone: '081122334455'
-    },
-    products: [
-      { name: 'Saos Tomat Premium 1L', qty: 4, price: 45000, unit: 'Botol' },
-      { name: 'Saos ABC Pedas 340ml', qty: 4, price: 18000, unit: 'Botol' }
-    ],
-    totalAmount: 252000,
-    status: 'PENDING',
-    paymentStatus: 'PAID',
-    paymentMethod: 'BCA Klikpay',
-    shippingAddress: 'Jl. Cikini Raya No. 23, Jakarta Pusat',
-    date: new Date('2026-01-05T12:00:00')
-  },
-  {
-    id: '11',
-    orderNumber: 'BLI-002',
-    source: 'BLIBLI',
-    customer: {
-      name: 'Kiki Amelia',
-      email: 'kiki@outlook.com',
-      phone: '082233445566'
-    },
-    products: [{ name: 'Bumbu Rendang 100g', qty: 10, price: 15000, unit: 'Pack' }],
-    totalAmount: 150000,
-    status: 'CONFIRMED',
-    paymentStatus: 'PAID',
-    paymentMethod: 'Mandiri Clickpay',
-    shippingAddress: 'Jl. Pemuda No. 45, Surabaya',
-    shippingCourier: 'Blibli Express',
-    date: new Date('2026-01-05T14:30:00')
-  },
-  {
-    id: '12',
-    orderNumber: 'BLI-003',
-    source: 'BLIBLI',
-    customer: {
-      name: 'Lina Sari',
-      email: 'lina@gmail.com',
-      phone: '083344556677'
-    },
-    products: [{ name: 'Saos Sambal Original 250ml', qty: 12, price: 15000, unit: 'Botol' }],
-    totalAmount: 180000,
-    status: 'READY_TO_SHIP',
-    paymentStatus: 'PAID',
-    paymentMethod: 'Credit Card',
-    shippingAddress: 'Jl. Asia Afrika No. 78, Bandung',
-    shippingCourier: 'Blibli Express',
-    date: new Date('2026-01-05T09:45:00')
-  },
-
-  // INTERNAL E-COMMERCE
-  {
-    id: '13',
-    orderNumber: 'WEB-001',
+    orderNumber: 'ORDER-008',
     source: 'INTERNAL',
     customer: {
-      name: 'Maya Angelina',
-      email: 'maya@ksfood.com',
-      phone: '084455667788'
+      name: 'Indra Hartono',
+      email: 'indra_ret@gmail.com',
+      phone: '081333333009'
     },
-    products: [
-      { name: 'Saos Sambal Bawang 500ml', qty: 10, price: 25000, unit: 'Botol' },
-      { name: 'Bumbu Kari Instan 75g', qty: 5, price: 12000, unit: 'Pack' }
-    ],
-    totalAmount: 310000,
-    status: 'PROCESSING',
-    paymentStatus: 'PAID',
-    paymentMethod: 'Transfer Bank BRI',
-    shippingAddress: 'Jl. Sudirman No. 234, Jakarta Barat',
-    shippingCourier: 'JNE',
-    date: new Date('2026-01-05T11:00:00'),
-    notes: 'Tolong kirim secepatnya'
-  },
-  {
-    id: '14',
-    orderNumber: 'WEB-002',
-    source: 'INTERNAL',
-    customer: {
-      name: 'Nanda Pratiwi',
-      email: 'nanda@yahoo.com',
-      phone: '085566778899'
-    },
-    products: [{ name: 'Saos Tomat Premium 1L', qty: 5, price: 45000, unit: 'Botol' }],
-    totalAmount: 225000,
-    status: 'SHIPPED',
-    paymentStatus: 'PAID',
-    paymentMethod: 'QRIS',
-    shippingAddress: 'Jl. Raya Bogor No. 56, Depok',
-    shippingCourier: 'SiCepat',
-    trackingNumber: 'SICEPAT9876543',
-    date: new Date('2026-01-04T13:20:00')
-  },
-  {
-    id: '15',
-    orderNumber: 'WEB-003',
-    source: 'INTERNAL',
-    customer: {
-      name: 'Omar Hakim',
-      email: 'omar@gmail.com',
-      phone: '086677889900'
-    },
-    products: [{ name: 'Saos ABC Manis 340ml', qty: 20, price: 16000, unit: 'Botol' }],
-    totalAmount: 320000,
+    products: [{ name: 'Saos Sambal Pedas Manis 135ml', qty: 8, price: 12000, unit: 'Botol' }],
+    totalAmount: 484000,
     status: 'DELIVERED',
     paymentStatus: 'PAID',
     paymentMethod: 'Transfer Bank Mandiri',
-    shippingAddress: 'Jl. Gatot Kaca No. 12, Bekasi',
-    shippingCourier: 'Anteraja',
-    trackingNumber: 'ANTERAJA123456',
-    date: new Date('2026-01-02T15:40:00')
+    shippingAddress: 'Jl. Kebon Jeruk Indah No. 9, Jakarta Barat, DKI Jakarta',
+    shippingCourier: 'J&T Express',
+    trackingNumber: 'AWB-KSFOOD-0008',
+    date: new Date('2026-06-08T15:30:00'),
+    notes: 'Catatan item order #8'
+  },
+  {
+    id: '9',
+    orderNumber: 'ORDER-009',
+    source: 'B2B',
+    customer: {
+      name: 'PT Nutrifood Indonesia',
+      email: 'procurement@nutrifood.co.id',
+      phone: '081299998810'
+    },
+    products: [{ name: 'Saos Sambal Pedas Manis 135ml', qty: 9, price: 12000, unit: 'Botol' }],
+    totalAmount: 999000,
+    status: 'READY_TO_SHIP',
+    paymentStatus: 'PAID',
+    paymentMethod: 'Transfer Bank BCA',
+    shippingAddress: 'Gudang Pusat Nutrifood, Kawasan Industri Cikarang Blok C/10, Tangerang, Banten',
+    shippingCourier: 'Armada Internal Pabrik',
+    date: new Date('2026-06-09T10:00:00'),
+    contractNumber: 'AGR-CORP-010',
+    notes: 'Catatan item order #9'
+  },
+  {
+    id: '10',
+    orderNumber: 'ORDER-010',
+    source: 'SHOPEE',
+    customer: {
+      name: 'Kiki Hartono',
+      email: 'kiki_ret@gmail.com',
+      phone: '081333333011'
+    },
+    products: [{ name: 'Saos Sambal Pedas Manis 135ml', qty: 10, price: 12000, unit: 'Botol' }],
+    totalAmount: 605000,
+    status: 'DELIVERED',
+    paymentStatus: 'PAID',
+    paymentMethod: 'ShopeePay',
+    shippingAddress: 'Jl. Kebon Jeruk Indah No. 11, Jakarta Barat, DKI Jakarta',
+    shippingCourier: 'J&T Express',
+    trackingNumber: 'AWB-KSFOOD-0010',
+    date: new Date('2026-06-10T15:30:00'),
+    notes: 'Catatan item order #10'
+  },
+  {
+    id: '11',
+    orderNumber: 'ORDER-011',
+    source: 'B2B',
+    customer: {
+      name: 'PT Nestle Indonesia',
+      email: 'procurement@nestle.co.id',
+      phone: '081299998812'
+    },
+    products: [{ name: 'Saos Sambal Pedas Manis 135ml', qty: 11, price: 12000, unit: 'Botol' }],
+    totalAmount: 1221000,
+    status: 'READY_TO_SHIP',
+    paymentStatus: 'PAID',
+    paymentMethod: 'Transfer Bank Mandiri',
+    shippingAddress: 'Gudang Pusat Nestle, Kawasan Industri Cikarang Blok C/12, Tangerang, Banten',
+    shippingCourier: 'Armada Internal Pabrik',
+    date: new Date('2026-06-11T10:00:00'),
+    contractNumber: 'AGR-CORP-012',
+    notes: 'Catatan item order #11'
+  },
+  {
+    id: '12',
+    orderNumber: 'ORDER-012',
+    source: 'TOKOPEDIA',
+    customer: {
+      name: 'Budi Hartono',
+      email: 'budi_ret@gmail.com',
+      phone: '081333333001'
+    },
+    products: [{ name: 'Saos Sambal Pedas Manis 135ml', qty: 12, price: 12000, unit: 'Botol' }],
+    totalAmount: 726000,
+    status: 'DELIVERED',
+    paymentStatus: 'PAID',
+    paymentMethod: 'GoPay',
+    shippingAddress: 'Jl. Kebon Jeruk Indah No. 1, Jakarta Barat, DKI Jakarta',
+    shippingCourier: 'J&T Express',
+    trackingNumber: 'AWB-KSFOOD-0012',
+    date: new Date('2026-06-12T15:30:00'),
+    notes: 'Catatan item order #12'
+  },
+  {
+    id: '13',
+    orderNumber: 'ORDER-013',
+    source: 'B2B',
+    customer: {
+      name: 'PT Gokana Resto Indonesia',
+      email: 'procurement@gokana.co.id',
+      phone: '081299998802'
+    },
+    products: [{ name: 'Saos Sambal Pedas Manis 135ml', qty: 13, price: 12000, unit: 'Botol' }],
+    totalAmount: 1433000,
+    status: 'READY_TO_SHIP',
+    paymentStatus: 'PAID',
+    paymentMethod: 'Transfer Bank BCA',
+    shippingAddress: 'Gudang Pusat Gokana, Kawasan Industri Cikarang Blok C/2, Tangerang, Banten',
+    shippingCourier: 'Armada Internal Pabrik',
+    date: new Date('2026-06-13T10:00:00'),
+    contractNumber: 'AGR-CORP-002',
+    notes: 'Catatan item order #13'
+  },
+  {
+    id: '14',
+    orderNumber: 'ORDER-014',
+    source: 'BLIBLI',
+    customer: {
+      name: 'Candra Hartono',
+      email: 'candra_ret@gmail.com',
+      phone: '081333333003'
+    },
+    products: [{ name: 'Saos Sambal Pedas Manis 135ml', qty: 14, price: 12000, unit: 'Botol' }],
+    totalAmount: 847000,
+    status: 'DELIVERED',
+    paymentStatus: 'PAID',
+    paymentMethod: 'BCA Klikpay',
+    shippingAddress: 'Jl. Kebon Jeruk Indah No. 3, Jakarta Barat, DKI Jakarta',
+    shippingCourier: 'J&T Express',
+    trackingNumber: 'AWB-KSFOOD-0014',
+    date: new Date('2026-06-14T15:30:00'),
+    notes: 'Catatan item order #14'
+  },
+  {
+    id: '15',
+    orderNumber: 'ORDER-015',
+    source: 'B2B',
+    customer: {
+      name: 'PT Indofood CBP Sukses Makmur',
+      email: 'procurement@indofood.co.id',
+      phone: '081299998804'
+    },
+    products: [{ name: 'Saos Sambal Pedas Manis 135ml', qty: 15, price: 12000, unit: 'Botol' }],
+    totalAmount: 1665000,
+    status: 'READY_TO_SHIP',
+    paymentStatus: 'PAID',
+    paymentMethod: 'Transfer Bank Mandiri',
+    shippingAddress: 'Gudang Pusat Indofood, Kawasan Industri Cikarang Blok C/4, Tangerang, Banten',
+    shippingCourier: 'Armada Internal Pabrik',
+    date: new Date('2026-06-15T10:00:00'),
+    contractNumber: 'AGR-CORP-004',
+    notes: 'Catatan item order #15'
   },
   {
     id: '16',
-    orderNumber: 'WEB-004',
+    orderNumber: 'ORDER-016',
     source: 'INTERNAL',
     customer: {
-      name: 'Putri Ayu',
-      email: 'putri@ksfood.com',
-      phone: '087788990011'
+      name: 'Erik Hartono',
+      email: 'erik_ret@gmail.com',
+      phone: '081333333005'
     },
-    products: [
-      { name: 'Bumbu Rendang 100g', qty: 8, price: 15000, unit: 'Pack' },
-      { name: 'Bumbu Soto Ayam 50g', qty: 8, price: 10000, unit: 'Pack' }
-    ],
-    totalAmount: 200000,
-    status: 'CONFIRMED',
+    products: [{ name: 'Saos Sambal Pedas Manis 135ml', qty: 16, price: 12000, unit: 'Botol' }],
+    totalAmount: 968000,
+    status: 'DELIVERED',
     paymentStatus: 'PAID',
-    paymentMethod: 'COD',
-    shippingAddress: 'Jl. Kebon Jeruk No. 34, Jakarta Barat',
-    date: new Date('2026-01-05T16:15:00')
+    paymentMethod: 'Transfer Bank Mandiri',
+    shippingAddress: 'Jl. Kebon Jeruk Indah No. 5, Jakarta Barat, DKI Jakarta',
+    shippingCourier: 'J&T Express',
+    trackingNumber: 'AWB-KSFOOD-0016',
+    date: new Date('2026-06-16T15:30:00'),
+    notes: 'Catatan item order #16'
   },
-
-  // B2B ORDERS
   {
     id: '17',
-    orderNumber: 'B2B-001',
+    orderNumber: 'ORDER-017',
     source: 'B2B',
     customer: {
-      name: 'PT Gokana Resto',
-      email: 'procurement@gokana.co.id',
-      phone: '02112345678'
+      name: 'PT ABC President Indonesia',
+      email: 'procurement@abc.co.id',
+      phone: '081299998806'
     },
-    products: [{ name: 'Saos Sambal Jerigen 20L', qty: 50, price: 850000, unit: 'Jerigen' }],
-    totalAmount: 42500000,
-    status: 'CONFIRMED',
-    paymentStatus: 'UNPAID',
-    paymentMethod: 'Tempo 30 Hari',
-    shippingAddress: 'Gudang PT Gokana, Jl. Industri Raya No. 45, Tangerang',
-    shippingCourier: 'Truck Sendiri',
-    date: new Date('2026-01-05T10:00:00'),
-    contractNumber: 'K-GKN-2024',
-    notes: 'Pengiriman maksimal 3 hari'
+    products: [{ name: 'Saos Sambal Pedas Manis 135ml', qty: 17, price: 12000, unit: 'Botol' }],
+    totalAmount: 1887000,
+    status: 'READY_TO_SHIP',
+    paymentStatus: 'PAID',
+    paymentMethod: 'Transfer Bank BCA',
+    shippingAddress: 'Gudang Pusat ABC, Kawasan Industri Cikarang Blok C/6, Tangerang, Banten',
+    shippingCourier: 'Armada Internal Pabrik',
+    date: new Date('2026-06-17T10:00:00'),
+    contractNumber: 'AGR-CORP-006',
+    notes: 'Catatan item order #17'
   },
   {
     id: '18',
-    orderNumber: 'B2B-002',
-    source: 'B2B',
+    orderNumber: 'ORDER-018',
+    source: 'SHOPEE',
     customer: {
-      name: 'PT Mayora Indah',
-      email: 'purchasing@mayora.co.id',
-      phone: '02187654321'
+      name: 'Gandi Hartono',
+      email: 'gandi_ret@gmail.com',
+      phone: '081333333007'
     },
-    products: [
-      { name: 'Saos Tomat Jerigen 20L', qty: 30, price: 800000, unit: 'Jerigen' },
-      { name: 'Bumbu Rendang Bulk 5Kg', qty: 20, price: 650000, unit: 'Karung' }
-    ],
-    totalAmount: 37000000,
-    status: 'PROCESSING',
+    products: [{ name: 'Saos Sambal Pedas Manis 135ml', qty: 18, price: 12000, unit: 'Botol' }],
+    totalAmount: 1089000,
+    status: 'DELIVERED',
     paymentStatus: 'PAID',
-    paymentMethod: 'Transfer Lunas',
-    shippingAddress: 'Pabrik PT Mayora, Jl. Tomang Raya No. 21-23, Jakarta Barat',
-    shippingCourier: 'Ekspedisi Kontrak',
-    date: new Date('2026-01-04T09:30:00'),
-    contractNumber: 'K-MYR-2024'
+    paymentMethod: 'ShopeePay',
+    shippingAddress: 'Jl. Kebon Jeruk Indah No. 7, Jakarta Barat, DKI Jakarta',
+    shippingCourier: 'J&T Express',
+    trackingNumber: 'AWB-KSFOOD-0018',
+    date: new Date('2026-06-18T15:30:00'),
+    notes: 'Catatan item order #18'
   },
   {
     id: '19',
-    orderNumber: 'B2B-003',
+    orderNumber: 'ORDER-019',
     source: 'B2B',
     customer: {
-      name: 'CV Warung Kita',
-      email: 'admin@warungkita.id',
-      phone: '081999888777'
+      name: 'PT Ajinomoto Indonesia',
+      email: 'procurement@ajinomoto.co.id',
+      phone: '081299998808'
     },
-    products: [{ name: 'Saos ABC Pedas 340ml', qty: 200, price: 16000, unit: 'Botol' }],
-    totalAmount: 3200000,
-    status: 'SHIPPED',
+    products: [{ name: 'Saos Sambal Pedas Manis 135ml', qty: 19, price: 12000, unit: 'Botol' }],
+    totalAmount: 2109000,
+    status: 'READY_TO_SHIP',
     paymentStatus: 'PAID',
-    paymentMethod: 'Transfer 50% DP',
-    shippingAddress: 'Toko CV Warung Kita, Jl. Pasar Minggu No. 67, Jakarta Selatan',
-    shippingCourier: 'JNE Trucking',
-    trackingNumber: 'JNETRK1234567',
-    date: new Date('2026-01-03T14:00:00'),
-    contractNumber: 'K-WKT-2025'
+    paymentMethod: 'Transfer Bank Mandiri',
+    shippingAddress: 'Gudang Pusat Ajinomoto, Kawasan Industri Cikarang Blok C/8, Tangerang, Banten',
+    shippingCourier: 'Armada Internal Pabrik',
+    date: new Date('2026-06-19T10:00:00'),
+    contractNumber: 'AGR-CORP-008',
+    notes: 'Catatan item order #19'
   },
   {
     id: '20',
-    orderNumber: 'B2B-004',
+    orderNumber: 'ORDER-020',
+    source: 'TOKOPEDIA',
+    customer: {
+      name: 'Indra Hartono',
+      email: 'indra_ret@gmail.com',
+      phone: '081333333009'
+    },
+    products: [{ name: 'Saos Sambal Pedas Manis 135ml', qty: 20, price: 12000, unit: 'Botol' }],
+    totalAmount: 1210000,
+    status: 'DELIVERED',
+    paymentStatus: 'PAID',
+    paymentMethod: 'GoPay',
+    shippingAddress: 'Jl. Kebon Jeruk Indah No. 9, Jakarta Barat, DKI Jakarta',
+    shippingCourier: 'J&T Express',
+    trackingNumber: 'AWB-KSFOOD-0020',
+    date: new Date('2026-06-20T15:30:00'),
+    notes: 'Catatan item order #20'
+  },
+  {
+    id: '21',
+    orderNumber: 'ORDER-021',
     source: 'B2B',
     customer: {
-      name: 'PT Indomarco Prismatama',
-      email: 'vendor@indomaret.co.id',
-      phone: '02155556666'
+      name: 'PT Nutrifood Indonesia',
+      email: 'procurement@nutrifood.co.id',
+      phone: '081299998810'
     },
-    products: [
-      { name: 'Saos Sambal Bawang 500ml', qty: 500, price: 23000, unit: 'Botol' },
-      { name: 'Saos Tomat Premium 1L', qty: 300, price: 42000, unit: 'Botol' }
-    ],
-    totalAmount: 24100000,
+    products: [{ name: 'Saos Sambal Pedas Manis 135ml', qty: 21, price: 12000, unit: 'Botol' }],
+    totalAmount: 2331000,
+    status: 'READY_TO_SHIP',
+    paymentStatus: 'PAID',
+    paymentMethod: 'Transfer Bank BCA',
+    shippingAddress: 'Gudang Pusat Nutrifood, Kawasan Industri Cikarang Blok C/10, Tangerang, Banten',
+    shippingCourier: 'Armada Internal Pabrik',
+    date: new Date('2026-06-21T10:00:00'),
+    contractNumber: 'AGR-CORP-010',
+    notes: 'Catatan item order #21'
+  },
+  {
+    id: '22',
+    orderNumber: 'ORDER-022',
+    source: 'BLIBLI',
+    customer: {
+      name: 'Kiki Hartono',
+      email: 'kiki_ret@gmail.com',
+      phone: '081333333011'
+    },
+    products: [{ name: 'Saos Sambal Pedas Manis 135ml', qty: 22, price: 12000, unit: 'Botol' }],
+    totalAmount: 1331000,
+    status: 'DELIVERED',
+    paymentStatus: 'PAID',
+    paymentMethod: 'BCA Klikpay',
+    shippingAddress: 'Jl. Kebon Jeruk Indah No. 11, Jakarta Barat, DKI Jakarta',
+    shippingCourier: 'J&T Express',
+    trackingNumber: 'AWB-KSFOOD-0022',
+    date: new Date('2026-06-22T15:30:00'),
+    notes: 'Catatan item order #22'
+  },
+  {
+    id: '23',
+    orderNumber: 'ORDER-023',
+    source: 'B2B',
+    customer: {
+      name: 'PT Nestle Indonesia',
+      email: 'procurement@nestle.co.id',
+      phone: '081299998812'
+    },
+    products: [{ name: 'Saos Sambal Pedas Manis 135ml', qty: 23, price: 12000, unit: 'Botol' }],
+    totalAmount: 2553000,
+    status: 'READY_TO_SHIP',
+    paymentStatus: 'PAID',
+    paymentMethod: 'Transfer Bank Mandiri',
+    shippingAddress: 'Gudang Pusat Nestle, Kawasan Industri Cikarang Blok C/12, Tangerang, Banten',
+    shippingCourier: 'Armada Internal Pabrik',
+    date: new Date('2026-06-23T10:00:00'),
+    contractNumber: 'AGR-CORP-012',
+    notes: 'Catatan item order #23'
+  },
+  {
+    id: '24',
+    orderNumber: 'ORDER-024',
+    source: 'INTERNAL',
+    customer: {
+      name: 'Budi Hartono',
+      email: 'budi_ret@gmail.com',
+      phone: '081333333001'
+    },
+    products: [{ name: 'Saos Sambal Pedas Manis 135ml', qty: 24, price: 12000, unit: 'Botol' }],
+    totalAmount: 1452000,
+    status: 'DELIVERED',
+    paymentStatus: 'UNPAID',
+    paymentMethod: 'COD',
+    shippingAddress: 'Jl. Kebon Jeruk Indah No. 1, Jakarta Barat, DKI Jakarta',
+    shippingCourier: 'J&T Express',
+    trackingNumber: 'AWB-KSFOOD-0024',
+    date: new Date('2026-06-24T15:30:00'),
+    notes: 'Catatan item order #24'
+  },
+  {
+    id: '25',
+    orderNumber: 'ORDER-025',
+    source: 'B2B',
+    customer: {
+      name: 'PT Gokana Resto Indonesia',
+      email: 'procurement@gokana.co.id',
+      phone: '081299998802'
+    },
+    products: [{ name: 'Saos Sambal Pedas Manis 135ml', qty: 25, price: 12000, unit: 'Botol' }],
+    totalAmount: 2775000,
     status: 'READY_TO_SHIP',
     paymentStatus: 'UNPAID',
-    paymentMethod: 'Tempo 45 Hari',
-    shippingAddress: 'DC Indomaret Cibitung, Jl. Raya Narogong KM 23, Bekasi',
-    shippingCourier: 'Armada DC',
-    date: new Date('2026-01-05T07:45:00'),
-    contractNumber: 'K-IDM-2024',
-    notes: 'Pengiriman sesuai jadwal DC'
+    paymentMethod: 'Tempo 30 Hari',
+    shippingAddress: 'Gudang Pusat Gokana, Kawasan Industri Cikarang Blok C/2, Tangerang, Banten',
+    shippingCourier: 'Armada Internal Pabrik',
+    date: new Date('2026-06-25T10:00:00'),
+    contractNumber: 'AGR-CORP-002',
+    notes: 'Catatan item order #25'
   }
 ]
 

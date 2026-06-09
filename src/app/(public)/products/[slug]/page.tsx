@@ -5,7 +5,7 @@ import { Star, Minus, Plus, ShoppingCart, Heart, ShareNetwork, Truck, ShieldChec
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
@@ -44,27 +44,24 @@ interface ProductDetail {
 }
 
 const PRODUCTS_DB: Record<string, ProductDetail> = {
-  default: {
-    id: 'prod-001',
-    name: 'Saus Sambal - Pedas Alami 1KG',
-    price: 25000,
-    originalPrice: 35000,
+  'saos-sambal-pedas-manis-135ml': {
+    id: 'PROD-001',
+    name: 'Saos Sambal Pedas Manis 135ml',
+    price: 12000,
+    originalPrice: 15000,
     description:
       'Saus sambal dengan perpaduan cabai segar pilihan dan rempah-rempah berkualitas. Memberikan rasa pedas yang pas dan aroma yang menggugah selera. Cocok untuk berbagai hidangan, mulai dari gorengan hingga makanan berkuah.\n\nKomposisi:\nCabai Segar, Bawang Putih, Gula, Garam, Cuka, Penguat Rasa, Pengawet Makanan.\n\nSaran Penyajian:\nDapat digunakan sebagai cocolan atau bumbu masak.',
-    images: [
-      '/static/images/products/sambal-bawang.png',
-      '/static/images/products/sambal-bawang.png',
-      '/static/images/products/sambal-bawang.png'
-    ],
+    images: ['/static/images/products/sambal-bawang.png'],
     rating: 4.8,
     reviewsCount: 128,
-    sold: '4RB+',
-    category: 'Saus & Sambal',
-    sku: 'KS-SAMBAL-ORIGINAL-1KG',
-    weight: '1KG',
+    sold: '4.5RB+',
+    category: 'Saus Pedas',
+    sku: 'SKU-SMBL-135',
+    weight: '150g',
     stock: 500,
     specifications: [
-      { label: 'Kategori', value: 'Saus & Sambal' },
+      { label: 'Kategori', value: 'Saus Pedas' },
+      { label: 'Kemasan', value: 'Botol PET 135ml' },
       { label: 'Stok', value: '500' },
       { label: 'Masa Penyimpanan', value: '12 Bulan' },
       { label: 'No. Izin Edar', value: 'BPOM RI MD 255428014446' },
@@ -76,40 +73,259 @@ const PRODUCTS_DB: Record<string, ProductDetail> = {
         user: 'budi_santoso',
         avatar: '',
         rating: 5,
-        date: '2023-12-20',
+        date: '2026-06-05',
         content:
           'Pengiriman cepat, packing aman pakai bubble wrap tebal. Rasa sausnya mantap, pedasnya pas ga bikin sakit perut. Bakal langganan disini!',
-        attributes: ['Rasa: Enak', 'Harga: Terjangkau', 'Kualitas: Standar'],
+        attributes: ['Rasa: Enak', 'Harga: Terjangkau'],
         images: [],
         response: 'Terima kasih kak Budi sudah berbelanja di KS Food! Ditunggu pesanan selanjutnya ya kak :)'
-      },
+      }
+    ]
+  },
+  'kecap-manis-cap-noni-250ml': {
+    id: 'PROD-002',
+    name: 'Kecap Manis Cap Noni 250ml',
+    price: 18000,
+    originalPrice: 22000,
+    description:
+      'Kecap manis resep tradisional dengan bahan kedelai hitam pilihan berkualitas tinggi yang diolah secara higienis. Memberikan rasa manis gurih yang legit dan aroma harum kedelai hitam alami.\n\nKomposisi:\nKedelai Hitam, Gula Merah Kelapa, Garam, Air, Rempah Tradisional.',
+    images: ['/static/images/products/sambal-bawang-botol.png'],
+    rating: 4.9,
+    reviewsCount: 95,
+    sold: '2.1RB+',
+    category: 'Kecap Manis',
+    sku: 'SKU-KCP-250',
+    weight: '350g',
+    stock: 400,
+    specifications: [
+      { label: 'Kategori', value: 'Kecap Manis' },
+      { label: 'Kemasan', value: 'Botol Kaca 250ml' },
+      { label: 'Stok', value: '400' },
+      { label: 'Masa Penyimpanan', value: '18 Bulan' },
+      { label: 'No. Izin Edar', value: 'BPOM RI MD 255428014447' },
+      { label: 'Dikirim Dari', value: 'KAB. BANDUNG' }
+    ],
+    reviews: [
       {
-        id: 2,
+        id: 1,
         user: 'siti_aminah',
         avatar: '',
         rating: 5,
-        date: '2023-12-18',
-        content: 'Suka banget sama teksturnya, ga terlalu cair. Cocok buat cocolan gorengan. Recommended seller!',
-        attributes: ['Rasa: Pedas Mantap', 'Kualitas: Premium'],
-        images: []
-      },
-      {
-        id: 3,
-        user: 'joko_widodo',
-        avatar: '',
-        rating: 4,
-        date: '2023-12-15',
-        content: 'Barang sampai dengan selamat. Cuma pengiriman agak lama dari ekspedisinya. Overall oke.',
-        attributes: ['Kualitas: Baik'],
+        date: '2026-06-03',
+        content: 'Manisnya legit banget, ga serik di tenggorokan. Cocok banget buat sate sama bakso.',
+        attributes: ['Rasa: Manis Legit', 'Kualitas: Premium'],
         images: []
       }
     ]
+  },
+  'mayones-original-premium-135ml': {
+    id: 'PROD-003',
+    name: 'Mayones Original Premium 135ml',
+    price: 15000,
+    originalPrice: 19000,
+    description:
+      'Saus emulsi mayones premium yang kental dan gurih. Dibuat dengan minyak kedelai pilihan dan kuning telur segar, menghasilkan rasa creamy yang pas untuk salad, burger, maupun cocolan camilan.',
+    images: ['/static/images/products/mayonaise.png'],
+    rating: 4.7,
+    reviewsCount: 64,
+    sold: '1.2RB+',
+    category: 'Mayones',
+    sku: 'SKU-MAYO-135',
+    weight: '140g',
+    stock: 350,
+    specifications: [
+      { label: 'Kategori', value: 'Mayones' },
+      { label: 'Kemasan', value: 'Botol PET 135ml' },
+      { label: 'Stok', value: '350' },
+      { label: 'Masa Penyimpanan', value: '9 Bulan' },
+      { label: 'No. Izin Edar', value: 'BPOM RI MD 255428014448' },
+      { label: 'Dikirim Dari', value: 'KAB. BANDUNG' }
+    ],
+    reviews: []
+  },
+  'saus-tomat-asam-manis-500ml': {
+    id: 'PROD-004',
+    name: 'Saus Tomat Asam Manis 500ml',
+    price: 22000,
+    originalPrice: 27000,
+    description:
+      'Saus tomat premium terbuat dari tomat merah segar pilihan yang dimasak dengan cermat. Menghasilkan rasa asam manis segar yang alami tanpa pewarna buatan.',
+    images: ['/static/images/products/saus-tomat-botol.png'],
+    rating: 4.8,
+    reviewsCount: 110,
+    sold: '3RB+',
+    category: 'Saus Tomat',
+    sku: 'SKU-TOM-500',
+    weight: '600g',
+    stock: 450,
+    specifications: [
+      { label: 'Kategori', value: 'Saus Tomat' },
+      { label: 'Kemasan', value: 'Botol Kaca 500ml' },
+      { label: 'Stok', value: '450' },
+      { label: 'Masa Penyimpanan', value: '12 Bulan' },
+      { label: 'No. Izin Edar', value: 'BPOM RI MD 255428014449' },
+      { label: 'Dikirim Dari', value: 'KAB. BANDUNG' }
+    ],
+    reviews: []
+  },
+  'kecap-asin-kedelai-hitam-100ml': {
+    id: 'PROD-005',
+    name: 'Kecap Asin Kedelai Hitam 100ml',
+    price: 9500,
+    originalPrice: 12000,
+    description:
+      'Kecap asin premium hasil fermentasi alami dari kedelai hitam pilihan. Memberikan rasa asin yang gurih dan umami alami untuk masakan tumisan atau saus cocolan oriental.',
+    images: ['/static/images/products/saus-tomat.png'],
+    rating: 4.6,
+    reviewsCount: 42,
+    sold: '800+',
+    category: 'Kecap Asin',
+    sku: 'SKU-ASN-100',
+    weight: '180g',
+    stock: 600,
+    specifications: [
+      { label: 'Kategori', value: 'Kecap Asin' },
+      { label: 'Kemasan', value: 'Botol Kaca 100ml' },
+      { label: 'Stok', value: '600' },
+      { label: 'Masa Penyimpanan', value: '18 Bulan' },
+      { label: 'No. Izin Edar', value: 'BPOM RI MD 255428014450' },
+      { label: 'Dikirim Dari', value: 'KAB. BANDUNG' }
+    ],
+    reviews: []
+  },
+  'minyak-wijen-wangi-murni-100ml': {
+    id: 'PROD-006',
+    name: 'Minyak Wijen Wangi Murni 100ml',
+    price: 25000,
+    originalPrice: 30000,
+    description:
+      'Minyak wijen murni hasil perasan pertama biji wijen panggang pilihan. Memiliki aroma khas wijen yang sangat harum dan rasa gurih yang mendalam untuk meningkatkan aroma masakan tumisan atau sup.',
+    images: ['/static/images/products/chili-oil.png'],
+    rating: 4.9,
+    reviewsCount: 88,
+    sold: '2.5RB+',
+    category: 'Minyak Wijen',
+    sku: 'SKU-WJN-100',
+    weight: '180g',
+    stock: 300,
+    specifications: [
+      { label: 'Kategori', value: 'Minyak Wijen' },
+      { label: 'Kemasan', value: 'Botol Kaca 100ml' },
+      { label: 'Stok', value: '300' },
+      { label: 'Masa Penyimpanan', value: '24 Bulan' },
+      { label: 'No. Izin Edar', value: 'BPOM RI MD 255428014451' },
+      { label: 'Dikirim Dari', value: 'KAB. BANDUNG' }
+    ],
+    reviews: []
+  },
+  'saus-tiram-selera-gurih-1kg': {
+    id: 'PROD-007',
+    name: 'Saus Tiram Selera Gurih 1kg',
+    price: 45000,
+    originalPrice: 55000,
+    description:
+      'Saus tiram kental berkualitas tinggi dalam kemasan refill 1kg. Dibuat dengan ekstrak tiram asli pilihan, memberikan rasa gurih umami yang kaya pada masakan tumis sayur, daging, maupun seafood.',
+    images: ['/static/images/products/saus-bbq.png'],
+    rating: 4.8,
+    reviewsCount: 73,
+    sold: '1.5RB+',
+    category: 'Saus Tiram',
+    sku: 'SKU-TRM-1K',
+    weight: '1050g',
+    stock: 200,
+    specifications: [
+      { label: 'Kategori', value: 'Saus Tiram' },
+      { label: 'Kemasan', value: 'Stand Pouch 1kg' },
+      { label: 'Stok', value: '200' },
+      { label: 'Masa Penyimpanan', value: '12 Bulan' },
+      { label: 'No. Izin Edar', value: 'BPOM RI MD 255428014452' },
+      { label: 'Dikirim Dari', value: 'KAB. BANDUNG' }
+    ],
+    reviews: []
+  },
+  'bumbu-lada-putih-bubuk-25g': {
+    id: 'PROD-008',
+    name: 'Bumbu Lada Putih Bubuk 25g',
+    price: 3500,
+    originalPrice: 5000,
+    description:
+      'Lada putih bubuk murni sachet 25g dari biji lada pilihan berkualitas tinggi. Diproses secara higienis tanpa campuran bahan kimia untuk menghasilkan tingkat kepedasan hangat dan aroma lada yang kuat.',
+    images: ['/static/images/products/selai-nastar.png'],
+    rating: 4.7,
+    reviewsCount: 154,
+    sold: '5RB+',
+    category: 'Bumbu Bubuk',
+    sku: 'SKU-LADA-25',
+    weight: '28g',
+    stock: 1000,
+    specifications: [
+      { label: 'Kategori', value: 'Bumbu Bubuk' },
+      { label: 'Kemasan', value: 'Sachet 25g' },
+      { label: 'Stok', value: '1000' },
+      { label: 'Masa Penyimpanan', value: '18 Bulan' },
+      { label: 'No. Izin Edar', value: 'BPOM RI MD 255428014453' },
+      { label: 'Dikirim Dari', value: 'KAB. BANDUNG' }
+    ],
+    reviews: []
+  },
+  'saus-teriyaki-jepang-330ml': {
+    id: 'PROD-009',
+    name: 'Saus Teriyaki Jepang 330ml',
+    price: 28000,
+    originalPrice: 35000,
+    description:
+      'Saus teriyaki khas Jepang dengan perpaduan rasa manis gurih karamel yang pas. Sangat cocok sebagai bumbu marinasi, tumisan daging sapi/ayam, maupun saus cocolan hidangan panggang.',
+    images: ['/static/images/products/saus-blackpepper.png'],
+    rating: 4.8,
+    reviewsCount: 67,
+    sold: '900+',
+    category: 'Saus Teriyaki',
+    sku: 'SKU-TERI-330',
+    weight: '380g',
+    stock: 250,
+    specifications: [
+      { label: 'Kategori', value: 'Saus Teriyaki' },
+      { label: 'Kemasan', value: 'Botol PET 330ml' },
+      { label: 'Stok', value: '250' },
+      { label: 'Masa Penyimpanan', value: '12 Bulan' },
+      { label: 'No. Izin Edar', value: 'BPOM RI MD 255428014454' },
+      { label: 'Dikirim Dari', value: 'KAB. BANDUNG' }
+    ],
+    reviews: []
+  },
+  'cuka-makan-asam-murni-10kg': {
+    id: 'PROD-010',
+    name: 'Cuka Makan Asam Murni 10kg',
+    price: 98000,
+    originalPrice: 120000,
+    description:
+      'Cuka makan asam asetat encer food grade kemasan jerigen industri 10kg. Diproduksi secara standar pabrik pangan nasional, aman digunakan sebagai bahan pengatur keasaman makanan maupun pembersih peralatan pangan industri.',
+    images: ['/static/images/products/sambal-dadak.png'],
+    rating: 4.9,
+    reviewsCount: 15,
+    sold: '100+',
+    category: 'Cuka Makan',
+    sku: 'SKU-CUKA-10K',
+    weight: '10.5kg',
+    stock: 50,
+    specifications: [
+      { label: 'Kategori', value: 'Cuka Makan' },
+      { label: 'Kemasan', value: 'Jerigen 10kg' },
+      { label: 'Stok', value: '50' },
+      { label: 'Masa Penyimpanan', value: '36 Bulan' },
+      { label: 'No. Izin Edar', value: 'BPOM RI MD 255428014455' },
+      { label: 'Dikirim Dari', value: 'KAB. BANDUNG' }
+    ],
+    reviews: []
   }
 }
 
 export default function ProductDetailPage() {
   const router = useRouter()
-  const product = PRODUCTS_DB['default']
+  const { slug } = useParams()
+
+  const productKey = typeof slug === 'string' && PRODUCTS_DB[slug] ? slug : 'saos-sambal-pedas-manis-135ml'
+  const product = PRODUCTS_DB[productKey]
 
   const [quantity, setQuantity] = useState(1)
   const [activeImage, setActiveImage] = useState(0)
@@ -128,7 +344,7 @@ export default function ProductDetailPage() {
     addItem({
       id: product.id,
       name: product.name,
-      slug: 'saus-sambal-premium',
+      slug: productKey,
       price: product.price,
       image: product.images[0],
       quantity: quantity,

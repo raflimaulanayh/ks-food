@@ -35,78 +35,312 @@ export const useUserStore = create<UserStore>((set) => ({
   staffList: [
     {
       id: 1,
-      name: 'Rafli Maulana',
-      email: 'rafli@ksfood.id',
+      name: 'Grace Indriani',
+      email: 'grace@ksfood.co.id',
       role: 'PIMPINAN',
-      phone: '08123456789',
+      phone: '081234567801',
       status: 'Active',
-      joinDate: '2023-01-15'
+      joinDate: '2026-06-01'
     },
     {
       id: 2,
-      name: 'Siti Aminah',
-      email: 'siti@ksfood.id',
-      role: 'HR',
-      phone: '08198765432',
+      name: 'Budi Santoso',
+      email: 'budi@ksfood.co.id',
+      role: 'WAREHOUSE',
+      phone: '081234567802',
       status: 'Active',
-      joinDate: '2023-03-20'
+      joinDate: '2026-06-01'
     },
     {
       id: 3,
-      name: 'Budi Santoso',
-      email: 'budi@ksfood.id',
-      role: 'WAREHOUSE',
-      phone: '081299887766',
+      name: 'Joko Susilo',
+      email: 'joko@ksfood.co.id',
+      role: 'QC',
+      phone: '081234567803',
       status: 'Active',
-      joinDate: '2024-02-10'
+      joinDate: '2026-06-01'
     },
     {
       id: 4,
-      name: 'Andi Saputra',
-      email: 'andi@ksfood.id',
-      role: 'PROCUREMENT',
-      phone: '085677889900',
-      status: 'Suspended',
-      joinDate: '2024-12-05'
+      name: 'Siti Aminah',
+      email: 'siti@ksfood.co.id',
+      role: 'QC',
+      phone: '081234567804',
+      status: 'Active',
+      joinDate: '2026-06-01'
     },
     {
       id: 5,
-      name: 'Dewi Lestari',
-      email: 'dewi@ksfood.id',
+      name: 'Eko Prasetyo',
+      email: 'eko@ksfood.co.id',
       role: 'FINANCE',
-      phone: '081234567890',
+      phone: '081234567805',
       status: 'Active',
-      joinDate: '2023-04-05'
+      joinDate: '2026-06-01'
+    },
+    {
+      id: 6,
+      name: 'Ratna Sari',
+      email: 'ratna@ksfood.co.id',
+      role: 'HR',
+      phone: '081234567806',
+      status: 'Active',
+      joinDate: '2026-06-01'
+    },
+    {
+      id: 7,
+      name: 'Agus Setiawan',
+      email: 'agus@ksfood.co.id',
+      role: 'ADMIN',
+      phone: '081234567807',
+      status: 'Active',
+      joinDate: '2026-06-01'
+    },
+    {
+      id: 8,
+      name: 'Dewi Lestari',
+      email: 'dewi@ksfood.co.id',
+      role: 'ADMIN',
+      phone: '081234567808',
+      status: 'Active',
+      joinDate: '2026-06-01'
+    },
+    {
+      id: 9,
+      name: 'Hendra Wijaya',
+      email: 'hendra@ksfood.co.id',
+      role: 'PROCUREMENT',
+      phone: '081234567809',
+      status: 'Active',
+      joinDate: '2026-06-01'
+    },
+    {
+      id: 10,
+      name: 'Megaawati Putri',
+      email: 'mega@ksfood.co.id',
+      role: 'WAREHOUSE',
+      phone: '0812345678010',
+      status: 'Active',
+      joinDate: '2026-06-01'
     }
   ],
 
   customerList: [
     {
       id: 1,
-      name: 'PT Maju Jaya',
-      email: 'contact@majujaya.com',
-      phone: '0811223344',
-      company: 'PT Maju Jaya',
+      name: 'Budi Hartono',
+      email: 'budi_ret@gmail.com',
+      phone: '081333333001',
+      company: 'Personal/Retail',
       status: 'Active',
-      joinDate: '2024-01-10'
+      joinDate: '2026-06-01'
     },
     {
       id: 2,
-      name: 'CV Berkah Sentosa',
-      email: 'info@berkahsentosa.com',
-      phone: '0815667788',
-      company: 'CV Berkah Sentosa',
+      name: 'Ani Hartono',
+      email: 'ani_ret@gmail.com',
+      phone: '081333333002',
+      company: 'Personal/Retail',
       status: 'Active',
-      joinDate: '2024-02-15'
+      joinDate: '2026-06-01'
     },
     {
       id: 3,
-      name: 'Toko Sumber Rezeki',
-      email: 'toko@sumberrezeki.com',
-      phone: '0819988776',
-      company: 'Toko Sumber Rezeki',
+      name: 'Candra Hartono',
+      email: 'candra_ret@gmail.com',
+      phone: '081333333003',
+      company: 'Personal/Retail',
       status: 'Active',
-      joinDate: '2024-03-20'
+      joinDate: '2026-06-01'
+    },
+    {
+      id: 4,
+      name: 'Diana Hartono',
+      email: 'diana_ret@gmail.com',
+      phone: '081333333004',
+      company: 'Personal/Retail',
+      status: 'Active',
+      joinDate: '2026-06-01'
+    },
+    {
+      id: 5,
+      name: 'Erik Hartono',
+      email: 'erik_ret@gmail.com',
+      phone: '081333333005',
+      company: 'Personal/Retail',
+      status: 'Active',
+      joinDate: '2026-06-01'
+    },
+    {
+      id: 6,
+      name: 'Fiona Hartono',
+      email: 'fiona_ret@gmail.com',
+      phone: '081333333006',
+      company: 'Personal/Retail',
+      status: 'Active',
+      joinDate: '2026-06-01'
+    },
+    {
+      id: 7,
+      name: 'Gandi Hartono',
+      email: 'gandi_ret@gmail.com',
+      phone: '081333333007',
+      company: 'Personal/Retail',
+      status: 'Active',
+      joinDate: '2026-06-01'
+    },
+    {
+      id: 8,
+      name: 'Hilda Hartono',
+      email: 'hilda_ret@gmail.com',
+      phone: '081333333008',
+      company: 'Personal/Retail',
+      status: 'Active',
+      joinDate: '2026-06-01'
+    },
+    {
+      id: 9,
+      name: 'Indra Hartono',
+      email: 'indra_ret@gmail.com',
+      phone: '081333333009',
+      company: 'Personal/Retail',
+      status: 'Active',
+      joinDate: '2026-06-01'
+    },
+    {
+      id: 10,
+      name: 'Julia Hartono',
+      email: 'julia_ret@gmail.com',
+      phone: '081333333010',
+      company: 'Personal/Retail',
+      status: 'Active',
+      joinDate: '2026-06-01'
+    },
+    {
+      id: 11,
+      name: 'Kiki Hartono',
+      email: 'kiki_ret@gmail.com',
+      phone: '081333333011',
+      company: 'Personal/Retail',
+      status: 'Active',
+      joinDate: '2026-06-01'
+    },
+    {
+      id: 12,
+      name: 'Lisa Hartono',
+      email: 'lisa_ret@gmail.com',
+      phone: '081333333012',
+      company: 'Personal/Retail',
+      status: 'Active',
+      joinDate: '2026-06-01'
+    },
+    {
+      id: 13,
+      name: 'PT Mayora Indah Tbk',
+      email: 'procurement@mayora.co.id',
+      phone: '0215555001',
+      company: 'PT Mayora Indah Tbk',
+      status: 'Active',
+      joinDate: '2026-06-01'
+    },
+    {
+      id: 14,
+      name: 'PT Gokana Resto Indonesia',
+      email: 'procurement@gokana.co.id',
+      phone: '0215555002',
+      company: 'PT Gokana Resto Indonesia',
+      status: 'Active',
+      joinDate: '2026-06-01'
+    },
+    {
+      id: 15,
+      name: 'PT Garuda Food Putra Putri Tbk',
+      email: 'procurement@garudafood.co.id',
+      phone: '0215555003',
+      company: 'PT Garuda Food Putra Putri Tbk',
+      status: 'Active',
+      joinDate: '2026-06-01'
+    },
+    {
+      id: 16,
+      name: 'PT Indofood CBP Sukses Makmur',
+      email: 'procurement@indofood.co.id',
+      phone: '0215555004',
+      company: 'PT Indofood CBP Sukses Makmur',
+      status: 'Active',
+      joinDate: '2026-06-01'
+    },
+    {
+      id: 17,
+      name: 'PT Wings Surya',
+      email: 'procurement@wings.co.id',
+      phone: '0215555005',
+      company: 'PT Wings Surya',
+      status: 'Active',
+      joinDate: '2026-06-01'
+    },
+    {
+      id: 18,
+      name: 'PT ABC President Indonesia',
+      email: 'procurement@abc.co.id',
+      phone: '0215555006',
+      company: 'PT ABC President Indonesia',
+      status: 'Active',
+      joinDate: '2026-06-01'
+    },
+    {
+      id: 19,
+      name: 'PT Sasa Inti',
+      email: 'procurement@sasa.co.id',
+      phone: '0215555007',
+      company: 'PT Sasa Inti',
+      status: 'Active',
+      joinDate: '2026-06-01'
+    },
+    {
+      id: 20,
+      name: 'PT Ajinomoto Indonesia',
+      email: 'procurement@ajinomoto.co.id',
+      phone: '0215555008',
+      company: 'PT Ajinomoto Indonesia',
+      status: 'Active',
+      joinDate: '2026-06-01'
+    },
+    {
+      id: 21,
+      name: 'PT Kobe Boga Utama',
+      email: 'procurement@kobe.co.id',
+      phone: '0215555009',
+      company: 'PT Kobe Boga Utama',
+      status: 'Active',
+      joinDate: '2026-06-01'
+    },
+    {
+      id: 22,
+      name: 'PT Nutrifood Indonesia',
+      email: 'procurement@nutrifood.co.id',
+      phone: '0215555010',
+      company: 'PT Nutrifood Indonesia',
+      status: 'Active',
+      joinDate: '2026-06-01'
+    },
+    {
+      id: 23,
+      name: 'PT Unilever Indonesia Tbk',
+      email: 'procurement@unilever.co.id',
+      phone: '0215555011',
+      company: 'PT Unilever Indonesia Tbk',
+      status: 'Active',
+      joinDate: '2026-06-01'
+    },
+    {
+      id: 24,
+      name: 'PT Nestle Indonesia',
+      email: 'procurement@nestle.co.id',
+      phone: '0215555012',
+      company: 'PT Nestle Indonesia',
+      status: 'Active',
+      joinDate: '2026-06-01'
     }
   ],
 

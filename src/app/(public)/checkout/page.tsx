@@ -359,10 +359,11 @@ export default function CheckoutPage() {
                   <h2 className="text-xl font-bold text-slate-800">Metode Pembayaran</h2>
                 </div>
 
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid gap-4 sm:grid-cols-3">
                   {[
                     { id: 'transfer', label: 'Bank Transfer', icon: Bank },
-                    { id: 'ewallet', label: 'E-Wallet', icon: Wallet }
+                    { id: 'ewallet', label: 'E-Wallet', icon: Wallet },
+                    { id: 'cod', label: 'Bayar di Tempat (COD)', icon: Truck }
                   ].map((method) => (
                     <label
                       key={method.id}
@@ -374,7 +375,7 @@ export default function CheckoutPage() {
                     >
                       <input type="radio" value={method.id} {...form.register('paymentMethod')} className="hidden" />
                       <method.icon size={32} weight={form.watch('paymentMethod') === method.id ? 'fill' : 'regular'} />
-                      <span className="font-semibold">{method.label}</span>
+                      <span className="text-center font-semibold">{method.label}</span>
                     </label>
                   ))}
                 </div>

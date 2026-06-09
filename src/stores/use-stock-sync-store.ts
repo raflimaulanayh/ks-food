@@ -52,8 +52,8 @@ interface StockSyncState {
 const mockProducts: ProductStock[] = [
   {
     id: '1',
-    sku: 'SKU-001',
-    name: 'Saos Sambal Bawang 500ml',
+    sku: 'SKU-SMBL-135',
+    name: 'Saos Sambal Pedas Manis 135ml',
     stock: {
       internal: 150,
       shopee: 150,
@@ -62,13 +62,13 @@ const mockProducts: ProductStock[] = [
       website: 148
     },
     syncStatus: 'out_of_sync',
-    lastSync: new Date('2026-01-06T03:45:00'),
-    unit: 'Botol'
+    lastSync: new Date('2026-06-09T03:45:00'),
+    unit: 'BOTOL'
   },
   {
     id: '2',
-    sku: 'SKU-002',
-    name: 'Saos Tomat Premium 1L',
+    sku: 'SKU-KCP-250',
+    name: 'Kecap Manis Cap Noni 250ml',
     stock: {
       internal: 200,
       shopee: 200,
@@ -77,13 +77,13 @@ const mockProducts: ProductStock[] = [
       website: 200
     },
     syncStatus: 'synced',
-    lastSync: new Date('2026-01-06T04:15:00'),
-    unit: 'Botol'
+    lastSync: new Date('2026-06-09T04:15:00'),
+    unit: 'BOTOL'
   },
   {
     id: '3',
-    sku: 'SKU-003',
-    name: 'Bumbu Rendang 100g',
+    sku: 'SKU-MAYO-135',
+    name: 'Mayones Original Premium 135ml',
     stock: {
       internal: 300,
       shopee: 295,
@@ -92,13 +92,13 @@ const mockProducts: ProductStock[] = [
       website: 300
     },
     syncStatus: 'out_of_sync',
-    lastSync: new Date('2026-01-06T02:30:00'),
-    unit: 'Pack'
+    lastSync: new Date('2026-06-09T02:30:00'),
+    unit: 'BOTOL'
   },
   {
     id: '4',
-    sku: 'SKU-004',
-    name: 'Saos ABC Pedas 340ml',
+    sku: 'SKU-TOM-500',
+    name: 'Saus Tomat Asam Manis 500ml',
     stock: {
       internal: 180,
       shopee: 180,
@@ -107,13 +107,13 @@ const mockProducts: ProductStock[] = [
       website: 180
     },
     syncStatus: 'synced',
-    lastSync: new Date('2026-01-06T04:10:00'),
-    unit: 'Botol'
+    lastSync: new Date('2026-06-09T04:10:00'),
+    unit: 'BOTOL'
   },
   {
     id: '5',
-    sku: 'SKU-005',
-    name: 'Bumbu Kari Instan 75g',
+    sku: 'SKU-ASN-100',
+    name: 'Kecap Asin Kedelai Hitam 100ml',
     stock: {
       internal: 250,
       shopee: 250,
@@ -122,13 +122,13 @@ const mockProducts: ProductStock[] = [
       website: 245
     },
     syncStatus: 'out_of_sync',
-    lastSync: new Date('2026-01-06T01:20:00'),
-    unit: 'Pack'
+    lastSync: new Date('2026-06-09T01:20:00'),
+    unit: 'BOTOL'
   },
   {
     id: '6',
-    sku: 'SKU-006',
-    name: 'Saos Sambal Original 250ml',
+    sku: 'SKU-WJN-100',
+    name: 'Minyak Wijen Wangi Murni 100ml',
     stock: {
       internal: 120,
       shopee: 120,
@@ -137,13 +137,13 @@ const mockProducts: ProductStock[] = [
       website: 120
     },
     syncStatus: 'synced',
-    lastSync: new Date('2026-01-06T04:20:00'),
-    unit: 'Botol'
+    lastSync: new Date('2026-06-09T04:20:00'),
+    unit: 'BOTOL'
   },
   {
     id: '7',
-    sku: 'SKU-007',
-    name: 'Saos ABC Manis 340ml',
+    sku: 'SKU-TRM-1K',
+    name: 'Saus Tiram Selera Gurih 1kg',
     stock: {
       internal: 160,
       shopee: 155,
@@ -152,13 +152,13 @@ const mockProducts: ProductStock[] = [
       website: 160
     },
     syncStatus: 'out_of_sync',
-    lastSync: new Date('2026-01-05T23:45:00'),
-    unit: 'Botol'
+    lastSync: new Date('2026-06-08T23:45:00'),
+    unit: 'POUCH'
   },
   {
     id: '8',
-    sku: 'SKU-008',
-    name: 'Bumbu Soto Ayam 50g',
+    sku: 'SKU-LADA-25',
+    name: 'Bumbu Lada Putih Bubuk 25g',
     stock: {
       internal: 280,
       shopee: 280,
@@ -167,28 +167,28 @@ const mockProducts: ProductStock[] = [
       website: 280
     },
     syncStatus: 'synced',
-    lastSync: new Date('2026-01-06T04:05:00'),
-    unit: 'Pack'
+    lastSync: new Date('2026-06-09T04:05:00'),
+    unit: 'SACHET'
   },
   {
     id: '9',
-    sku: 'SKU-009',
-    name: 'Saos Sambal Jerigen 20L',
+    sku: 'SKU-TERI-330',
+    name: 'Saus Teriyaki Jepang 330ml',
     stock: {
       internal: 50,
-      shopee: 0, // Not sold on Shopee
-      tokopedia: 0, // Not sold on Tokopedia
-      blibli: 0, // Not sold on Blibli
+      shopee: 0,
+      tokopedia: 0,
+      blibli: 0,
       website: 48
     },
     syncStatus: 'out_of_sync',
-    lastSync: new Date('2026-01-06T00:15:00'),
-    unit: 'Jerigen'
+    lastSync: new Date('2026-06-09T00:15:00'),
+    unit: 'BOTOL'
   },
   {
     id: '10',
-    sku: 'SKU-010',
-    name: 'Bumbu Rendang Bulk 5Kg',
+    sku: 'SKU-CUKA-10K',
+    name: 'Cuka Makan Asam Murni 10kg',
     stock: {
       internal: 75,
       shopee: 0,
@@ -197,8 +197,8 @@ const mockProducts: ProductStock[] = [
       website: 75
     },
     syncStatus: 'synced',
-    lastSync: new Date('2026-01-06T04:00:00'),
-    unit: 'Karung'
+    lastSync: new Date('2026-06-09T04:00:00'),
+    unit: 'JERIGEN'
   }
 ]
 
@@ -206,9 +206,9 @@ const mockHistory: SyncHistory[] = [
   {
     id: '1',
     productId: '2',
-    productName: 'Saos Tomat Premium 1L',
+    productName: 'Kecap Manis Cap Noni 250ml',
     channel: 'all',
-    timestamp: new Date('2026-01-06T04:15:00'),
+    timestamp: new Date('2026-06-09T04:15:00'),
     status: 'success',
     oldStock: 195,
     newStock: 200,
@@ -217,9 +217,9 @@ const mockHistory: SyncHistory[] = [
   {
     id: '2',
     productId: '1',
-    productName: 'Saos Sambal Bawang 500ml',
+    productName: 'Saos Sambal Pedas Manis 135ml',
     channel: 'tokopedia',
-    timestamp: new Date('2026-01-06T03:45:00'),
+    timestamp: new Date('2026-06-09T03:45:00'),
     status: 'failed',
     oldStock: 145,
     newStock: 145,
@@ -228,9 +228,9 @@ const mockHistory: SyncHistory[] = [
   {
     id: '3',
     productId: '6',
-    productName: 'Saos Sambal Original 250ml',
+    productName: 'Minyak Wijen Wangi Murni 100ml',
     channel: 'all',
-    timestamp: new Date('2026-01-06T04:20:00'),
+    timestamp: new Date('2026-06-09T04:20:00'),
     status: 'success',
     oldStock: 118,
     newStock: 120,

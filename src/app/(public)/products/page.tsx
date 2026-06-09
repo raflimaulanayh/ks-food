@@ -7,119 +7,113 @@ import { ProductCard } from '@/components/molecules/product-card'
 import { SectionHeader } from '@/components/molecules/section-header'
 import { Container } from '@/components/templates/container'
 
-// Real Products with actual images
+// Real Products synchronized with database schema DDL & DML
 const allProducts = [
   {
-    id: '1',
-    title: 'Sambal Bawang Original',
-    price: 25000,
+    id: 'PROD-001',
+    title: 'Saos Sambal Pedas Manis 135ml',
+    price: 12000,
     imageUrl: '/static/images/products/sambal-bawang.png',
-    badges: ['Best Seller', 'Halal'],
-    category: 'Sambal',
-    slug: 'sambal-bawang'
+    badges: ['Best Seller', 'Pedas', 'Halal'],
+    category: 'Saus Pedas',
+    slug: 'saos-sambal-pedas-manis-135ml'
   },
   {
-    id: '2',
-    title: 'Sambal Bawang Botol 340ml',
-    price: 28000,
+    id: 'PROD-002',
+    title: 'Kecap Manis Cap Noni 250ml',
+    price: 18000,
     imageUrl: '/static/images/products/sambal-bawang-botol.png',
-    badges: ['BPOM', 'Halal'],
-    category: 'Sambal',
-    slug: 'sambal-bawang-botol'
+    badges: ['Tradisional', 'Manis', 'Halal'],
+    category: 'Kecap Manis',
+    slug: 'kecap-manis-cap-noni-250ml'
   },
   {
-    id: '3',
-    title: 'Sambal Dadak Pedas',
-    price: 22000,
-    imageUrl: '/static/images/products/sambal-dadak.png',
-    badges: ['Pedas', 'Halal'],
-    category: 'Sambal',
-    slug: 'sambal-dadak'
+    id: 'PROD-003',
+    title: 'Mayones Original Premium 135ml',
+    price: 15000,
+    imageUrl: '/static/images/products/mayonaise.png',
+    badges: ['Premium', 'Gurih', 'Halal'],
+    category: 'Mayones',
+    slug: 'mayones-original-premium-135ml'
   },
   {
-    id: '4',
-    title: 'Sambal Geprek Extra Hot',
-    price: 26000,
-    imageUrl: '/static/images/products/sambal-geprek.png',
-    badges: ['Extra Pedas', 'New'],
-    category: 'Sambal',
-    slug: 'sambal-geprek'
-  },
-  {
-    id: '5',
-    title: 'Chili Oil Premium',
-    price: 35000,
-    imageUrl: '/static/images/products/chili-oil.png',
-    badges: ['Premium', 'Aromatis'],
-    category: 'Sambal',
-    slug: 'chili-oil'
-  },
-  {
-    id: '6',
-    title: 'Saus Tomat Premium 1L',
-    price: 45000,
-    imageUrl: '/static/images/products/saus-tomat.png',
-    badges: ['Best Seller', 'BPOM'],
-    category: 'Saus',
-    slug: 'saus-tomat'
-  },
-  {
-    id: '7',
-    title: 'Saus Tomat Botol 340ml',
+    id: 'PROD-004',
+    title: 'Saus Tomat Asam Manis 500ml',
     price: 22000,
     imageUrl: '/static/images/products/saus-tomat-botol.png',
-    badges: ['Halal', 'Favorit'],
-    category: 'Saus',
-    slug: 'saus-tomat-botol'
+    badges: ['Segar', 'Manis Asam', 'Halal'],
+    category: 'Saus Tomat',
+    slug: 'saus-tomat-asam-manis-500ml'
   },
   {
-    id: '8',
-    title: 'Saus BBQ Spesial',
-    price: 38000,
+    id: 'PROD-005',
+    title: 'Kecap Asin Kedelai Hitam 100ml',
+    price: 9500,
+    imageUrl: '/static/images/products/saus-tomat.png',
+    badges: ['Gurih', 'Fermentasi', 'Halal'],
+    category: 'Kecap Asin',
+    slug: 'kecap-asin-kedelai-hitam-100ml'
+  },
+  {
+    id: 'PROD-006',
+    title: 'Minyak Wijen Wangi Murni 100ml',
+    price: 25000,
+    imageUrl: '/static/images/products/chili-oil.png',
+    badges: ['Aromatik', 'Murni', 'Halal'],
+    category: 'Minyak Wijen',
+    slug: 'minyak-wijen-wangi-murni-100ml'
+  },
+  {
+    id: 'PROD-007',
+    title: 'Saus Tiram Selera Gurih 1kg',
+    price: 45000,
     imageUrl: '/static/images/products/saus-bbq.png',
-    badges: ['New', 'Premium'],
-    category: 'Saus',
-    slug: 'saus-bbq'
+    badges: ['Kental', 'Gurih', 'Porsi Besar'],
+    category: 'Saus Tiram',
+    slug: 'saus-tiram-selera-gurih-1kg'
   },
   {
-    id: '9',
-    title: 'Saus Black Pepper',
-    price: 42000,
-    imageUrl: '/static/images/products/saus-blackpepper.png',
-    badges: ['Premium', 'Favorit'],
-    category: 'Saus',
-    slug: 'saus-blackpepper'
-  },
-  {
-    id: '10',
-    title: 'Mayonaise Creamy',
-    price: 35000,
-    imageUrl: '/static/images/products/mayonaise.png',
-    badges: ['Creamy', 'Best Seller'],
-    category: 'Mayonnaise',
-    slug: 'mayonaise'
-  },
-  {
-    id: '11',
-    title: 'Selai Nastar Homemade',
-    price: 32000,
+    id: 'PROD-008',
+    title: 'Bumbu Lada Putih Bubuk 25g',
+    price: 3500,
     imageUrl: '/static/images/products/selai-nastar.png',
-    badges: ['Homemade', 'Manis'],
-    category: 'Selai',
-    slug: 'selai-nastar'
+    badges: ['Bubuk', 'Pedas Hangat', 'Praktis'],
+    category: 'Bumbu Bubuk',
+    slug: 'bumbu-lada-putih-bubuk-25g'
   },
   {
-    id: '12',
-    title: 'Sambal Tomat Spesial',
-    price: 24000,
-    imageUrl: '/static/images/category/sambal-tomat.png',
-    badges: ['Halal', 'BPOM'],
-    category: 'Sambal',
-    slug: 'sambal-tomat'
+    id: 'PROD-009',
+    title: 'Saus Teriyaki Jepang 330ml',
+    price: 28000,
+    imageUrl: '/static/images/products/saus-blackpepper.png',
+    badges: ['Tumis', 'Khas Jepang', 'Halal'],
+    category: 'Saus Teriyaki',
+    slug: 'saus-teriyaki-jepang-330ml'
+  },
+  {
+    id: 'PROD-010',
+    title: 'Cuka Makan Asam Murni 10kg',
+    price: 98000,
+    imageUrl: '/static/images/products/sambal-dadak.png',
+    badges: ['Asam Murni', 'Industri', 'Ukuran Besar'],
+    category: 'Cuka Makan',
+    slug: 'cuka-makan-asam-murni-10kg'
   }
 ]
 
-const categories = ['Semua', 'Sambal', 'Saus', 'Mayonnaise', 'Selai']
+const categories = [
+  'Semua',
+  'Saus Pedas',
+  'Saus Tomat',
+  'Mayones',
+  'Kecap Manis',
+  'Kecap Asin',
+  'Minyak Wijen',
+  'Saus Tiram',
+  'Bumbu Bubuk',
+  'Saus Teriyaki',
+  'Cuka Makan'
+]
 
 export default function ProductsPage() {
   const [activeCategory, setActiveCategory] = useState('Semua')
