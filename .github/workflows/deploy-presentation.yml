@@ -32,8 +32,10 @@ jobs:
 
       - name: Prepare presentation folder
         run: |
-          # Copy presentation.html to index.html so it serves as the home page
-          cp presentation/presentation.html presentation/index.html
+          # Copy presentation.html to index.html if it exists
+          if [ -f "presentation/presentation.html" ]; then
+            cp presentation/presentation.html presentation/index.html
+          fi
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
