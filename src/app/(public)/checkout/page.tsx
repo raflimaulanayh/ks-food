@@ -19,6 +19,8 @@ import { Input } from '@/components/atoms/ui/input'
 import { Textarea } from '@/components/atoms/ui/textarea'
 import { Container } from '@/components/templates/container'
 
+import { cn } from '@/utils/cn'
+
 const checkoutSchema = z.object({
   fullName: z.string().min(2, 'Nama lengkap wajib diisi'),
   email: z.string().email('Email tidak valid'),
@@ -29,6 +31,33 @@ const checkoutSchema = z.object({
   paymentMethod: z.enum(['transfer', 'ewallet', 'cod'])
 })
 
+const SAVED_ADDRESSES = [
+  {
+    id: 'addr-1',
+    label: 'Rumah Budi (Utama)',
+    fullAddress: 'Jl. Kebon Jeruk Indah No. 1',
+    city: 'Jakarta Barat',
+    zipCode: '11530',
+    phone: '081333333001'
+  },
+  {
+    id: 'addr-2',
+    label: 'Kantor Budi',
+    fullAddress: 'Jl. Sudirman Kav 21, Gedung Chase Plaza Lt. 10',
+    city: 'Jakarta Selatan',
+    zipCode: '12190',
+    phone: '081333333001'
+  },
+  {
+    id: 'addr-3',
+    label: 'Apartemen Budi',
+    fullAddress: 'Apartemen Green Bay Tower D Lnt 12 No. 5',
+    city: 'Jakarta Utara',
+    zipCode: '14450',
+    phone: '081333333001'
+  }
+]
+
 export default function CheckoutPage() {
   const router = useRouter()
   const { items, clearCart, getTotalPrice } = useCartStore()
@@ -37,6 +66,7 @@ export default function CheckoutPage() {
   const [isSuccessOpen, setIsSuccessOpen] = useState(false)
 
   const [paymentMethod, setPaymentMethod] = useState<'transfer' | 'ewallet' | 'cod'>('transfer')
+  const [selectedAddressId, setSelectedAddressId] = useState<string>('addr-1')
   const [lastOrder, setLastOrder] = useState<{
     id: string
     total: number
@@ -57,6 +87,24 @@ export default function CheckoutPage() {
     }
   })
 
+  const handleAddressChange = (addressId: string) => {
+    setSelectedAddressId(addressId)
+    if (addressId === 'new') {
+      form.setValue('address', '')
+      form.setValue('city', '')
+      form.setValue('zipCode', '')
+    } else {
+      const addr = SAVED_ADDRESSES.find((a) => a.id === addressId)
+      if (addr) {
+        form.setValue('fullName', 'Budi Hartono')
+        form.setValue('phone', addr.phone)
+        form.setValue('address', addr.fullAddress)
+        form.setValue('city', addr.city)
+        form.setValue('zipCode', addr.zipCode)
+      }
+    }
+  }
+
   // Auth & Cart Check
   useEffect(() => {
     setMounted(true)
@@ -75,12 +123,12 @@ export default function CheckoutPage() {
     if (authState.user) {
       const u = authState.user
       form.reset({
-        fullName: u.name,
-        email: u.email,
-        phone: u.phone,
-        address: u.address,
-        city: u.city,
-        zipCode: u.zipCode,
+        fullName: u.name === 'Guest User' ? 'Budi Hartono' : u.name,
+        email: u.email === 'rafli@example.com' ? 'budi_ret@gmail.com' : u.email,
+        phone: u.phone === '081234567890' ? '081333333001' : u.phone,
+        address: SAVED_ADDRESSES[0].fullAddress,
+        city: SAVED_ADDRESSES[0].city,
+        zipCode: SAVED_ADDRESSES[0].zipCode,
         paymentMethod: 'transfer'
       })
     }
@@ -303,6 +351,41 @@ export default function CheckoutPage() {
                         </FormItem>
                       )}
                     />
+
+                    {/* Saved Address Selector */}
+                    <div className="flex flex-col gap-y-2">
+                      <FormLabel>Pilih Alamat Pengiriman</FormLabel>
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        {SAVED_ADDRESSES.map((addr) => (
+                          <div
+                            key={addr.id}
+                            onClick={() => handleAddressChange(addr.id)}
+                            className={cn(
+                              'cursor-pointer rounded-xl border-2 p-3 text-left transition-all hover:bg-slate-50',
+                              selectedAddressId === addr.id ? 'border-primary bg-red-50/50' : 'border-slate-100'
+                            )}
+                          >
+                            <div className="text-sm font-bold text-slate-800">{addr.label}</div>
+                            <div className="mt-1 line-clamp-2 text-xs text-slate-500">{addr.fullAddress}</div>
+                            <div className="mt-0.5 text-[10px] text-slate-400">
+                              {addr.city}, {addr.zipCode}
+                            </div>
+                          </div>
+                        ))}
+                        <div
+                          onClick={() => handleAddressChange('new')}
+                          className={cn(
+                            'flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-3 transition-all hover:bg-slate-50',
+                            selectedAddressId === 'new'
+                              ? 'border-primary bg-red-50/50 text-primary'
+                              : 'border-slate-200 text-slate-500'
+                          )}
+                        >
+                          <span className="text-sm font-bold">+ Alamat Baru</span>
+                          <span className="text-[10px] opacity-70">Tulis alamat manual</span>
+                        </div>
+                      </div>
+                    </div>
 
                     <FormField
                       control={form.control}

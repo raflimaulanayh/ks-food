@@ -20,15 +20,30 @@ export type Customer = {
   joinDate: string
 }
 
+export type Address = {
+  addressId: string
+  customerId: string
+  label: string
+  fullAddress: string
+  city: string
+  province: string
+  postalCode: string
+  isPrimary: boolean
+}
+
 interface UserStore {
   staffList: Staff[]
   customerList: Customer[]
+  addressList: Address[]
   addStaff: (staff: Staff) => void
   updateStaff: (id: number, data: Partial<Staff>) => void
   deleteStaff: (id: number) => void
   addCustomer: (customer: Customer) => void
   updateCustomer: (id: number, data: Partial<Customer>) => void
   deleteCustomer: (id: number) => void
+  addAddress: (address: Address) => void
+  updateAddress: (addressId: string, data: Partial<Address>) => void
+  deleteAddress: (addressId: string) => void
 }
 
 export const useUserStore = create<UserStore>((set) => ({
@@ -344,6 +359,271 @@ export const useUserStore = create<UserStore>((set) => ({
     }
   ],
 
+  addressList: [
+    // Retail Customer Addresses
+    {
+      addressId: 'ADDR-RET-001',
+      customerId: 'CUST-RET-001',
+      label: 'Rumah Budi (Utama)',
+      fullAddress: 'Jl. Kebon Jeruk Indah No. 1',
+      city: 'Jakarta Barat',
+      province: 'DKI Jakarta',
+      postalCode: '11530',
+      isPrimary: true
+    },
+    {
+      addressId: 'ADDR-RET-001-KANTOR',
+      customerId: 'CUST-RET-001',
+      label: 'Kantor Budi',
+      fullAddress: 'Jl. Sudirman Kav 21, Gedung Chase Plaza Lt. 10',
+      city: 'Jakarta Selatan',
+      province: 'DKI Jakarta',
+      postalCode: '12190',
+      isPrimary: false
+    },
+    {
+      addressId: 'ADDR-RET-001-APART',
+      customerId: 'CUST-RET-001',
+      label: 'Apartemen Budi',
+      fullAddress: 'Apartemen Green Bay Tower D Lnt 12 No. 5',
+      city: 'Jakarta Utara',
+      province: 'DKI Jakarta',
+      postalCode: '14450',
+      isPrimary: false
+    },
+    {
+      addressId: 'ADDR-RET-002',
+      customerId: 'CUST-RET-002',
+      label: 'Rumah Ani',
+      fullAddress: 'Jl. Kebon Jeruk Indah No. 2',
+      city: 'Jakarta Barat',
+      province: 'DKI Jakarta',
+      postalCode: '11530',
+      isPrimary: true
+    },
+    {
+      addressId: 'ADDR-RET-003',
+      customerId: 'CUST-RET-003',
+      label: 'Rumah Candra',
+      fullAddress: 'Jl. Kebon Jeruk Indah No. 3',
+      city: 'Jakarta Barat',
+      province: 'DKI Jakarta',
+      postalCode: '11530',
+      isPrimary: true
+    },
+    {
+      addressId: 'ADDR-RET-004',
+      customerId: 'CUST-RET-004',
+      label: 'Rumah Diana',
+      fullAddress: 'Jl. Kebon Jeruk Indah No. 4',
+      city: 'Jakarta Barat',
+      province: 'DKI Jakarta',
+      postalCode: '11530',
+      isPrimary: true
+    },
+    {
+      addressId: 'ADDR-RET-005',
+      customerId: 'CUST-RET-005',
+      label: 'Rumah Erik',
+      fullAddress: 'Jl. Kebon Jeruk Indah No. 5',
+      city: 'Jakarta Barat',
+      province: 'DKI Jakarta',
+      postalCode: '11530',
+      isPrimary: true
+    },
+    {
+      addressId: 'ADDR-RET-006',
+      customerId: 'CUST-RET-006',
+      label: 'Rumah Fiona',
+      fullAddress: 'Jl. Kebon Jeruk Indah No. 6',
+      city: 'Jakarta Barat',
+      province: 'DKI Jakarta',
+      postalCode: '11530',
+      isPrimary: true
+    },
+    {
+      addressId: 'ADDR-RET-007',
+      customerId: 'CUST-RET-007',
+      label: 'Rumah Gandi',
+      fullAddress: 'Jl. Kebon Jeruk Indah No. 7',
+      city: 'Jakarta Barat',
+      province: 'DKI Jakarta',
+      postalCode: '11530',
+      isPrimary: true
+    },
+    {
+      addressId: 'ADDR-RET-008',
+      customerId: 'CUST-RET-008',
+      label: 'Rumah Hilda',
+      fullAddress: 'Jl. Kebon Jeruk Indah No. 8',
+      city: 'Jakarta Barat',
+      province: 'DKI Jakarta',
+      postalCode: '11530',
+      isPrimary: true
+    },
+    {
+      addressId: 'ADDR-RET-009',
+      customerId: 'CUST-RET-009',
+      label: 'Rumah Indra',
+      fullAddress: 'Jl. Kebon Jeruk Indah No. 9',
+      city: 'Jakarta Barat',
+      province: 'DKI Jakarta',
+      postalCode: '11530',
+      isPrimary: true
+    },
+    {
+      addressId: 'ADDR-RET-010',
+      customerId: 'CUST-RET-010',
+      label: 'Rumah Julia',
+      fullAddress: 'Jl. Kebon Jeruk Indah No. 10',
+      city: 'Jakarta Barat',
+      province: 'DKI Jakarta',
+      postalCode: '11530',
+      isPrimary: true
+    },
+    {
+      addressId: 'ADDR-RET-011',
+      customerId: 'CUST-RET-011',
+      label: 'Rumah Kiki',
+      fullAddress: 'Jl. Kebon Jeruk Indah No. 11',
+      city: 'Jakarta Barat',
+      province: 'DKI Jakarta',
+      postalCode: '11530',
+      isPrimary: true
+    },
+    {
+      addressId: 'ADDR-RET-012',
+      customerId: 'CUST-RET-012',
+      label: 'Rumah Lisa',
+      fullAddress: 'Jl. Kebon Jeruk Indah No. 12',
+      city: 'Jakarta Barat',
+      province: 'DKI Jakarta',
+      postalCode: '11530',
+      isPrimary: true
+    },
+    // Corporate Customer Addresses
+    {
+      addressId: 'ADDR-CORP-001',
+      customerId: 'CUST-CORP-001',
+      label: 'Gudang Pusat Mayora',
+      fullAddress: 'Kawasan Industri Cikarang Blok C/1',
+      city: 'Tangerang',
+      province: 'Banten',
+      postalCode: '15136',
+      isPrimary: true
+    },
+    {
+      addressId: 'ADDR-CORP-002',
+      customerId: 'CUST-CORP-002',
+      label: 'Gudang Pusat Gokana',
+      fullAddress: 'Kawasan Industri Cikarang Blok C/2',
+      city: 'Tangerang',
+      province: 'Banten',
+      postalCode: '15136',
+      isPrimary: true
+    },
+    {
+      addressId: 'ADDR-CORP-003',
+      customerId: 'CUST-CORP-003',
+      label: 'Gudang Pusat Garuda',
+      fullAddress: 'Kawasan Industri Cikarang Blok C/3',
+      city: 'Tangerang',
+      province: 'Banten',
+      postalCode: '15136',
+      isPrimary: true
+    },
+    {
+      addressId: 'ADDR-CORP-004',
+      customerId: 'CUST-CORP-004',
+      label: 'Gudang Pusat Indofood',
+      fullAddress: 'Kawasan Industri Cikarang Blok C/4',
+      city: 'Tangerang',
+      province: 'Banten',
+      postalCode: '15136',
+      isPrimary: true
+    },
+    {
+      addressId: 'ADDR-CORP-005',
+      customerId: 'CUST-CORP-005',
+      label: 'Gudang Pusat Wings',
+      fullAddress: 'Kawasan Industri Cikarang Blok C/5',
+      city: 'Tangerang',
+      province: 'Banten',
+      postalCode: '15136',
+      isPrimary: true
+    },
+    {
+      addressId: 'ADDR-CORP-006',
+      customerId: 'CUST-CORP-006',
+      label: 'Gudang Pusat ABC',
+      fullAddress: 'Kawasan Industri Cikarang Blok C/6',
+      city: 'Tangerang',
+      province: 'Banten',
+      postalCode: '15136',
+      isPrimary: true
+    },
+    {
+      addressId: 'ADDR-CORP-007',
+      customerId: 'CUST-CORP-007',
+      label: 'Gudang Pusat Sasa',
+      fullAddress: 'Kawasan Industri Cikarang Blok C/7',
+      city: 'Tangerang',
+      province: 'Banten',
+      postalCode: '15136',
+      isPrimary: true
+    },
+    {
+      addressId: 'ADDR-CORP-008',
+      customerId: 'CUST-CORP-008',
+      label: 'Gudang Pusat Ajinomoto',
+      fullAddress: 'Kawasan Industri Cikarang Blok C/8',
+      city: 'Tangerang',
+      province: 'Banten',
+      postalCode: '15136',
+      isPrimary: true
+    },
+    {
+      addressId: 'ADDR-CORP-009',
+      customerId: 'CUST-CORP-009',
+      label: 'Gudang Pusat Kobe',
+      fullAddress: 'Kawasan Industri Cikarang Blok C/9',
+      city: 'Tangerang',
+      province: 'Banten',
+      postalCode: '15136',
+      isPrimary: true
+    },
+    {
+      addressId: 'ADDR-CORP-010',
+      customerId: 'CUST-CORP-010',
+      label: 'Gudang Pusat Nutrifood',
+      fullAddress: 'Kawasan Industri Cikarang Blok C/10',
+      city: 'Tangerang',
+      province: 'Banten',
+      postalCode: '15136',
+      isPrimary: true
+    },
+    {
+      addressId: 'ADDR-CORP-011',
+      customerId: 'CUST-CORP-011',
+      label: 'Gudang Pusat Unilever',
+      fullAddress: 'Kawasan Industri Cikarang Blok C/11',
+      city: 'Tangerang',
+      province: 'Banten',
+      postalCode: '15136',
+      isPrimary: true
+    },
+    {
+      addressId: 'ADDR-CORP-012',
+      customerId: 'CUST-CORP-012',
+      label: 'Gudang Pusat Nestle',
+      fullAddress: 'Kawasan Industri Cikarang Blok C/12',
+      city: 'Tangerang',
+      province: 'Banten',
+      postalCode: '15136',
+      isPrimary: true
+    }
+  ],
+
   addStaff: (staff) =>
     set((state) => ({
       staffList: [...state.staffList, staff]
@@ -372,5 +652,20 @@ export const useUserStore = create<UserStore>((set) => ({
   deleteCustomer: (id) =>
     set((state) => ({
       customerList: state.customerList.filter((c) => c.id !== id)
+    })),
+
+  addAddress: (address) =>
+    set((state) => ({
+      addressList: [...state.addressList, address]
+    })),
+
+  updateAddress: (addressId, data) =>
+    set((state) => ({
+      addressList: state.addressList.map((a) => (a.addressId === addressId ? { ...a, ...data } : a))
+    })),
+
+  deleteAddress: (addressId) =>
+    set((state) => ({
+      addressList: state.addressList.filter((a) => a.addressId !== addressId)
     }))
 }))

@@ -1,6 +1,7 @@
 'use client'
 
 import { useAuthStore } from '@/stores/use-auth-store'
+import { useUserStore } from '@/stores/use-user-store'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -38,10 +39,29 @@ export default function LoginPage() {
 
     // Simulate API delay
     setTimeout(() => {
-      login({
-        email: values.email,
-        name: 'Guest User' // Default name for the demo
-      })
+      // Find customer in user store
+      const customers = useUserStore.getState().customerList
+      const matchedCustomer = customers.find((c) => c.email.toLowerCase() === values.email.toLowerCase())
+
+      if (matchedCustomer) {
+        const isRetail = matchedCustomer.company === 'Personal/Retail'
+        const dbCustomerId = isRetail
+          ? `CUST-RET-${String(matchedCustomer.id).padStart(3, '0')}`
+          : `CUST-CORP-${String(matchedCustomer.id - 12).padStart(3, '0')}`
+
+        login({
+          id: dbCustomerId,
+          email: matchedCustomer.email,
+          name: matchedCustomer.name,
+          phone: matchedCustomer.phone,
+          role: 'ADMIN' // Default role for standard fields, but functions as customer
+        })
+      } else {
+        login({
+          email: values.email,
+          name: 'Guest User' // Default name for the demo
+        })
+      }
 
       toast.success('Login Berhasil!', {
         description: 'Selamat datang kembali.'
