@@ -8,27 +8,43 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Outfit:wght@400;700;900&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
+    <!-- Tailwind CSS CDN (Optional for custom inline Tailwind classes in HTML) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            corePlugins: {
+                preflight: false,
+            },
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#a31313',
+                        secondary: '#ffae0d',
+                        accent: '#ff6900',
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
         :root {
-            /* KSFOOD Theme Colors (Light) */
+            /* KSFOOD Theme Colors (from globals.css) */
+            --color-primary: #a31313;
+            --color-secondary: #ffae0d;
+            --color-accent: #ff6900;
+            --neon-blue: var(--color-primary);
+            --neon-purple: var(--color-secondary);
+            --neon-pink: var(--color-accent);
             --bg-base: #F8FAFC;
             --bg-surface: #FFFFFF;
             --text-main: #0F172A;
             --text-muted: #64748B;
-            --neon-blue: #a31313;
-            /* KSFOOD Primary (Deep Red) */
-            --neon-purple: #ffae0d;
-            /* KSFOOD Secondary (Yellow-Orange) */
-            --neon-pink: #ff6900;
-            /* KSFOOD Accent (Orange) */
-
-            /* Glassmorphism */
             --glass-bg: rgba(255, 255, 255, 0.7);
             --glass-border: rgba(0, 0, 0, 0.1);
             --glass-glow: 0 8px 32px 0 rgba(163, 19, 19, 0.1);
@@ -43,59 +59,28 @@
         body {
             background-color: var(--bg-base);
             color: var(--text-main);
-            font-family: 'Inter', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            margin: 0;
             overflow: hidden;
             background-image:
                 radial-gradient(circle at 15% 50%, rgba(163, 19, 19, 0.08), transparent 25%),
                 radial-gradient(circle at 85% 30%, rgba(255, 174, 13, 0.08), transparent 25%);
         }
 
-        /* Slide Container Mechanism */
-        #presentation-wrapper {
-            position: relative;
-            width: 1280px;
-            height: 720px;
-            background-color: var(--bg-surface);
-            border-radius: 24px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1), inset 0 0 0 1px var(--glass-border);
-            overflow: hidden;
-        }
-
-        .slide-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            transform: scale(0.95);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .slide-container.active {
-            opacity: 1;
-            visibility: visible;
-            transform: scale(1);
-        }
-
-        /* Typography */
         h1,
         h2,
         h3 {
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             margin-bottom: 0.5em;
         }
 
         h1 {
             font-size: 3.5rem;
-            font-weight: 900;
+            font-weight: 700;
             background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
             background-clip: text;
             -webkit-background-clip: text;
@@ -138,7 +123,39 @@
             line-height: 1.2;
         }
 
-        /* Structural Classes */
+        #presentation-wrapper {
+            position: relative;
+            width: 1280px;
+            height: 720px;
+            background-color: var(--bg-surface);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1), inset 0 0 0 1px var(--glass-border);
+            overflow: hidden;
+            transform-origin: center center;
+            transition: transform 0.1s ease;
+            flex-shrink: 0;
+        }
+
+        .slide-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: scale(0.95);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide-container.active {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+
         .chapter-badge {
             position: absolute;
             top: 30px;
@@ -250,10 +267,6 @@
             opacity: 0.85;
         }
 
-        .bleed-image::after {
-            display: none;
-        }
-
         .img-container {
             width: 100%;
             height: 100%;
@@ -273,7 +286,6 @@
             object-fit: contain;
         }
 
-        /* Specific Elements */
         .highlight {
             color: var(--text-main);
             font-weight: 600;
@@ -295,7 +307,6 @@
             overflow-x: auto;
         }
 
-        /* Custom Scrollbar */
         .custom-scrollbar::-webkit-scrollbar {
             width: 6px;
         }
@@ -314,7 +325,6 @@
             background: var(--neon-blue);
         }
 
-        /* Lightbox Modal & Zoom */
         .lightbox-modal {
             position: fixed;
             top: 0;
@@ -407,7 +417,7 @@
 
         .zoom-btn {
             background: var(--neon-blue);
-            color: #000;
+            color: #fff;
             padding: 10px 20px;
             border-radius: 20px;
             font-weight: 600;
@@ -423,35 +433,129 @@
             transform: scale(1.05);
         }
 
-        /* Navigation Controls */
-        .nav-controls {
+        /* Quick Navigation Bar */
+        .quick-nav-bar {
             position: absolute;
-            bottom: 30px;
-            right: 40px;
+            bottom: 25px;
+            left: 50%;
+            transform: translate(-50%, 100px);
+            opacity: 0;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 40px;
+            padding: 8px 16px;
             display: flex;
-            gap: 15px;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
             z-index: 100;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+            pointer-events: none;
         }
 
-        .nav-btn {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            color: var(--text-main);
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
+        .quick-nav-bar.visible {
+            transform: translate(-50%, 0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .quick-nav-btn {
+            background: transparent;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            color: #64748b;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
             display: flex;
-            justify-content: center;
             align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .quick-nav-btn:hover:not(:disabled) {
+            background: rgba(0, 0, 0, 0.02);
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .quick-nav-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .quick-nav-btn-next {
+            background: var(--color-primary);
+            border: none;
+            color: #ffffff;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(163, 19, 19, 0.2);
+        }
+
+        .quick-nav-btn-next:hover:not(:disabled) {
+            opacity: 0.95;
+            transform: translateY(-1px);
+        }
+
+        .quick-nav-btn-next:disabled {
+            background: #cbd5e1;
+            color: #94a3b8;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .quick-nav-indicators {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            overflow-x: auto;
+            max-width: 720px;
+            padding: 2px;
+            /* Hide scrollbar for standard browsers */
+            scrollbar-width: none;
+        }
+
+        /* Hide scrollbar for Chrome/Safari */
+        .quick-nav-indicators::-webkit-scrollbar {
+            display: none;
+        }
+
+        .indicator-dot {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #f1f5f9;
+            border: none;
+            color: #475569;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
             transition: all 0.2s ease;
-            backdrop-filter: blur(4px);
+            flex-shrink: 0;
         }
 
-        .nav-btn:hover {
-            background: rgba(255, 174, 13, 0.1);
-            border-color: var(--neon-blue);
-            color: var(--neon-blue);
+        .indicator-dot:hover {
+            background: #e2e8f0;
+            color: #0f172a;
+            transform: scale(1.1);
+        }
+
+        .indicator-dot.active {
+            background: var(--color-primary);
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(163, 19, 19, 0.3);
+            transform: scale(1.1);
         }
 
         .progress-bar {
@@ -465,17 +569,6 @@
             z-index: 100;
         }
 
-        .slide-counter {
-            position: absolute;
-            bottom: 40px;
-            left: 40px;
-            font-family: 'Outfit', sans-serif;
-            color: var(--text-muted);
-            font-size: 1.2rem;
-            font-weight: 600;
-        }
-
-        /* KSFOOD Logo Animation */
         .ksfood-logo .logo-box {
             stroke-dasharray: 600;
             stroke-dashoffset: 600;
@@ -485,6 +578,37 @@
         .ksfood-logo .logo-text {
             opacity: 0;
             animation: fadeInText 3s ease-in-out infinite;
+        }
+
+        .portrait-warning {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(163, 19, 19, 0.95);
+            color: #FFFFFF;
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            z-index: 10000;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            width: 85%;
+            max-width: 340px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            pointer-events: none;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        @media (max-width: 768px) and (orientation: portrait) {
+            .portrait-warning {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+            }
         }
 
         @keyframes drawBox {
@@ -531,6 +655,12 @@
 
 <body>
 
+    <!-- Warning for Portrait Mobile Screens -->
+    <div class="portrait-warning">
+        <i class="ph ph-screen-rotate" style="font-size: 1.25rem;"></i>
+        <span>Putar layar horizontal (landscape) untuk tampilan terbaik!</span>
+    </div>
+
     <div id="presentation-wrapper">
 
         <!-- Slide 1: Cover -->
@@ -543,10 +673,10 @@
                     <g class="logo-text">
                         <path
                             d="M62.3408 64L54.2128 54.048V64H49.7328V41.664H54.2128V51.68L62.3408 41.664H67.7488L58.5328 52.736L68.0048 64H62.3408ZM78.0236 64.224C76.4663 64.224 75.0583 63.9573 73.7996 63.424C72.5623 62.8907 71.5809 62.1227 70.8556 61.12C70.1303 60.1173 69.7569 58.9333 69.7356 57.568H74.5356C74.5996 58.4853 74.9196 59.2107 75.4956 59.744C76.0929 60.2773 76.9036 60.544 77.9276 60.544C78.9729 60.544 79.7943 60.2987 80.3916 59.808C80.9889 59.296 81.2876 58.6347 81.2876 57.824C81.2876 57.1627 81.0849 56.6187 80.6796 56.192C80.2743 55.7653 79.7623 55.4347 79.1436 55.2C78.5463 54.944 77.7143 54.6667 76.6476 54.368C75.1969 53.9413 74.0129 53.5253 73.0956 53.12C72.1996 52.6933 71.4209 52.064 70.7596 51.232C70.1196 50.3787 69.7996 49.248 69.7996 47.84C69.7996 46.5173 70.1303 45.3653 70.7916 44.384C71.4529 43.4027 72.3809 42.656 73.5756 42.144C74.7703 41.6107 76.1356 41.344 77.6716 41.344C79.9756 41.344 81.8423 41.9093 83.2716 43.04C84.7223 44.1493 85.5223 45.7067 85.6716 47.712H80.7436C80.7009 46.944 80.3703 46.3147 79.7516 45.824C79.1543 45.312 78.3543 45.056 77.3516 45.056C76.4769 45.056 75.7729 45.28 75.2396 45.728C74.7276 46.176 74.4716 46.8267 74.4716 47.68C74.4716 48.2773 74.6636 48.7787 75.0476 49.184C75.4529 49.568 75.9436 49.888 76.5196 50.144C77.1169 50.3787 77.9489 50.656 79.0156 50.976C80.4663 51.4027 81.6503 51.8293 82.5676 52.256C83.4849 52.6827 84.2743 53.3227 84.9356 54.176C85.5969 55.0293 85.9276 56.1493 85.9276 57.536C85.9276 58.7307 85.6183 59.84 84.9996 60.864C84.3809 61.888 83.4743 62.7093 82.2796 63.328C81.0849 63.9253 79.6663 64.224 78.0236 64.224ZM102.964 41.664V45.28H93.6516V51.008H100.788V54.56H93.6516V64H89.1716V41.664H102.964ZM147.554 41.664C149.9 41.664 151.959 42.1227 153.73 43.04C155.522 43.9573 156.898 45.2693 157.858 46.976C158.839 48.6613 159.33 50.624 159.33 52.864C159.33 55.104 158.839 57.0667 157.858 58.752C156.898 60.416 155.522 61.7067 153.73 62.624C151.959 63.5413 149.9 64 147.554 64H139.746V41.664H147.554ZM147.394 60.192C149.74 60.192 151.554 59.552 152.834 58.272C154.114 56.992 154.754 55.1893 154.754 52.864C154.754 50.5387 154.114 48.7253 152.834 47.424C151.554 46.1013 149.74 45.44 147.394 45.44H144.226V60.192H147.394Z"
-                            fill="var(--text-main)" />
+                            fill="var(--neon-blue)" />
                         <path
                             d="M113.08 57.147C111.694 57.147 110.42 56.825 109.258 56.181C108.11 55.537 107.193 54.641 106.507 53.493C105.835 52.331 105.499 51.029 105.499 49.587C105.499 48.145 105.835 46.85 106.507 45.702C107.193 44.554 108.11 43.658 109.258 43.014C110.42 42.37 111.694 42.048 113.08 42.048C114.466 42.048 115.733 42.37 116.881 43.014C118.043 43.658 118.953 44.554 119.611 45.702C120.283 46.85 120.619 48.145 120.619 49.587C120.619 51.029 120.283 52.331 119.611 53.493C118.939 54.641 118.029 55.537 116.881 56.181C115.733 56.825 114.466 57.147 113.08 57.147ZM113.08 53.871C114.256 53.871 115.194 53.479 115.894 52.695C116.608 51.911 116.965 50.875 116.965 49.587C116.965 48.285 116.608 47.249 115.894 46.479C115.194 45.695 114.256 45.303 113.08 45.303C111.89 45.303 110.938 45.688 110.224 46.458C109.524 47.228 109.174 48.271 109.174 49.587C109.174 50.889 109.524 51.932 110.224 52.716C110.938 53.486 111.89 53.871 113.08 53.871ZM128.959 57.147C127.573 57.147 126.299 56.825 125.137 56.181C123.989 55.537 123.072 54.641 122.386 53.493C121.714 52.331 121.378 51.029 121.378 49.587C121.378 48.145 121.714 46.85 122.386 45.702C123.072 44.554 123.989 43.658 125.137 43.014C126.299 42.37 127.573 42.048 128.959 42.048C130.345 42.048 131.612 42.37 132.76 43.014C133.922 43.658 134.832 44.554 135.49 45.702C136.162 46.85 136.498 48.145 136.498 49.587C136.498 51.029 136.162 52.331 135.49 53.493C134.818 54.641 133.908 55.537 132.76 56.181C131.612 56.825 130.345 57.147 128.959 57.147ZM128.959 53.871C130.135 53.871 131.073 53.479 131.773 52.695C132.487 51.911 132.844 50.875 132.844 49.587C132.844 48.285 132.487 47.249 131.773 46.479C131.073 45.695 130.135 45.303 128.959 45.303C127.769 45.303 126.817 45.688 126.103 46.458C125.403 47.228 125.053 48.271 125.053 49.587C125.053 50.889 125.403 51.932 126.103 52.716C126.817 53.486 127.769 53.871 128.959 53.871Z"
-                            fill="var(--text-main)" />
+                            fill="var(--neon-blue)" />
                         <line x1="107" y1="62" x2="120" y2="62" stroke="var(--neon-pink)" stroke-width="4" />
                         <line x1="123" y1="62" x2="136" y2="62" stroke="var(--neon-pink)" stroke-width="4" />
                     </g>
@@ -570,46 +700,109 @@
             <div class="chapter-badge">BAB 1: Company Profile & Business Process</div>
             <div class="content-area" style="align-items: center; justify-content: flex-start; padding-top: 60px;">
                 <h2 style="align-self: flex-start; margin-bottom: 30px;">Profil CV Kertasari Sejahtera (KS FOOD)</h2>
-
-                <div style="display: flex; gap: 30px; width: 100%;">
+                <div style="display: flex; gap: 24px; width: 100%;">
                     <!-- Company Profile Card -->
-                    <div class="card" style="flex: 1;">
-                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                            <i class="ph ph-buildings" style="margin: 0; font-size: 2.5rem;"></i>
-                            <h3 style="margin: 0;">Company Profile</h3>
+                    <div class="card" style="flex: 1; border-top: 4px solid var(--color-primary); padding: 25px 20px;">
+                        <div
+                            style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;">
+                            <i class="ph ph-buildings"
+                                style="margin: 0; font-size: 2rem; color: var(--color-primary);"></i>
+                            <h3 style="margin: 0; font-size: 1.35rem; font-weight: 700; color: var(--text-main);">
+                                Company Profile</h3>
                         </div>
-                        <ul style="font-size: 1rem;">
-                            <li><strong>Industri:</strong> Manufaktur Fast-Moving Consumer Goods (FMCG)</li>
-                            <li><strong>Produk:</strong> Saos Sambal, Saos Tomat, Mayones, dan aneka bumbu.</li>
-                            <li><strong>Pimpinan:</strong> Grace Indriani</li>
-                            <li><strong>Model Bisnis:</strong> Melayani B2B (Business-to-Business) dan B2C.</li>
-                            <li><strong>Klien Utama:</strong> Mayora Superbubur, Gokana, Kingfood, Dellifood.</li>
-                        </ul>
+                        <div style="display: flex; flex-direction: column; gap: 14px;">
+                            <div style="display: flex; flex-direction: column; gap: 2px;">
+                                <span
+                                    style="font-size: 0.85rem; font-weight: 700; color: var(--color-primary); text-transform: uppercase; letter-spacing: 0.5px;">Industri</span>
+                                <span style="font-size: 1.15rem; font-weight: 700; color: var(--text-main);">Manufaktur
+                                    Fast-Moving Consumer Goods (FMCG)</span>
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 2px;">
+                                <span
+                                    style="font-size: 0.85rem; font-weight: 700; color: var(--color-primary); text-transform: uppercase; letter-spacing: 0.5px;">Produk
+                                    Utama</span>
+                                <span style="font-size: 1.15rem; font-weight: 700; color: var(--text-main);">Saos
+                                    Sambal, Saos Tomat, Mayones, & Aneka Bumbu</span>
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 2px;">
+                                <span
+                                    style="font-size: 0.85rem; font-weight: 700; color: var(--color-primary); text-transform: uppercase; letter-spacing: 0.5px;">Pimpinan</span>
+                                <span style="font-size: 1.15rem; font-weight: 700; color: var(--text-main);">Grace
+                                    Indriani</span>
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 2px;">
+                                <span
+                                    style="font-size: 0.85rem; font-weight: 700; color: var(--color-primary); text-transform: uppercase; letter-spacing: 0.5px;">Model
+                                    Bisnis</span>
+                                <span style="font-size: 1.15rem; font-weight: 700; color: var(--text-main);">Melayani
+                                    B2B (Business-to-Business) & B2C</span>
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 2px;">
+                                <span
+                                    style="font-size: 0.85rem; font-weight: 700; color: var(--color-primary); text-transform: uppercase; letter-spacing: 0.5px;">Klien
+                                    Utama</span>
+                                <span style="font-size: 1.15rem; font-weight: 700; color: var(--text-main);">Mayora
+                                    Superbubur, Gokana, Kingfood, Dellifood</span>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Visi Misi Card -->
-                    <div class="card" style="flex: 1; border-color: var(--neon-purple);">
-                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                            <i class="ph ph-target"
-                                style="margin: 0; font-size: 2.5rem; color: var(--neon-purple);"></i>
-                            <h3 style="margin: 0;">Visi & Misi</h3>
+                    <div class="card" style="flex: 1; border-top: 4px solid #b45309; padding: 25px 20px;">
+                        <div
+                            style="display: flex; align-items: center; gap: 12px; margin-bottom: 15px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;">
+                            <i class="ph ph-target" style="margin: 0; font-size: 2rem; color: #b45309;"></i>
+                            <h3 style="margin: 0; font-size: 1.35rem; font-weight: 700; color: var(--text-main);">Visi &
+                                Misi</h3>
                         </div>
-                        <p
-                            style="font-style: italic; color: var(--neon-blue); font-weight: 600; text-align: center; margin-bottom: 15px;">
-                            "GOOD TASTE, GOOD QUALITY"</p>
-                        <ul style="font-size: 0.95rem;">
-                            <li>Menghasilkan produk berkualitas unggulan & berinovasi.</li>
-                            <li>Menjadi mitra kerja terbaik untuk memenuhi kepuasan pelanggan.</li>
-                            <li>Memberkati seluruh karyawan, lingkungan sekitar, kota, dan bangsa.</li>
-                        </ul>
+
+                        <!-- Slogan Banner -->
+                        <div
+                            style="background: rgba(255, 174, 13, 0.08); border-radius: 8px; padding: 12px 14px; margin-bottom: 20px; border-left: 3px solid var(--color-secondary);">
+                            <p
+                                style="font-style: italic; color: #b45309; font-weight: 700; text-align: center; margin: 0; font-size: 1.25rem; letter-spacing: 0.5px;">
+                                "GOOD TASTE, GOOD QUALITY"
+                            </p>
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; gap: 16px;">
+                            <div
+                                style="display: flex; align-items: flex-start; gap: 10px; font-size: 1.15rem; color: var(--text-main);">
+                                <i class="ph ph-check-circle"
+                                    style="color: var(--color-primary); font-size: 1.4rem; flex-shrink: 0; margin-top: 2px;"></i>
+                                <span style="font-weight: 700; line-height: 1.4;">Menghasilkan produk berkualitas
+                                    unggulan & terus berinovasi.</span>
+                            </div>
+                            <div
+                                style="display: flex; align-items: flex-start; gap: 10px; font-size: 1.15rem; color: var(--text-main);">
+                                <i class="ph ph-check-circle"
+                                    style="color: var(--color-primary); font-size: 1.4rem; flex-shrink: 0; margin-top: 2px;"></i>
+                                <span style="font-weight: 700; line-height: 1.4;">Menjadi mitra kerja terbaik untuk
+                                    memenuhi kepuasan pelanggan.</span>
+                            </div>
+                            <div
+                                style="display: flex; align-items: flex-start; gap: 10px; font-size: 1.15rem; color: var(--text-main);">
+                                <i class="ph ph-check-circle"
+                                    style="color: var(--color-primary); font-size: 1.4rem; flex-shrink: 0; margin-top: 2px;"></i>
+                                <span style="font-weight: 700; line-height: 1.4;">Memberkati seluruh karyawan,
+                                    lingkungan sekitar, kota, dan bangsa.</span>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Logo Area -->
-                    <div
-                        style="flex: 0.8; display: flex; justify-content: center; align-items: center; background: rgba(0, 240, 255, 0.05); border-radius: 16px; border: 1px dashed var(--neon-blue);">
-                        <div style="text-align: center; width: 100%; height: 100%; padding: 20px;">
+                    <!-- Logo Area Card -->
+                    <div class="card"
+                        style="flex: 1; border-top: 4px solid var(--color-primary); padding: 25px 20px; display: flex; flex-direction: column; justify-content: flex-start; align-items: stretch;">
+                        <div
+                            style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;">
+                            <i class="ph ph-image" style="margin: 0; font-size: 2rem; color: var(--color-primary);"></i>
+                            <h3 style="margin: 0; font-size: 1.35rem; font-weight: 700; color: var(--text-main);">Brand
+                                Logo</h3>
+                        </div>
+                        <div
+                            style="flex: 1; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle, rgba(163, 19, 19, 0.02) 0%, rgba(255, 174, 13, 0.02) 100%); border-radius: 12px; padding: 20px; border: 1px solid rgba(0,0,0,0.03);">
                             <img src="assets/logo.png" alt="Logo KS FOOD"
-                                style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                                style="max-width: 95%; max-height: 95%; object-fit: contain; filter: drop-shadow(0 8px 16px rgba(0,0,0,0.05));">
                         </div>
                     </div>
                 </div>
@@ -691,90 +884,135 @@
             <div class="content-area" style="align-items: center; justify-content: flex-start; padding-top: 50px;">
                 <h2 style="align-self: flex-start; margin-bottom: 20px;">Struktur Organisasi</h2>
 
-                <div style="display: flex; flex-direction: column; align-items: center; width: 100%; gap: 20px;">
+                <div style="display: flex; flex-direction: column; align-items: center; width: 100%; gap: 0;">
                     <!-- Level 1 -->
                     <div class="card"
-                        style="padding: 15px 40px; text-align: center; border-color: var(--neon-blue); background: rgba(255, 174, 13, 0.1);">
-                        <h3 style="margin: 0; font-size: 1.5rem;">Kepala Pabrik</h3>
+                        style="padding: 12px 40px; text-align: center; border-color: var(--color-primary); background: rgba(163, 19, 19, 0.05); border-radius: 12px; z-index: 10;">
+                        <h3 style="margin: 0; font-size: 1.35rem; font-weight: 700; color: var(--color-primary);">Kepala
+                            Pabrik</h3>
                     </div>
 
-                    <!-- Connector Line -->
-                    <div style="width: 2px; height: 20px; background: var(--neon-blue);"></div>
-                    <div style="width: 80%; height: 2px; background: var(--neon-blue);"></div>
+                    <!-- Vertical Connector Line from Kepala Pabrik -->
+                    <div style="width: 2px; height: 25px; background: var(--color-primary); opacity: 0.8; z-index: 1;">
+                    </div>
 
                     <!-- Level 2 container -->
-                    <div style="display: flex; width: 90%; justify-content: space-between; position: relative;">
-                        <!-- Connector drops -->
+                    <div style="display: flex; width: 100%; justify-content: space-between; position: relative;">
+                        <!-- Horizontal connector line -->
                         <div
-                            style="position: absolute; top: -2px; left: 0%; width: 2px; height: 20px; background: var(--neon-blue);">
-                        </div>
-                        <div
-                            style="position: absolute; top: -2px; left: 33%; width: 2px; height: 20px; background: var(--neon-blue);">
-                        </div>
-                        <div
-                            style="position: absolute; top: -2px; left: 66%; width: 2px; height: 20px; background: var(--neon-blue);">
-                        </div>
-                        <div
-                            style="position: absolute; top: -2px; right: 0%; width: 2px; height: 20px; background: var(--neon-blue);">
+                            style="position: absolute; top: 0; left: 12.5%; right: 12.5%; height: 2px; background: var(--color-primary); opacity: 0.8;">
                         </div>
 
-                        <!-- Box 1 -->
-                        <div style="flex: 1; margin-top: 18px; padding: 0 10px;">
-                            <div class="card" style="padding: 15px; text-align: center; height: 100%;">
+                        <!-- Column 1: Produksi -->
+                        <div
+                            style="flex: 1; padding: 0 10px; position: relative; display: flex; flex-direction: column; align-items: center;">
+                            <!-- Vertical connector drop -->
+                            <div
+                                style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 2px; height: 20px; background: var(--color-primary); opacity: 0.8;">
+                            </div>
+
+                            <div class="card"
+                                style="margin-top: 20px; padding: 15px; width: 100%; height: 100%; display: flex; flex-direction: column; border-top: 4px solid var(--color-primary);">
                                 <h3
-                                    style="font-size: 1.1rem; color: var(--neon-blue); margin-bottom: 15px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;">
-                                    1. Produksi</h3>
-                                <ul style="text-align: left; font-size: 0.9rem; margin: 0; padding-left: 15px;">
-                                    <li>Asisten Produksi</li>
-                                    <li>Pembelian</li>
-                                    <li>R&D</li>
-                                </ul>
+                                    style="font-size: 1.05rem; font-weight: 700; color: var(--color-primary); margin-bottom: 12px; text-align: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 8px; letter-spacing: 0.5px;">
+                                    1. Produksi
+                                </h3>
+                                <div style="display: flex; flex-direction: column; gap: 6px;">
+                                    <div
+                                        style="background: rgba(163, 19, 19, 0.03); border: 1px solid rgba(163, 19, 19, 0.08); border-radius: 8px; padding: 6px 10px; font-size: 0.85rem; font-weight: 600; color: var(--text-main); text-align: center;">
+                                        Asisten Produksi</div>
+                                    <div
+                                        style="background: rgba(163, 19, 19, 0.03); border: 1px solid rgba(163, 19, 19, 0.08); border-radius: 8px; padding: 6px 10px; font-size: 0.85rem; font-weight: 600; color: var(--text-main); text-align: center;">
+                                        Pembelian</div>
+                                    <div
+                                        style="background: rgba(163, 19, 19, 0.03); border: 1px solid rgba(163, 19, 19, 0.08); border-radius: 8px; padding: 6px 10px; font-size: 0.85rem; font-weight: 600; color: var(--text-main); text-align: center;">
+                                        R&D</div>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Box 2 -->
-                        <div style="flex: 1; margin-top: 18px; padding: 0 10px;">
-                            <div class="card" style="padding: 15px; text-align: center; height: 100%;">
+                        <!-- Column 2: Quality Control -->
+                        <div
+                            style="flex: 1; padding: 0 10px; position: relative; display: flex; flex-direction: column; align-items: center;">
+                            <!-- Vertical connector drop -->
+                            <div
+                                style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 2px; height: 20px; background: var(--color-primary); opacity: 0.8;">
+                            </div>
+
+                            <div class="card"
+                                style="margin-top: 20px; padding: 15px; width: 100%; height: 100%; display: flex; flex-direction: column; border-top: 4px solid var(--color-secondary);">
                                 <h3
-                                    style="font-size: 1.1rem; color: var(--neon-blue); margin-bottom: 15px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;">
-                                    2. Quality Control</h3>
-                                <ul style="text-align: left; font-size: 0.9rem; margin: 0; padding-left: 15px;">
-                                    <li>Gudang Bahan Baku
-                                        <ul style="padding-left: 15px; font-size: 0.8rem; color: var(--text-muted);">
-                                            <li>Divisi Tepung</li>
-                                            <li>Divisi Bumbu</li>
-                                        </ul>
-                                    </li>
-                                    <li>Lab QC</li>
-                                </ul>
+                                    style="font-size: 1.05rem; font-weight: 700; color: #b45309; margin-bottom: 12px; text-align: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 8px; letter-spacing: 0.5px;">
+                                    2. Quality Control
+                                </h3>
+                                <div style="display: flex; flex-direction: column; gap: 6px;">
+                                    <div
+                                        style="background: rgba(255, 174, 13, 0.04); border: 1px solid rgba(255, 174, 13, 0.1); border-radius: 8px; padding: 6px 10px; font-size: 0.85rem; font-weight: 600; color: var(--text-main); text-align: center;">
+                                        Gudang Bahan Baku
+                                        <div style="display: flex; gap: 4px; margin-top: 6px; justify-content: center;">
+                                            <span
+                                                style="background: #ffffff; border: 1px solid rgba(0,0,0,0.1); padding: 3px 8px; border-radius: 6px; font-size: 0.78rem; color: #334155; font-weight: 600;">Tepung</span>
+                                            <span
+                                                style="background: #ffffff; border: 1px solid rgba(0,0,0,0.1); padding: 3px 8px; border-radius: 6px; font-size: 0.78rem; color: #334155; font-weight: 600;">Bumbu</span>
+                                        </div>
+                                    </div>
+                                    <div
+                                        style="background: rgba(255, 174, 13, 0.04); border: 1px solid rgba(255, 174, 13, 0.1); border-radius: 8px; padding: 6px 10px; font-size: 0.85rem; font-weight: 600; color: var(--text-main); text-align: center;">
+                                        Lab QC</div>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Box 3 -->
-                        <div style="flex: 1; margin-top: 18px; padding: 0 10px;">
-                            <div class="card" style="padding: 15px; text-align: center; height: 100%;">
+                        <!-- Column 3: Umum & Personalia -->
+                        <div
+                            style="flex: 1; padding: 0 10px; position: relative; display: flex; flex-direction: column; align-items: center;">
+                            <!-- Vertical connector drop -->
+                            <div
+                                style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 2px; height: 20px; background: var(--color-primary); opacity: 0.8;">
+                            </div>
+
+                            <div class="card"
+                                style="margin-top: 20px; padding: 15px; width: 100%; height: 100%; display: flex; flex-direction: column; border-top: 4px solid var(--color-accent);">
                                 <h3
-                                    style="font-size: 1.1rem; color: var(--neon-blue); margin-bottom: 15px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;">
-                                    3. Umum + Personalia</h3>
-                                <ul style="text-align: left; font-size: 0.9rem; margin: 0; padding-left: 15px;">
-                                    <li>Pengolahan Limbah</li>
-                                    <li>Umum</li>
-                                    <li>Utilitas</li>
-                                    <li>HRD & Kemasan</li>
-                                    <li>Security</li>
-                                </ul>
+                                    style="font-size: 1.05rem; font-weight: 700; color: #c2410c; margin-bottom: 12px; text-align: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 8px; letter-spacing: 0.5px;">
+                                    3. Umum & Personalia
+                                </h3>
+                                <div style="display: flex; flex-direction: column; gap: 6px;">
+                                    <div
+                                        style="background: rgba(255, 105, 0, 0.03); border: 1px solid rgba(255, 105, 0, 0.08); border-radius: 8px; padding: 6px 10px; font-size: 0.85rem; font-weight: 600; color: var(--text-main); text-align: center;">
+                                        Pengolahan Limbah</div>
+                                    <div
+                                        style="background: rgba(255, 105, 0, 0.03); border: 1px solid rgba(255, 105, 0, 0.08); border-radius: 8px; padding: 6px 10px; font-size: 0.85rem; font-weight: 600; color: var(--text-main); text-align: center;">
+                                        Umum / Utilitas</div>
+                                    <div
+                                        style="background: rgba(255, 105, 0, 0.03); border: 1px solid rgba(255, 105, 0, 0.08); border-radius: 8px; padding: 6px 10px; font-size: 0.85rem; font-weight: 600; color: var(--text-main); text-align: center;">
+                                        HRD & Kemasan</div>
+                                    <div
+                                        style="background: rgba(255, 105, 0, 0.03); border: 1px solid rgba(255, 105, 0, 0.08); border-radius: 8px; padding: 6px 10px; font-size: 0.85rem; font-weight: 600; color: var(--text-main); text-align: center;">
+                                        Security</div>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Box 4 -->
-                        <div style="flex: 1; margin-top: 18px; padding: 0 10px;">
-                            <div class="card" style="padding: 15px; text-align: center; height: 100%;">
+                        <!-- Column 4: Administrasi -->
+                        <div
+                            style="flex: 1; padding: 0 10px; position: relative; display: flex; flex-direction: column; align-items: center;">
+                            <!-- Vertical connector drop -->
+                            <div
+                                style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 2px; height: 20px; background: var(--color-primary); opacity: 0.8;">
+                            </div>
+
+                            <div class="card"
+                                style="margin-top: 20px; padding: 15px; width: 100%; height: 100%; display: flex; flex-direction: column; border-top: 4px solid #10b981;">
                                 <h3
-                                    style="font-size: 1.1rem; color: var(--neon-blue); margin-bottom: 15px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;">
-                                    4. Administrasi</h3>
-                                <ul style="text-align: left; font-size: 0.9rem; margin: 0; padding-left: 15px;">
-                                    <li>Adm & Administrasi</li>
-                                </ul>
+                                    style="font-size: 1.05rem; font-weight: 700; color: #047857; margin-bottom: 12px; text-align: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 8px; letter-spacing: 0.5px;">
+                                    4. Administrasi
+                                </h3>
+                                <div style="display: flex; flex-direction: column; gap: 6px;">
+                                    <div
+                                        style="background: rgba(16, 185, 129, 0.03); border: 1px solid rgba(16, 185, 129, 0.08); border-radius: 8px; padding: 6px 10px; font-size: 0.85rem; font-weight: 600; color: var(--text-main); text-align: center;">
+                                        Adm & Administrasi</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -914,7 +1152,7 @@
                             <li>Ketergantungan data produksi pihak ketiga yang menghambat visibilitas operasi.</li>
                         </ul>
                     </div>
-                    <div class="card" style="background: rgba(0, 240, 255, 0.1); border-color: var(--neon-blue);">
+                    <div class="card" style="background: rgba(0, 238, 255, 0.003); border-color: var(--neon-blue);">
                         <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
                             <i class="ph ph-rocket-launch" style="font-size: 2.5rem; color: var(--neon-blue);"></i>
                             <h3 style="margin: 0; color: var(--neon-blue);">Mission Statement & Objectives</h3>
@@ -1738,8 +1976,7 @@
                     <!-- Fallback / Alternative Button if Embed fails -->
                     <div style="position: absolute; bottom: 20px; right: 20px;">
                         <a href="KS FOOD.pdf" target="_blank" style="text-decoration: none;">
-                            <div class="zoom-btn"
-                                style="background: var(--neon-purple); color: white; display: flex; gap: 8px;">
+                            <div class="zoom-btn" style="display: flex; gap: 8px;">
                                 <i class="ph ph-file-pdf"></i> Buka PDF Kamus Data di Tab Baru
                             </div>
                         </a>
@@ -1862,8 +2099,7 @@ COMMIT; -- Simpan jika semua sukses
                     <!-- Fallback / Alternative Button -->
                     <div style="position: absolute; bottom: 20px; right: 20px;">
                         <a href="KSFOOD Phisical Database.pdf" target="_blank" style="text-decoration: none;">
-                            <div class="zoom-btn"
-                                style="background: var(--neon-blue); color: black; display: flex; gap: 8px;">
+                            <div class="zoom-btn" style="background: var(--neon-blue); display: flex; gap: 8px;">
                                 <i class="ph ph-file-pdf"></i> Buka PDF Physical ERD di Tab Baru
                             </div>
                         </a>
@@ -1872,17 +2108,16 @@ COMMIT; -- Simpan jika semua sukses
             </div>
         </div>
 
-        <!-- Controls UI -->
-        <div class="slide-counter">
-            <span id="current-slide">1</span> / <span id="total-slides">27</span>
-        </div>
-
-        <div class="nav-controls">
-            <button class="nav-btn" id="prev-btn" title="Previous Slide">
-                <i class="ph ph-caret-left" style="font-size: 1.5rem;"></i>
+        <!-- Quick Navigation Bar -->
+        <div class="quick-nav-bar">
+            <button class="quick-nav-btn" id="prev-btn" title="Previous Slide">
+                <i class="ph ph-caret-left"></i> Prev
             </button>
-            <button class="nav-btn" id="next-btn" title="Next Slide">
-                <i class="ph ph-caret-right" style="font-size: 1.5rem;"></i>
+            <div class="quick-nav-indicators" id="quick-nav-indicators">
+                <!-- Dynamically populated via JS -->
+            </div>
+            <button class="quick-nav-btn-next" id="next-btn" title="Next Slide">
+                Next <i class="ph ph-caret-right"></i>
             </button>
         </div>
 
@@ -1918,8 +2153,75 @@ COMMIT; -- Simpan jika semua sukses
             const currentSlideEl = document.getElementById('current-slide');
             const totalSlidesEl = document.getElementById('total-slides');
             const progressBar = document.getElementById('progress-bar');
+            const indicatorsContainer = document.getElementById('quick-nav-indicators');
+            const navBar = document.querySelector('.quick-nav-bar');
+            const wrapper = document.getElementById('presentation-wrapper');
 
-            totalSlidesEl.textContent = totalSlides;
+            let isMouseOverBottom = false;
+            let isFocused = false;
+
+            function updateNavBarVisibility() {
+                if (navBar) {
+                    if (isMouseOverBottom || isFocused) {
+                        navBar.classList.add('visible');
+                    } else {
+                        navBar.classList.remove('visible');
+                    }
+                }
+            }
+
+            if (navBar) {
+                navBar.addEventListener('focusin', () => {
+                    isFocused = true;
+                    updateNavBarVisibility();
+                });
+                navBar.addEventListener('focusout', () => {
+                    isFocused = false;
+                    updateNavBarVisibility();
+                });
+            }
+
+            if (wrapper) {
+                wrapper.addEventListener('mousemove', (e) => {
+                    const rect = wrapper.getBoundingClientRect();
+                    const relativeYPercent = (e.clientY - rect.top) / rect.height;
+                    const relativeXPercent = (e.clientX - rect.left) / rect.width;
+
+                    const isInside = relativeXPercent >= 0 && relativeXPercent <= 1 && relativeYPercent >= 0 && relativeYPercent <= 1;
+
+                    if (isInside && relativeYPercent >= 0.85) {
+                        isMouseOverBottom = true;
+                    } else {
+                        isMouseOverBottom = false;
+                    }
+                    updateNavBarVisibility();
+                });
+
+                wrapper.addEventListener('mouseleave', () => {
+                    isMouseOverBottom = false;
+                    updateNavBarVisibility();
+                });
+            }
+
+            if (totalSlidesEl) {
+                totalSlidesEl.textContent = totalSlides;
+            }
+
+            // Dynamically generate quick navigation indicator dots
+            if (indicatorsContainer) {
+                slides.forEach((_, index) => {
+                    const button = document.createElement('button');
+                    button.className = 'indicator-dot';
+                    button.textContent = index + 1;
+                    button.title = `Go to Slide ${index + 1}`;
+                    button.addEventListener('click', () => {
+                        currentSlideIndex = index;
+                        updateSlideVisibility();
+                        button.blur();
+                    });
+                    indicatorsContainer.appendChild(button);
+                });
+            }
 
             function updateSlideVisibility() {
                 slides.forEach((slide, index) => {
@@ -1930,10 +2232,36 @@ COMMIT; -- Simpan jika semua sukses
                     }
                 });
 
-                currentSlideEl.textContent = currentSlideIndex + 1;
+                if (currentSlideEl) {
+                    currentSlideEl.textContent = currentSlideIndex + 1;
+                }
+
+                // Update active state of indicator dots and scroll active dot into view
+                if (indicatorsContainer) {
+                    const dots = indicatorsContainer.querySelectorAll('.indicator-dot');
+                    dots.forEach((dot, index) => {
+                        if (index === currentSlideIndex) {
+                            dot.classList.add('active');
+                            // Center the active dot in the indicators container horizontally without vertical page shifts
+                            const containerWidth = indicatorsContainer.clientWidth;
+                            const dotOffsetLeft = dot.offsetLeft;
+                            const dotWidth = dot.clientWidth;
+                            indicatorsContainer.scrollTo({
+                                left: dotOffsetLeft - (containerWidth / 2) + (dotWidth / 2),
+                                behavior: 'smooth'
+                            });
+                        } else {
+                            dot.classList.remove('active');
+                        }
+                    });
+                }
 
                 const progress = ((currentSlideIndex + 1) / totalSlides) * 100;
                 progressBar.style.width = `${progress}%`;
+
+                // Update navigation button states
+                prevBtn.disabled = currentSlideIndex === 0;
+                nextBtn.disabled = currentSlideIndex === totalSlides - 1;
 
                 prevBtn.style.opacity = currentSlideIndex === 0 ? '0.5' : '1';
                 prevBtn.style.cursor = currentSlideIndex === 0 ? 'not-allowed' : 'pointer';
@@ -1956,8 +2284,14 @@ COMMIT; -- Simpan jika semua sukses
                 }
             }
 
-            nextBtn.addEventListener('click', goToNextSlide);
-            prevBtn.addEventListener('click', goToPrevSlide);
+            nextBtn.addEventListener('click', () => {
+                goToNextSlide();
+                nextBtn.blur();
+            });
+            prevBtn.addEventListener('click', () => {
+                goToPrevSlide();
+                prevBtn.blur();
+            });
 
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'ArrowRight' || e.key === ' ') {
@@ -1968,6 +2302,50 @@ COMMIT; -- Simpan jika semua sukses
                     closeLightbox();
                 }
             });
+
+            // Responsive Scaling Mechanism
+            function resizePresentation() {
+                const wrapper = document.getElementById('presentation-wrapper');
+                if (!wrapper) return;
+
+                const targetWidth = 1280;
+                const targetHeight = 720;
+
+                const scaleX = window.innerWidth / targetWidth;
+                const scaleY = window.innerHeight / targetHeight;
+                // Add a margin of 0.95 to keep spacing clean
+                const scale = Math.min(scaleX, scaleY) * 0.95;
+
+                wrapper.style.transform = `scale(${scale})`;
+            }
+
+            window.addEventListener('resize', resizePresentation);
+            resizePresentation(); // Initial run
+
+            // Swipe Gestures for Mobile Touch Devices
+            let touchStartX = 0;
+            let touchEndX = 0;
+
+            document.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, { passive: true });
+
+            document.addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            }, { passive: true });
+
+            function handleSwipe() {
+                const diff = touchEndX - touchStartX;
+                const threshold = 50; // minimum swipe distance in pixels
+                if (Math.abs(diff) > threshold) {
+                    if (diff < 0) {
+                        goToNextSlide();
+                    } else {
+                        goToPrevSlide();
+                    }
+                }
+            }
 
             updateSlideVisibility();
         });
